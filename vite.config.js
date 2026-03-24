@@ -6,6 +6,6 @@ export default defineConfig({
   resolve: { alias: { "@": resolve(__dirname, "src") } },
   server: {
     port: 3001,
-    proxy: { "/api": { target: "http://localhost:8000", changeOrigin: true } },
+    proxy: { "/api": { target: "https://multi_functional_ecommerce_and_affiliate_platform_api.test", changeOrigin: true } },
   },
 });
