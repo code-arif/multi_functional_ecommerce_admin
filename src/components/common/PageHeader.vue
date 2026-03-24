@@ -9,7 +9,6 @@
         </div>
     </div>
 </template>
-
 <script setup>
 defineProps({ title: String, subtitle: String })
 </script>
