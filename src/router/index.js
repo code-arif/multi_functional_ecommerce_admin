@@ -1,127 +1,175 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
 
+// Layout
+import AdminLayout from "@/components/layout/AdminLayout.vue";
+
+// Auth
+import LoginPage from "@/pages/LoginPage.vue";
+
+// Dashboard
+import DashboardPage from "@/pages/DashboardPage.vue";
+
+// Products
+import ProductsPage from "@/pages/products/ProductsPage.vue";
+import ProductFormPage from "@/pages/products/ProductFormPage.vue";
+
+// Orders
+import OrdersPage from "@/pages/orders/OrdersPage.vue";
+import OrderDetailPage from "@/pages/orders/OrderDetailPage.vue";
+
+// Users
+import UsersPage from "@/pages/users/UsersPage.vue";
+import UserDetailPage from "@/pages/users/UserDetailPage.vue";
+
+// Categories
+import CategoriesPage from "@/pages/categories/CategoriesPage.vue";
+
+// Brands
+import BrandsPage from "@/pages/brands/BrandsPage.vue";
+
+// Coupons
+import CouponsPage from "@/pages/coupons/CouponsPage.vue";
+
+// Reviews
+import ReviewsPage from "@/pages/reviews/ReviewsPage.vue";
+
+// Affiliate
+import AffiliatePage from "@/pages/affiliate/AffiliatePage.vue";
+
+// CMS
+import CmsPage from "@/pages/cms/CmsPage.vue";
+
+// Banners
+import BannersPage from "@/pages/banners/BannersPage.vue";
+
+// Reports
+import ReportsPage from "@/pages/reports/ReportsPage.vue";
+
+// Settings
+import SettingsPage from "@/pages/settings/SettingsPage.vue";
+
 const routes = [
   {
     path: "/login",
     name: "login",
-    component: () => import("@/pages/LoginPage.vue"),
+    component: LoginPage,
     meta: { guest: true },
   },
 
   {
     path: "/",
-    component: () => import("@/components/layout/AdminLayout.vue"),
+    component: AdminLayout,
     meta: { requiresAuth: true },
     children: [
       {
         path: "",
         name: "dashboard",
-        component: () => import("@/pages/DashboardPage.vue"),
+        component: DashboardPage,
       },
 
       // Products
       {
         path: "products",
         name: "products",
-        component: () => import("@/pages/products/ProductsPage.vue"),
+        component: ProductsPage,
       },
       {
         path: "products/create",
         name: "products-create",
-        component: () => import("@/pages/products/ProductFormPage.vue"),
+        component: ProductFormPage,
       },
       {
         path: "products/:id/edit",
         name: "products-edit",
-        component: () => import("@/pages/products/ProductFormPage.vue"),
+        component: ProductFormPage,
       },
 
       // Orders
       {
         path: "orders",
         name: "orders",
-        component: () => import("@/pages/orders/OrdersPage.vue"),
+        component: OrdersPage,
       },
       {
         path: "orders/:id",
         name: "orders-detail",
-        component: () => import("@/pages/orders/OrderDetailPage.vue"),
+        component: OrderDetailPage,
       },
 
       // Users
       {
         path: "users",
         name: "users",
-        component: () => import("@/pages/users/UsersPage.vue"),
+        component: UsersPage,
       },
       {
         path: "users/:id",
         name: "users-detail",
-        component: () => import("@/pages/users/UserDetailPage.vue"),
+        component: UserDetailPage,
       },
 
       // Categories
       {
         path: "categories",
         name: "categories",
-        component: () => import("@/pages/categories/CategoriesPage.vue"),
+        component: CategoriesPage,
       },
 
       // Brands
       {
         path: "brands",
         name: "brands",
-        component: () => import("@/pages/brands/BrandsPage.vue"),
+        component: BrandsPage,
       },
 
       // Coupons
       {
         path: "coupons",
         name: "coupons",
-        component: () => import("@/pages/coupons/CouponsPage.vue"),
+        component: CouponsPage,
       },
 
       // Reviews
       {
         path: "reviews",
         name: "reviews",
-        component: () => import("@/pages/reviews/ReviewsPage.vue"),
+        component: ReviewsPage,
       },
 
       // Affiliate
       {
         path: "affiliate",
         name: "affiliate",
-        component: () => import("@/pages/affiliate/AffiliatePage.vue"),
+        component: AffiliatePage,
       },
 
       // CMS
       {
         path: "cms",
         name: "cms",
-        component: () => import("@/pages/cms/CmsPage.vue"),
+        component: CmsPage,
       },
 
       // Banners
       {
         path: "banners",
         name: "banners",
-        component: () => import("@/pages/banners/BannersPage.vue"),
+        component: BannersPage,
       },
 
       // Reports
       {
         path: "reports",
         name: "reports",
-        component: () => import("@/pages/reports/ReportsPage.vue"),
+        component: ReportsPage,
       },
 
       // Settings
       {
         path: "settings",
         name: "settings",
-        component: () => import("@/pages/settings/SettingsPage.vue"),
+        component: SettingsPage,
       },
     ],
   },
@@ -137,8 +185,10 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const auth = useAuthStore();
+
   if (to.meta.requiresAuth && !auth.isLoggedIn) return next("/login");
   if (to.meta.guest && auth.isLoggedIn) return next("/");
+
   next();
 });
 
