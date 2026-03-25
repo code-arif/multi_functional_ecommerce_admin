@@ -276,6 +276,71 @@
             <p v-if="errors.thumbnail" class="text-red-500 text-xs mt-1">{{ errors.thumbnail[0] }}</p>
           </div>
 
+          <!-- Gallery Images -->
+          <div class="card p-5">
+            <h3 class="font-bold text-gray-900 mb-4">Product Gallery</h3>
+
+            <!-- Upload Box -->
+            <div
+                class="border-2 border-dashed border-gray-200 rounded-xl p-6 text-center hover:border-[#4CAF50] transition cursor-pointer"
+                @click="$refs.galleryInput.click()"
+            >
+              <p class="text-sm text-gray-500">Click to upload images</p>
+              <p class="text-xs text-gray-400 mt-1">JPG, PNG, WebP</p>
+            </div>
+
+            <input
+                ref="galleryInput"
+                type="file"
+                multiple
+                accept="image/*"
+                class="hidden"
+                @change="onGalleryChange"
+            />
+
+            <!-- Preview Grid -->
+            <div v-if="imagePreviews.length" class="grid grid-cols-3 gap-3 mt-4">
+              <div
+                  v-for="(img, index) in imagePreviews"
+                  :key="index"
+                  class="relative group border rounded-lg overflow-hidden"
+              >
+                <img :src="img" class="w-full h-28 object-cover"/>
+
+                <!-- Primary Badge -->
+                <span
+                    v-if="uploadedImages[index]?.is_primary"
+                    class="absolute top-1 left-1 bg-green-600 text-white text-[10px] px-1.5 py-0.5 rounded"
+                >
+                    Primary
+                  </span>
+
+                <!-- Actions -->
+                <div
+                    class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center gap-2 transition">
+
+                  <!-- Set Primary -->
+                  <button
+                      type="button"
+                      @click="setPrimary(index)"
+                      class="bg-white text-xs px-2 py-1 rounded"
+                  >
+                    Set Primary
+                  </button>
+
+                  <!-- Remove -->
+                  <button
+                      type="button"
+                      @click="removeImage(index)"
+                      class="bg-red-500 text-white text-xs px-2 py-1 rounded"
+                  >
+                    Remove
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <!-- Category & Brand -->
           <div class="card p-5">
             <h3 class="font-bold text-gray-900 mb-4">Organization</h3>
@@ -355,6 +420,11 @@ const categories = ref([]), brands = ref([])
 const newTag = ref(''), newAttrValues = ref([])
 const thumbInput = ref(null)
 
+// image uploading state
+const imageFiles = ref([])      // raw files
+const imagePreviews = ref([])   // preview URLs
+const uploadedImages = ref([])  // final data (path, is_primary, alt_text)
+
 // Quill toolbar configuration
 const quillOptions = {
   modules: {
@@ -428,49 +498,206 @@ function generateVariants() {
 async function save() {
   saving.value = true
   errors.value = {}
+
   try {
-    // Step 1: Upload thumbnail separately if changed
-    let thumbnailUrl = form.thumbnail_url
+    const fd = new FormData()
+
+    // ── Basic fields ──────────────────────────────
+    fd.append('name',             form.name)
+    fd.append('type',             form.type)
+    fd.append('status',           form.status)
+    fd.append('sku',              form.sku || '')
+    fd.append('short_description',form.short_description || '')
+    fd.append('description',      form.description || '')
+    fd.append('category_id',      form.category_id || '')
+    fd.append('brand_id',         form.brand_id || '')
+    fd.append('meta_title',       form.meta_title || '')
+    fd.append('meta_description', form.meta_description || '')
+    fd.append('meta_keywords',    form.meta_keywords || '')
+
+    // ── Booleans ──────────────────────────────────
+    fd.append('is_featured',   form.is_featured  ? '1' : '0')
+    fd.append('is_new',        form.is_new       ? '1' : '0')
+    fd.append('is_bestseller', form.is_bestseller ? '1' : '0')
+    fd.append('manage_stock',  form.manage_stock  ? '1' : '0')
+
+    // ── Thumbnail: actual FILE, no pre-upload ─────
     if (thumbnailFile.value) {
-      const fd = new FormData()
-      fd.append('thumbnail', thumbnailFile.value)
-      const uploadRes = await productApi.uploadThumbnail(fd)
-      thumbnailUrl = uploadRes.data.url
+      fd.append('thumbnail', thumbnailFile.value)  // raw File object
     }
 
-    // Step 2: Send JSON — booleans, arrays, objects all preserved
-    const payload = {...form, thumbnail_url: thumbnailUrl}
+    // ── Type-specific fields ──────────────────────
+    if (form.type === 'simple') {
+      fd.append('price',               form.price ?? '')
+      fd.append('sale_price',          form.sale_price || '')
+      fd.append('cost_price',          form.cost_price || '')
+      fd.append('stock_quantity',      form.stock_quantity ?? 0)
+      fd.append('low_stock_threshold', form.low_stock_threshold ?? 5)
+    }
 
+    if (form.type === 'affiliate') {
+      fd.append('price',           form.price ?? '')
+      fd.append('affiliate_link',  form.affiliate_link || '')
+      fd.append('source_platform', form.source_platform || '')
+    }
+
+    // ── Arrays/Objects → JSON string ─────────────
+    // prepareForValidation() এ json_decode করে নেবে
+    fd.append('tags',       JSON.stringify(form.tags || []))
+    fd.append('images',     JSON.stringify(
+        uploadedImages.value
+            .filter(img => img.path)
+            .map((img, index) => ({
+              id:         img.id || null,
+              path:       img.path,
+              is_primary: img.is_primary,
+              alt_text:   img.alt_text || null,
+              sort_order: index,
+            }))
+    ))
+
+    if (form.type === 'variable') {
+      fd.append('attributes', JSON.stringify(form.attributes || []))
+      fd.append('variants',   JSON.stringify(form.variants   || []))
+    }
+
+    // ── API call ──────────────────────────────────
     if (isEdit.value) {
-      await productApi.update(route.params.id, payload)
-      toast.success('Product updated.')
+      await productApi.update(route.params.id, fd)
+      toast.success('Product updated successfully.')
     } else {
-      await productApi.store(payload)
-      toast.success('Product created.')
+      await productApi.store(fd)
+      toast.success('Product created successfully.')
     }
+
     router.push('/products')
+
   } catch (e) {
-    errors.value = e.response?.data?.errors || {}
-    toast.error(e.response?.data?.message || 'Save failed.')
+    console.error('Save error:', e)
+
+    if (e.response?.status === 422) {
+      errors.value = e.response.data.errors || {}
+      const firstError = Object.values(errors.value)[0]?.[0]
+      toast.error(firstError || 'Validation failed.')
+    } else if (e.response?.status === 403) {
+      toast.error('Permission denied.')
+    } else if (e.response?.status === 500) {
+      toast.error('Server error. Please try again.')
+    } else if (!e.response) {
+      toast.error('Network error. Check your connection.')
+    } else {
+      toast.error(e.response.data?.message || 'Something went wrong.')
+    }
   } finally {
     saving.value = false
   }
 }
 
+async function onGalleryChange(e) {
+  const files = Array.from(e.target.files)
+  if (!files.length) return
+
+  // Reset input so same file can be re-selected if needed
+  e.target.value = ''
+
+  for (const file of files) {
+    // Size check (5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error(`${file.name} is too large. Max 5MB allowed.`)
+      continue
+    }
+
+    // Optimistically add preview
+    const previewUrl = URL.createObjectURL(file)
+    const previewIndex = imagePreviews.value.length
+    imageFiles.value.push(file)
+    imagePreviews.value.push(previewUrl)
+    // Placeholder so index stays consistent
+    uploadedImages.value.push({ path: null, is_primary: false, alt_text: '', uploading: true })
+
+    try {
+      const fd = new FormData()
+      fd.append('image', file)   // key = 'image'
+      const res = await productApi.uploadImage(fd)
+
+      uploadedImages.value[previewIndex] = {
+        path:       res.data.data.path,
+        url:        res.data.data.url,
+        is_primary: previewIndex === 0 && !uploadedImages.value.some(i => i.is_primary && i.path),
+        alt_text:   '',
+        uploading:  false,
+      }
+
+      toast.success(`${file.name} uploaded.`)
+
+    } catch (err) {
+      console.error('Gallery upload error:', err)
+      // Remove the failed preview
+      imageFiles.value.splice(previewIndex, 1)
+      imagePreviews.value.splice(previewIndex, 1)
+      uploadedImages.value.splice(previewIndex, 1)
+      toast.error(`Failed to upload ${file.name}. Please try again.`)
+    }
+  }
+}
+
+function setPrimary(index) {
+  uploadedImages.value.forEach((img, i) => {
+    img.is_primary = i === index
+  })
+}
+
+function removeImage(index) {
+  imageFiles.value.splice(index, 1)
+  imagePreviews.value.splice(index, 1)
+  uploadedImages.value.splice(index, 1)
+
+  // ensure at least one primary
+  if (!uploadedImages.value.find(i => i.is_primary) && uploadedImages.value.length) {
+    uploadedImages.value[0].is_primary = true
+  }
+}
+
 onMounted(async () => {
-  const [catRes, brandRes] = await Promise.allSettled([categoryApi.list(), brandApi.list()])
+  const [catRes, brandRes] = await Promise.allSettled([
+    categoryApi.list(),
+    brandApi.list()
+  ])
   if (catRes.status === 'fulfilled') categories.value = catRes.value.data.data || []
   if (brandRes.status === 'fulfilled') brands.value = brandRes.value.data.data || []
 
   if (isEdit.value) {
-    const res = await productApi.show(route.params.id)
-    const p = res.data.data
-    Object.keys(form).forEach(k => {
-      if (p[k] !== undefined) form[k] = p[k]
-    })
-    form.tags = p.tags || []
-    form.attributes = p.attributes?.map(a => ({name: a.name, values: a.values || []})) || []
-    form.variants = p.variants || []
+    try {
+      const res = await productApi.show(route.params.id)
+      const p = res.data.data
+
+      Object.keys(form).forEach(k => {
+        if (p[k] !== undefined) form[k] = p[k]
+      })
+
+      form.tags        = p.tags || []
+      form.attributes  = p.attributes?.map(a => ({ name: a.name, values: a.values || [] })) || []
+      form.variants    = p.variants || []
+
+      // ── Existing gallery images restore করা ──
+      if (p.images?.length) {
+        uploadedImages.value = p.images.map(img => ({
+          id:         img.id,           // existing image ID (update)
+          path:       img.image_path,
+          url:        img.url || asset('storage/' + img.image_path),
+          is_primary: img.is_primary,
+          alt_text:   img.alt_text || '',
+          uploading:  false,
+        }))
+        imagePreviews.value = p.images.map(img =>
+            img.url || `/storage/${img.image_path}`
+        )
+      }
+
+    } catch (err) {
+      toast.error('Failed to load product data.')
+      console.error(err)
+    }
   }
 })
 </script>
