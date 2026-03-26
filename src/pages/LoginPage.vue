@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-[#0F172A] to-[#1E293B] flex items-center justify-center p-4">
-    <div class="w-full max-w-sm">
+    <div class="w-full max-w-md">
       <div class="text-center mb-8">
         <div class="w-16 h-16 bg-[#2E7D32] rounded-2xl flex items-center justify-center mx-auto mb-4">
           <span class="text-white font-black text-2xl">E</span>
@@ -21,10 +21,13 @@
             <div class="relative">
               <input v-model="form.password" :type="showPass ? 'text' : 'password'" required
                      class="input pr-10" placeholder="••••••••"/>
-              <button type="button" @click="showPass = !showPass"
-                      class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">{{
-                  showPass ? '🙈' : '👁️'
-                }}
+              <button
+                  type="button"
+                  @click="showPass = !showPass"
+                  class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+              >
+                <Eye v-if="!showPass" class="w-5 h-5"/>
+                <EyeOff v-else class="w-5 h-5"/>
               </button>
             </div>
           </div>
@@ -42,6 +45,7 @@
 <script setup>
 import {ref, reactive} from 'vue'
 import {useAuthStore} from '@/stores/auth'
+import {Eye, EyeOff} from 'lucide-vue-next'
 
 const auth = useAuthStore()
 const form = reactive({email: '', password: ''})

@@ -11,7 +11,6 @@
                search-placeholder="Search products..." empty-icon="📦" empty-text="No products found"
                @search="q => { search = q; load(1) }" @page="load">
       <template #filters>
-        <!-- input class ব্যবহার করলে search এর সাথে same size হবে -->
         <select v-model="statusFilter" @change="load(1)" class="input py-2 w-36 text-sm">
           <option value="">All Status</option>
           <option value="active">Active</option>
