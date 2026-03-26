@@ -13,7 +13,9 @@
           <div class="flex items-center gap-3">
             <div class="w-9 h-9 rounded-lg bg-gray-100 overflow-hidden shrink-0">
               <img v-if="item.image_url" :src="item.image_url" class="w-full h-full object-cover"/>
-              <span v-else class="w-full h-full flex items-center justify-center text-lg">🏷️</span>
+              <div class="w-9 h-9 rounded-lg bg-gray-50 flex items-center justify-center">
+                <Tag class="w-4 h-4 text-gray-400" />
+              </div>
             </div>
             <div>
               <p class="font-semibold text-gray-900 text-sm">{{ item.name }}</p>
@@ -123,6 +125,7 @@ import DataTable from '@/components/common/DataTable.vue'
 import ConfirmModal from '@/components/common/ConfirmModal.vue'
 import {categoryApi} from '@/api'
 import {PlusIcon, PencilIcon, TrashIcon} from '@heroicons/vue/24/outline'
+import { Tag } from 'lucide-vue-next'
 
 const toast = useToast()
 const categories = ref([]), loading = ref(true), showForm = ref(false), saving = ref(false)
@@ -135,7 +138,7 @@ const columns = [
   {key: 'parent', label: 'Parent', class: 'w-32'},
   {key: 'products', label: 'Products', class: 'w-24'},
   {key: 'status', label: 'Status', class: 'w-24'},
-  {key: 'actions', label: '', class: 'w-24 text-right'},
+  {key: 'actions', label: 'Action', class: 'w-24 text-right'},
 ]
 const flatCategories = computed(() => categories.value.filter(c => !editing.value || c.id !== editing.value.id))
 

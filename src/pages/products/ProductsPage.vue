@@ -29,7 +29,8 @@
             <div class="w-10 h-10 rounded-lg bg-gray-100 overflow-hidden shrink-0">
               <img v-if="item.thumbnail_url" :src="item.thumbnail_url"
                    class="w-full h-full object-cover"/>
-              <div v-else class="w-full h-full flex items-center justify-center text-gray-300 text-lg">📦
+              <div v-else class="w-full h-full flex items-center justify-center text-gray-300 text-lg">
+                <Package class="w-4 h-4 text-gray-400" />
               </div>
             </div>
             <div>
@@ -90,6 +91,7 @@ import StatusBadge from '@/components/common/StatusBadge.vue'
 import ConfirmModal from '@/components/common/ConfirmModal.vue'
 import {productApi} from '@/api'
 import {PlusIcon, PencilIcon, TrashIcon, ArrowPathIcon, EyeIcon} from '@heroicons/vue/24/outline'
+import {Package, Tag} from 'lucide-vue-next'
 
 const toast = useToast()
 const products = ref([]), pagination = ref(null), loading = ref(true)
@@ -101,7 +103,7 @@ const columns = [
   {key: 'price', label: 'Price', class: 'w-28'},
   {key: 'stock', label: 'Stock', class: 'w-20'},
   {key: 'status', label: 'Status', class: 'w-24'},
-  {key: 'actions', label: '', class: 'w-28 text-right'},
+  {key: 'actions', label: 'Action', class: 'w-28 text-right'},
 ]
 
 async function load(page = 1) {

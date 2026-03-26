@@ -133,7 +133,8 @@
           </div>
           <div v-if="product.is_on_sale"
                class="mt-3 inline-flex items-center gap-1.5 bg-orange-50 text-orange-600 text-xs font-semibold px-3 py-1.5 rounded-full">
-            🔥 On Sale — {{ product.discount_percentage }}% off
+            <Flame class="w-4 h-4"/>
+            On Sale — {{ product.discount_percentage }}% off
           </div>
         </div>
 
@@ -411,6 +412,7 @@ import StatusBadge from '@/components/common/StatusBadge.vue'
 import ConfirmModal from '@/components/common/ConfirmModal.vue'
 import {productApi} from '@/api'
 import {PencilIcon, TrashIcon, PencilSquareIcon} from '@heroicons/vue/24/outline'
+import {Flame} from 'lucide-vue-next'
 
 const route = useRoute()
 const router = useRouter()
