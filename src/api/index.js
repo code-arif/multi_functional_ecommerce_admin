@@ -49,9 +49,9 @@ export const categoryApi = {
 // Brands
 export const brandApi = {
   list:    p  => client.get('/admin/brands', { params: p }),
-  store:   d  => client.post('/admin/brands', d, { headers: { 'Content-Type': 'multipart/form-data' } }),
-  update:  (id,d) => client.post(`/admin/brands/${id}?_method=PUT`, d, { headers: { 'Content-Type': 'multipart/form-data' } }),
-  destroy: id => client.delete(`/admin/brands/${id}`),
+  store:   d  => client.post('/admin/brands/store', d, { headers: { 'Content-Type': 'multipart/form-data' } }),
+  update:  (id,d) => client.post(`/admin/brands/${id}/update?_method=PUT`, d, { headers: { 'Content-Type': 'multipart/form-data' } }),
+  destroy: id => client.delete(`/admin/brands/${id}/delete`),
 }
 
 // Orders
@@ -88,10 +88,10 @@ export const bannerApi = {
 
 // Affiliate
 export const affiliateApi = {
-  list:    p      => client.get('/admin/affiliate-products', { params: p }),
-  store:   d      => client.post('/admin/affiliate-products', d, { headers: { 'Content-Type': 'multipart/form-data' } }),
-  update:  (id,d) => client.post(`/admin/affiliate-products/${id}?_method=PUT`, d, { headers: { 'Content-Type': 'multipart/form-data' } }),
-  destroy: id     => client.delete(`/admin/affiliate-products/${id}`),
+  list: p => client.get('/admin/affiliate-products', { params: p }),
+  store: d => client.post('/admin/affiliate-products/store', d, { headers: { 'Content-Type': 'multipart/form-data' } }),
+  update: (id,d) => client.post(`/admin/affiliate-products/${id}/update?_method=PUT`, d, { headers: { 'Content-Type': 'multipart/form-data' } }),
+  destroy: id => client.delete(`/admin/affiliate-products/${id}/delete`),
 }
 
 // CMS Pages
