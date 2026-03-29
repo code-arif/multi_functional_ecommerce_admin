@@ -60,6 +60,7 @@ import PaymentSettings from "@/pages/settings/PaymentSettings.vue";
 import TaxSettings from "@/pages/settings/TaxSettings.vue";
 import NotificationSettings from "@/pages/settings/NotificationSettings.vue";
 import CustomerSettings from "@/pages/settings/CustomerSettings.vue";
+import LegalSettings from "@/pages/settings/LegalSettings.vue";
 
 const routes = [
     {
@@ -243,6 +244,11 @@ const routes = [
                         path: "customers",
                         name: "settings.customers",
                         component: CustomerSettings,
+                    },
+                    {
+                        path: "legal",
+                        name: "settings.legal",
+                        component: LegalSettings
                     },
                 ],
             },
