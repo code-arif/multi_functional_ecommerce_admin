@@ -52,6 +52,7 @@ import SettingsLayout from "@/pages/settings/SettingsLayout.vue";
 import GeneralSettings from "@/pages/settings/GeneralSettings.vue";
 import ShippingSettings from "@/pages/settings/ShippingSettings.vue";
 import SeoSettings from "@/pages/settings/SeoSettings.vue";
+import SocialSettings from "@/pages/settings/SocialSettings.vue";
 
 const routes = [
     {
@@ -195,7 +196,12 @@ const routes = [
                         path: "seo",
                         name: "settings.seo",
                         component: SeoSettings,
-                    }
+                    },
+                    {
+                        path: "social",
+                        name: "settings.social",
+                        component: SocialSettings,
+                    },
                 ],
             },
         ],
