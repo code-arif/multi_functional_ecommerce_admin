@@ -63,6 +63,7 @@ import CustomerSettings from "@/pages/settings/CustomerSettings.vue";
 import LegalSettings from "@/pages/settings/LegalSettings.vue";
 import LocalizationSettings from "@/pages/settings/LocalizationSettings.vue";
 import SecuritySettings from "@/pages/settings/SecuritySettings.vue";
+import MaintenanceSettings from "@/pages/settings/MaintenanceSettings.vue";
 
 const routes = [
     {
@@ -261,6 +262,11 @@ const routes = [
                         path: "security",
                         name: "settings.security",
                         component: SecuritySettings,
+                    },
+                    {
+                        path: "maintenance",
+                        name: "settings.maintenance",
+                        component: MaintenanceSettings,
                     },
                 ],
             },
