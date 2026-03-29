@@ -59,6 +59,7 @@ import ReverbSettings from "@/pages/settings/ReverbSettings.vue";
 import PaymentSettings from "@/pages/settings/PaymentSettings.vue";
 import TaxSettings from "@/pages/settings/TaxSettings.vue";
 import NotificationSettings from "@/pages/settings/NotificationSettings.vue";
+import CustomerSettings from "@/pages/settings/CustomerSettings.vue";
 
 const routes = [
     {
@@ -237,6 +238,11 @@ const routes = [
                         path: "notifications",
                         name: "settings.notifications",
                         component: NotificationSettings,
+                    },
+                    {
+                        path: "customers",
+                        name: "settings.customers",
+                        component: CustomerSettings,
                     },
                 ],
             },
