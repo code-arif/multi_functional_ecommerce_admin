@@ -55,6 +55,7 @@ import SeoSettings from "@/pages/settings/SeoSettings.vue";
 import SocialSettings from "@/pages/settings/SocialSettings.vue";
 import BrandingSettings from "@/pages/settings/BrandingSettings.vue";
 import MailSettings from "@/pages/settings/MailSettings.vue";
+import ReverbSettings from "@/pages/settings/ReverbSettings.vue";
 
 const routes = [
     {
@@ -213,6 +214,11 @@ const routes = [
                         path: "mail",
                         name: "settings.mail",
                         component: MailSettings,
+                    },
+                    {
+                        path: "reverb",
+                        name: "settings.reverb",
+                        component: ReverbSettings,
                     },
                 ],
             },
