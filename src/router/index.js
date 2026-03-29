@@ -54,6 +54,7 @@ import ShippingSettings from "@/pages/settings/ShippingSettings.vue";
 import SeoSettings from "@/pages/settings/SeoSettings.vue";
 import SocialSettings from "@/pages/settings/SocialSettings.vue";
 import BrandingSettings from "@/pages/settings/BrandingSettings.vue";
+import MailSettings from "@/pages/settings/MailSettings.vue";
 
 const routes = [
     {
@@ -207,6 +208,11 @@ const routes = [
                         path: "branding",
                         name: "settings.branding",
                         component: BrandingSettings,
+                    },
+                    {
+                        path: "mail",
+                        name: "settings.mail",
+                        component: MailSettings,
                     },
                 ],
             },
