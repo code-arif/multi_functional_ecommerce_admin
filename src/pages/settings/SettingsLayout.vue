@@ -43,12 +43,12 @@ import { markRaw } from 'vue'
 
 const navItems = [
     { to: '/settings/general', label: 'General', icon: markRaw(Store) },
-    { to: '/admin/settings/shipping', label: 'Shipping', icon: markRaw(Truck) },
-    { to: '/admin/settings/seo', label: 'SEO', icon: markRaw(Search) },
-    { to: '/admin/settings/social', label: 'Social Media', icon: markRaw(Share2) },
-    { to: '/admin/settings/branding', label: 'Branding', icon: markRaw(Palette) },
-    { to: '/admin/settings/mail', label: 'Mail', icon: markRaw(Mail) },
-    { to: '/admin/settings/reverb', label: 'Reverb / WebSocket', icon: markRaw(Radio) },
+    { to: '/settings/shipping', label: 'Shipping', icon: markRaw(Truck) },
+    { to: '/settings/seo', label: 'SEO', icon: markRaw(Search) },
+    { to: '/settings/social', label: 'Social Media', icon: markRaw(Share2) },
+    { to: '/settings/branding', label: 'Branding', icon: markRaw(Palette) },
+    { to: '/settings/mail', label: 'Mail', icon: markRaw(Mail) },
+    { to: '/settings/reverb', label: 'Reverb / WebSocket', icon: markRaw(Radio) },
     { to: '/admin/settings/payment', label: 'Payment Gateways', icon: markRaw(CreditCard) },
     { to: '/admin/settings/tax', label: 'Tax & VAT', icon: markRaw(Percent) },
     { to: '/admin/settings/notifications', label: 'Notifications', icon: markRaw(Bell) },

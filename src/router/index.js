@@ -50,6 +50,7 @@ import ReportsPage from "@/pages/reports/ReportsPage.vue";
 // Settings
 import SettingsLayout from "@/pages/settings/SettingsLayout.vue";
 import GeneralSettings from "@/pages/settings/GeneralSettings.vue";
+import ShippingSettings from "@/pages/settings/ShippingSettings.vue";
 
 const routes = [
     {
@@ -183,6 +184,11 @@ const routes = [
                         path: "general",
                         name: "settings.general",
                         component: GeneralSettings,
+                    },
+                    {
+                        path: "shipping",
+                        name: "settings.shipping",
+                        component: ShippingSettings,
                     }
                 ],
             },
