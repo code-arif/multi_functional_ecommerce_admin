@@ -63,8 +63,6 @@ const navItems = [
 <style scoped>
 .settings-layout {
     min-height: 100vh;
-    background: #f8fafc;
-    padding: 28px 24px;
 }
 
 .settings-header {
