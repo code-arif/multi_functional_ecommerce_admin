@@ -1,5 +1,5 @@
-import {createRouter, createWebHistory} from "vue-router";
-import {useAuthStore} from "@/stores/auth";
+import { createRouter, createWebHistory } from "vue-router";
+import { useAuthStore } from "@/stores/auth";
 
 // Layout
 import AdminLayout from "@/components/layout/AdminLayout.vue";
@@ -49,154 +49,230 @@ import ReportsPage from "@/pages/reports/ReportsPage.vue";
 
 // Settings
 import SettingsPage from "@/pages/settings/SettingsPage.vue";
+import GeneralSettings from "@/pages/settings/GeneralSettings.vue";
+import ShippingSettings from "@/pages/settings/ShippingSettings.vue";
+import SeoSettings from "@/pages/settings/SeoSettings.vue";
+import SocialSettings from "@/pages/settings/SocialSettings.vue";
+import BrandingSettings from "@/pages/settings/BrandingSettings.vue";
+import MailSettings from "@/pages/settings/MailSettings.vue";
+import ReverbSettings from "@/pages/settings/ReverbSettings.vue";
+import PaymentSettings from "@/pages/settings/PaymentSettings.vue";
+import TaxSettings from "@/pages/settings/TaxSettings.vue";
+import NotificationSettings from "@/pages/settings/NotificationSettings.vue";
+import CustomerSettings from "@/pages/settings/CustomerSettings.vue";
+import LegalSettings from "@/pages/settings/LegalSettings.vue";
+import LocalizationSettings from "@/pages/settings/LocalizationSettings.vue";
+import SecuritySettings from "@/pages/settings/SecuritySettings.vue";
+import MaintenanceSettings from "@/pages/settings/MaintenanceSettings.vue";
 
 const routes = [
-    {
-        path: "/login",
-        name: "login",
-        component: LoginPage,
-        meta: {guest: true},
-    },
+  {
+    path: "/login",
+    name: "login",
+    component: LoginPage,
+    meta: { guest: true },
+  },
 
-    {
-        path: "/",
-        component: AdminLayout,
-        meta: {requiresAuth: true},
+  {
+    path: "/",
+    component: AdminLayout,
+    meta: { requiresAuth: true },
+    children: [
+      {
+        path: "",
+        name: "dashboard",
+        component: DashboardPage,
+      },
+
+      // Products
+      {
+        path: "products",
+        name: "products",
+        component: ProductsPage,
+      },
+      {
+        path: "products/create",
+        name: "products-create",
+        component: ProductFormPage,
+      },
+      {
+        path: "products/:id/edit",
+        name: "products-edit",
+        component: ProductFormPage,
+      },
+      {
+        path: "/products/:id",
+        name: "product-detail",
+        component: ProductDetail,
+        meta: { requiresAuth: true },
+      },
+
+      // Orders
+      {
+        path: "orders",
+        name: "orders",
+        component: OrdersPage,
+      },
+      {
+        path: "orders/:id",
+        name: "orders-detail",
+        component: OrderDetailPage,
+      },
+
+      // Users
+      {
+        path: "users",
+        name: "users",
+        component: UsersPage,
+      },
+      {
+        path: "users/:id",
+        name: "users-detail",
+        component: UserDetailPage,
+      },
+
+      // Categories
+      {
+        path: "categories",
+        name: "categories",
+        component: CategoriesPage,
+      },
+
+      // Brands
+      {
+        path: "brands",
+        name: "brands",
+        component: BrandsPage,
+      },
+
+      // Coupons
+      {
+        path: "coupons",
+        name: "coupons",
+        component: CouponsPage,
+      },
+
+      // Reviews
+      {
+        path: "reviews",
+        name: "reviews",
+        component: ReviewsPage,
+      },
+
+      // Affiliate
+      {
+        path: "affiliate",
+        name: "affiliate",
+        component: AffiliatePage,
+      },
+
+      // CMS
+      {
+        path: "cms",
+        name: "cms",
+        component: CmsPage,
+      },
+
+      // Banners
+      {
+        path: "banners",
+        name: "banners",
+        component: BannersPage,
+      },
+
+      // Reports
+      {
+        path: "reports",
+        name: "reports",
+        component: ReportsPage,
+      },
+
+      // Settings
+      {
+        path: "settings",
+        component: SettingsLayout,
+        redirect: { name: "settings.general" },
         children: [
-            {
-                path: "",
-                name: "dashboard",
-                component: DashboardPage,
-            },
-
-            // Products
-            {
-                path: "products",
-                name: "products",
-                component: ProductsPage,
-            },
-            {
-                path: "products/create",
-                name: "products-create",
-                component: ProductFormPage,
-            },
-            {
-                path: "products/:id/edit",
-                name: "products-edit",
-                component: ProductFormPage,
-            },
-            {
-                path: '/products/:id',
-                name: 'product-detail',
-                component: ProductDetail,
-                meta: {requiresAuth: true}
-            },
-
-            // Orders
-            {
-                path: "orders",
-                name: "orders",
-                component: OrdersPage,
-            },
-            {
-                path: "orders/:id",
-                name: "orders-detail",
-                component: OrderDetailPage,
-            },
-
-            // Users
-            {
-                path: "users",
-                name: "users",
-                component: UsersPage,
-            },
-            {
-                path: "users/:id",
-                name: "users-detail",
-                component: UserDetailPage,
-            },
-
-            // Categories
-            {
-                path: "categories",
-                name: "categories",
-                component: CategoriesPage,
-            },
-
-            // Brands
-            {
-                path: "brands",
-                name: "brands",
-                component: BrandsPage,
-            },
-
-            // Coupons
-            {
-                path: "coupons",
-                name: "coupons",
-                component: CouponsPage,
-            },
-
-            // Reviews
-            {
-                path: "reviews",
-                name: "reviews",
-                component: ReviewsPage,
-            },
-
-            // Affiliate
-            {
-                path: "affiliate",
-                name: "affiliate",
-                component: AffiliatePage,
-            },
-
-            // CMS
-            {
-                path: "cms",
-                name: "cms",
-                component: CmsPage,
-            },
-
-            // Banners
-            {
-                path: "banners",
-                name: "banners",
-                component: BannersPage,
-            },
-
-            // Reports
-            {
-                path: "reports",
-                name: "reports",
-                component: ReportsPage,
-            },
-
-            // Settings
-            {
-                path: "settings",
-                name: "settings",
-                component: SettingsPage,
-            },
+          {
+            path: "general",
+            name: "settings.general",
+            component: GeneralSettings,
+          },
+          {
+            path: "shipping",
+            name: "settings.shipping",
+            component: ShippingSettings,
+          },
+          { path: "seo", name: "settings.seo", component: SeoSettings },
+          {
+            path: "social",
+            name: "settings.social",
+            component: SocialSettings,
+          },
+          {
+            path: "branding",
+            name: "settings.branding",
+            component: BrandingSettings,
+          },
+          { path: "mail", name: "settings.mail", component: MailSettings },
+          {
+            path: "reverb",
+            name: "settings.reverb",
+            component: ReverbSettings,
+          },
+          {
+            path: "payment",
+            name: "settings.payment",
+            component: PaymentSettings,
+          },
+          { path: "tax", name: "settings.tax", component: TaxSettings },
+          {
+            path: "notifications",
+            name: "settings.notifications",
+            component: NotificationSettings,
+          },
+          {
+            path: "customers",
+            name: "settings.customers",
+            component: CustomerSettings,
+          },
+          { path: "legal", name: "settings.legal", component: LegalSettings },
+          {
+            path: "localization",
+            name: "settings.localization",
+            component: LocalizationSettings,
+          },
+          {
+            path: "security",
+            name: "settings.security",
+            component: SecuritySettings,
+          },
+          {
+            path: "maintenance",
+            name: "settings.maintenance",
+            component: MaintenanceSettings,
+          },
         ],
-    },
+      },
+    ],
+  },
 
-    {path: "/:pathMatch(.*)*", redirect: "/"},
+  { path: "/:pathMatch(.*)*", redirect: "/" },
 ];
 
 const router = createRouter({
-    history: createWebHistory(),
-    routes,
-    scrollBehavior: () => ({top: 0}),
+  history: createWebHistory(),
+  routes,
+  scrollBehavior: () => ({ top: 0 }),
 });
 
 router.beforeEach((to, from, next) => {
-    const auth = useAuthStore();
+  const auth = useAuthStore();
 
-    if (to.meta.requiresAuth && !auth.isLoggedIn) return next("/login");
-    if (to.meta.guest && auth.isLoggedIn) return next("/");
+  if (to.meta.requiresAuth && !auth.isLoggedIn) return next("/login");
+  if (to.meta.guest && auth.isLoggedIn) return next("/");
 
-    next();
+  next();
 });
 
 export default router;
