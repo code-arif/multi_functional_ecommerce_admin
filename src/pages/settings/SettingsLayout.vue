@@ -49,14 +49,14 @@ const navItems = [
     { to: '/settings/branding', label: 'Branding', icon: markRaw(Palette) },
     { to: '/settings/mail', label: 'Mail', icon: markRaw(Mail) },
     { to: '/settings/reverb', label: 'Reverb / WebSocket', icon: markRaw(Radio) },
-    { to: '/admin/settings/payment', label: 'Payment Gateways', icon: markRaw(CreditCard) },
-    { to: '/admin/settings/tax', label: 'Tax & VAT', icon: markRaw(Percent) },
-    { to: '/admin/settings/notifications', label: 'Notifications', icon: markRaw(Bell) },
-    { to: '/admin/settings/customers', label: 'Customer', icon: markRaw(Users) },
-    { to: '/admin/settings/legal', label: 'Legal Pages', icon: markRaw(FileText) },
-    { to: '/admin/settings/localization', label: 'Localization', icon: markRaw(Globe) },
-    { to: '/admin/settings/security', label: 'Security', icon: markRaw(Shield) },
-    { to: '/admin/settings/maintenance', label: 'Maintenance', icon: markRaw(Wrench) },
+    { to: '/settings/payment', label: 'Payment Gateways', icon: markRaw(CreditCard) },
+    { to: '/settings/tax', label: 'Tax & VAT', icon: markRaw(Percent) },
+    { to: '/settings/notifications', label: 'Notifications', icon: markRaw(Bell) },
+    { to: '/settings/customers', label: 'Customer', icon: markRaw(Users) },
+    { to: '/settings/legal', label: 'Legal Pages', icon: markRaw(FileText) },
+    { to: '/settings/localization', label: 'Localization', icon: markRaw(Globe) },
+    { to: '/settings/security', label: 'Security', icon: markRaw(Shield) },
+    { to: '/settings/maintenance', label: 'Maintenance', icon: markRaw(Wrench) },
 ]
 </script>
 

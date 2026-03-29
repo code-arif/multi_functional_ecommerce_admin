@@ -56,6 +56,7 @@ import SocialSettings from "@/pages/settings/SocialSettings.vue";
 import BrandingSettings from "@/pages/settings/BrandingSettings.vue";
 import MailSettings from "@/pages/settings/MailSettings.vue";
 import ReverbSettings from "@/pages/settings/ReverbSettings.vue";
+import PaymentSettings from "@/pages/settings/PaymentSettings.vue";
 
 const routes = [
     {
@@ -219,6 +220,11 @@ const routes = [
                         path: "reverb",
                         name: "settings.reverb",
                         component: ReverbSettings,
+                    },
+                    {
+                        path: "payment",
+                        name: "settings.payment",
+                        component: PaymentSettings,
                     },
                 ],
             },
