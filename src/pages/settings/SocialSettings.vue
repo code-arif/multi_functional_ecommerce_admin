@@ -15,8 +15,8 @@
 
 <script setup>
 import { Share2, Facebook, Instagram, Twitter, Youtube, Linkedin, Send, MessageCircle } from 'lucide-vue-next'
-import SettingsCard from '../components/SettingsCard.vue'
-import { useSettings } from '../useSettings'
+import SettingsCard from "@/components/common/SettingsCard.vue";
+import {useSettings} from "@/composables/useSettings.js";
 
 const socials = [
     { key: 'facebook_url', label: 'Facebook', icon: Facebook, placeholder: 'https://facebook.com/yourpage' },

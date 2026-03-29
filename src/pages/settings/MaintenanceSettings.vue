@@ -1,7 +1,7 @@
 <template>
     <div class="space-y-5">
         <!-- Site Status -->
-        <SettingsCard :icon="WrenchScrewdriver" title="Maintenance Mode"
+        <SettingsCard :icon="Wrench" title="Maintenance Mode"
             description="Toggle site availability and run system commands" :no-footer="true">
             <div class="toggle-row">
                 <div class="toggle-info">
@@ -69,10 +69,10 @@
 import { ref } from 'vue'
 import { useToast } from 'vue-toastification'
 import {
-    WrenchScrewdriver, Terminal, Loader2, Play, X,
+    Wrench, Terminal, Loader2, Play, X,
     PowerOff, Trash2, Link, RefreshCw, Database, ShieldCheck
 } from 'lucide-vue-next'
-import SettingsCard from '../components/SettingsCard.vue'
+import SettingsCard from "@/components/common/SettingsCard.vue";
 // import { maintenanceApi } from '@/api'
 
 const toast = useToast()

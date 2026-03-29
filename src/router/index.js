@@ -49,6 +49,7 @@ import ReportsPage from "@/pages/reports/ReportsPage.vue";
 
 // Settings
 import SettingsPage from "@/pages/settings/SettingsPage.vue";
+import SettingsLayout from "@/pages/settings/SettingsLayout.vue";
 import GeneralSettings from "@/pages/settings/GeneralSettings.vue";
 import ShippingSettings from "@/pages/settings/ShippingSettings.vue";
 import SeoSettings from "@/pages/settings/SeoSettings.vue";

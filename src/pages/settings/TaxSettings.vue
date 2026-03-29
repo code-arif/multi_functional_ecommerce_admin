@@ -59,8 +59,8 @@
 
 <script setup>
 import { Percent } from 'lucide-vue-next'
-import SettingsCard from '../components/SettingsCard.vue'
-import { useSettings } from '../useSettings'
+import SettingsCard from "@/components/common/SettingsCard.vue";
+import {useSettings} from "@/composables/useSettings.js";
 
 const keys = ['tax_enabled', 'tax_rate', 'tax_name', 'tax_type', 'tax_based_on', 'tax_display_in_cart']
 const { form, saving, save } = useSettings(keys, 'Tax')

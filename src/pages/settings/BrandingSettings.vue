@@ -83,8 +83,8 @@ import { Palette, Upload, X, Image as ImageIcon } from 'lucide-vue-next'
 import { ref } from 'vue'
 import { useToast } from 'vue-toastification'
 import { settingsApi } from '@/api'
-import SettingsCard from '../components/SettingsCard.vue'
-import { useSettings } from '../useSettings'
+import SettingsCard from "@/components/common/SettingsCard.vue";
+import {useSettings} from "@/composables/useSettings.js";
 
 const toast = useToast()
 const uploading = ref(null)

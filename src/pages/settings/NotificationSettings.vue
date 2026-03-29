@@ -38,8 +38,8 @@
 
 <script setup>
 import { Bell } from 'lucide-vue-next'
-import SettingsCard from '../components/SettingsCard.vue'
-import { useSettings } from '../useSettings'
+import SettingsCard from "@/components/common/SettingsCard.vue";
+import {useSettings} from "@/composables/useSettings.js";
 
 const adminNotifs = [
     { key: 'notify_admin_new_order', label: 'New Order', desc: 'Get notified when a new order is placed' },

@@ -77,8 +77,8 @@
 import { Mail, Eye, EyeOff, Send } from 'lucide-vue-next'
 import { ref } from 'vue'
 import { useToast } from 'vue-toastification'
-import SettingsCard from '../components/SettingsCard.vue'
-import { useSettings } from '../useSettings'
+import SettingsCard from "@/components/common/SettingsCard.vue";
+import {useSettings} from "@/composables/useSettings.js";
 
 const toast = useToast()
 const showPassword = ref(false)

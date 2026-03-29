@@ -53,8 +53,8 @@
 
 <script setup>
 import { Globe } from 'lucide-vue-next'
-import SettingsCard from '../components/SettingsCard.vue'
-import { useSettings } from '../useSettings'
+import SettingsCard from "@/components/common/SettingsCard.vue";
+import {useSettings} from "@/composables/useSettings.js";
 
 const keys = ['default_language', 'admin_language', 'weight_unit', 'dimension_unit', 'rtl_mode']
 const { form, saving, save } = useSettings(keys, 'Localization')

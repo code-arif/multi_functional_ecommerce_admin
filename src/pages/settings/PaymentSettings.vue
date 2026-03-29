@@ -41,8 +41,8 @@
 <script setup>
 import { CreditCard, Eye, EyeOff, Zap, Banknote, Wallet } from 'lucide-vue-next'
 import { reactive } from 'vue'
-import SettingsCard from '../components/SettingsCard.vue'
-import { useSettings } from '../useSettings'
+import SettingsCard from "@/components/common/SettingsCard.vue";
+import {useSettings} from "@/composables/useSettings.js";
 
 const visibleSecrets = reactive({})
 function toggleSecret(key) { visibleSecrets[key] = !visibleSecrets[key] }

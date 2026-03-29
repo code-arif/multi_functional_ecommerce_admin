@@ -26,8 +26,8 @@
 
 <script setup>
 import { FileText } from 'lucide-vue-next'
-import SettingsCard from '../components/SettingsCard.vue'
-import { useSettings } from '../useSettings'
+import SettingsCard from "@/components/common/SettingsCard.vue";
+import {useSettings} from "@/composables/useSettings.js";
 
 const pages = [
     { key: 'privacy_policy_url', label: 'Privacy Policy URL', placeholder: '/privacy-policy', hint: 'Route or full URL to your privacy policy page' },

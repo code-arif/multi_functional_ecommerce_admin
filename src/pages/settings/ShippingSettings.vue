@@ -82,8 +82,8 @@
 
 <script setup>
 import { Truck } from 'lucide-vue-next'
-import SettingsCard from '../components/SettingsCard.vue'
-import { useSettings } from '../useSettings'
+import SettingsCard from "@/components/common/SettingsCard.vue";
+import {useSettings} from "@/composables/useSettings.js";
 
 const keys = [
     'shipping_charge', 'free_shipping_over',

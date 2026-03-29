@@ -91,8 +91,8 @@
 
 <script setup>
 import { Store } from 'lucide-vue-next'
-import SettingsCard from '../components/SettingsCard.vue'
-import { useSettings } from '../useSettings'
+import SettingsCard from "@/components/common/SettingsCard.vue";
+import {useSettings} from "@/composables/useSettings.js";
 
 const keys = [
     'store_name', 'store_email', 'store_phone', 'store_support_email',
