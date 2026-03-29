@@ -1,5 +1,5 @@
-import {createRouter, createWebHistory} from "vue-router";
-import {useAuthStore} from "@/stores/auth";
+import { createRouter, createWebHistory } from "vue-router";
+import { useAuthStore } from "@/stores/auth";
 
 // Layout
 import AdminLayout from "@/components/layout/AdminLayout.vue";
@@ -48,20 +48,21 @@ import BannersPage from "@/pages/banners/BannersPage.vue";
 import ReportsPage from "@/pages/reports/ReportsPage.vue";
 
 // Settings
-import SettingsPage from "@/pages/settings/SettingsPage.vue";
+import SettingsLayout from "@/pages/settings/SettingsLayout.vue";
+import GeneralSettings from "@/pages/settings/GeneralSettings.vue";
 
 const routes = [
     {
         path: "/login",
         name: "login",
         component: LoginPage,
-        meta: {guest: true},
+        meta: { guest: true },
     },
 
     {
         path: "/",
         component: AdminLayout,
-        meta: {requiresAuth: true},
+        meta: { requiresAuth: true },
         children: [
             {
                 path: "",
@@ -89,7 +90,7 @@ const routes = [
                 path: '/products/:id',
                 name: 'product-detail',
                 component: ProductDetail,
-                meta: {requiresAuth: true}
+                meta: { requiresAuth: true }
             },
 
             // Orders
@@ -175,19 +176,26 @@ const routes = [
             // Settings
             {
                 path: "settings",
-                name: "settings",
-                component: SettingsPage,
+                component: SettingsLayout,
+                redirect: { name: "settings.general" },
+                children: [
+                    {
+                        path: "general",
+                        name: "settings.general",
+                        component: GeneralSettings,
+                    }
+                ],
             },
         ],
     },
 
-    {path: "/:pathMatch(.*)*", redirect: "/"},
+    { path: "/:pathMatch(.*)*", redirect: "/" },
 ];
 
 const router = createRouter({
     history: createWebHistory(),
     routes,
-    scrollBehavior: () => ({top: 0}),
+    scrollBehavior: () => ({ top: 0 }),
 });
 
 router.beforeEach((to, from, next) => {
