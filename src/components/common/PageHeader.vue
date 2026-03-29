@@ -5,14 +5,16 @@
       <p v-if="subtitle" class="text-sm text-gray-500 mt-0.5">{{ subtitle }}</p>
     </div>
     <div class="flex items-center gap-2">
-      <p class="text-sm text-gray-500">{{ todayDate }}</p>
-      <slot/>
+      <p class="text-xs font-medium text-gray-600 bg-white px-3 py-1.5 rounded-full shadow-sm border border-gray-100">
+        {{ todayDate }}
+      </p>
+      <slot />
     </div>
   </div>
 </template>
 
 <script setup>
-import {ref, computed} from 'vue'
+import { ref, computed } from 'vue'
 
 defineProps({
   title: String,
