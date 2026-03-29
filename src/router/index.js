@@ -61,7 +61,8 @@ import TaxSettings from "@/pages/settings/TaxSettings.vue";
 import NotificationSettings from "@/pages/settings/NotificationSettings.vue";
 import CustomerSettings from "@/pages/settings/CustomerSettings.vue";
 import LegalSettings from "@/pages/settings/LegalSettings.vue";
-import LocalizationSettings from "@/pages/settings/LocalizationSettings.vue";   
+import LocalizationSettings from "@/pages/settings/LocalizationSettings.vue";
+import SecuritySettings from "@/pages/settings/SecuritySettings.vue";
 
 const routes = [
     {
@@ -255,6 +256,11 @@ const routes = [
                         path: "localization",
                         name: "settings.localization",
                         component: LocalizationSettings,
+                    },
+                    {
+                        path: "security",
+                        name: "settings.security",
+                        component: SecuritySettings,
                     },
                 ],
             },
