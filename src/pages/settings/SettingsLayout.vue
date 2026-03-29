@@ -132,12 +132,12 @@ const navItems = [
 
 .nav-item--active {
     background: #eff6ff;
-    color: #2563eb;
+    color: #2E7D32;
 }
 
 .nav-item--active .nav-icon,
 .nav-item--active .nav-arrow {
-    color: #2563eb;
+    color: #2E7D32;
 }
 
 .nav-icon {

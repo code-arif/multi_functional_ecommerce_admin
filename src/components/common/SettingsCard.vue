@@ -52,7 +52,7 @@ defineEmits(['save'])
 .s-card__icon {
     width: 22px;
     height: 22px;
-    /* color: #2563eb; */
+    color: #2E7D32;
     margin-top: 2px;
     flex-shrink: 0;
 }
@@ -138,7 +138,7 @@ defineEmits(['save'])
 :global(.input:focus),
 :global(.select:focus),
 :global(.textarea:focus) {
-    /* border-color: #2563eb; */
+    border-color: #2E7D32;
     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
 }
 
@@ -208,24 +208,6 @@ defineEmits(['save'])
     margin: 20px 0;
 }
 
-:global(.btn-primary) {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 9px 20px;
-    /* background: #2563eb; */
-    color: #ffffff;
-    border: none;
-    border-radius: 8px;
-    font-size: 0.875rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.15s, opacity 0.15s;
-}
-
-:global(.btn-primary:hover:not(:disabled)) {
-    /* background: #1d4ed8; */
-}
 
 :global(.btn-primary:disabled) {
     opacity: 0.6;
@@ -357,7 +339,7 @@ defineEmits(['save'])
 }
 
 :global(.toggle input:checked + .toggle__slider) {
-    /* background: #2563eb; */
+    background: #2E7D32;
 }
 
 :global(.toggle input:checked + .toggle__slider::before) {
