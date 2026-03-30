@@ -25,10 +25,10 @@
           item.is_active ? 'Active' : 'Inactive'
         }}</span></td>
         <td class="table-cell text-right">
-          <button @click="openForm(item)" class="p-1.5 rounded-lg text-blue-500 hover:bg-blue-50 transition mr-1">
+          <button @click="openForm(item)" class="p-1.5 rounded-lg text-blue-500 bg-blue-50 hover:bg-blue-100 transition mr-1">
             <PencilIcon class="w-4 h-4" />
           </button>
-          <button @click="confirmDelete(item)" class="p-1.5 rounded-lg text-red-400 hover:bg-red-50 transition">
+          <button @click="confirmDelete(item)" class="p-1.5 rounded-lg text-red-400 bg-red-50 hover:bg-red-100 transition">
             <TrashIcon class="w-4 h-4" />
           </button>
         </td>
