@@ -13,7 +13,7 @@ VUEEOF
                     <p class="text-xs text-gray-400">/{{ item.slug }}</p>
                 </td>
                 <td class="table-cell"><span class="badge" :class="item.is_active ? 'badge-green' : 'badge-gray'">{{
-                    item.is_active ?'Active':'Inactive' }}</span></td>
+                    item.is_active ? 'Active' : 'Inactive' }}</span></td>
                 <td class="table-cell text-right">
                     <button @click="openForm(item)" class="p-1.5 rounded-lg text-blue-500 hover:bg-blue-50 mr-1">
                         <PencilIcon class="w-4 h-4" />
@@ -48,7 +48,7 @@ VUEEOF
                                 v-model="form.is_active" class="accent-[#2E7D32]" /> Active</label>
                         <div class="flex gap-3 pt-2">
                             <button type="submit" :disabled="saving" class="btn-primary flex-1 justify-center">{{
-                                saving?'Saving...':'Save Page' }}</button>
+                                saving ? 'Saving...' : 'Save Page' }}</button>
                             <button type="button" @click="showForm = false" class="btn-ghost px-5">Cancel</button>
                         </div>
                     </form>
@@ -67,15 +67,60 @@ import DataTable from '@/components/common/DataTable.vue'
 import ConfirmModal from '@/components/common/ConfirmModal.vue'
 import { cmsApi } from '@/api'
 import { PlusIcon, PencilIcon, TrashIcon } from '@heroicons/vue/24/outline'
+
 const toast = useToast()
 const pages = ref([]), loading = ref(true), showForm = ref(false), saving = ref(false)
 const editing = ref(null), deleteTarget = ref(null), deleting = ref(false)
 const form = reactive({ title: '', content: '', meta_title: '', meta_description: '', sort_order: 0, is_active: true })
-const columns = [{ key: 'title', label: 'Page' }, { key: 'status', label: 'Status', class: 'w-24' }, { key: 'actions', label: '', class: 'w-20 text-right' }]
-async function load() { loading.value = true; try { const r = await cmsApi.list(); pages.value = r.data.data || [] } finally { loading.value = false } }
-function openForm(item = null) { editing.value = item; if (item) Object.assign(form, { title: item.title, content: item.content || '', meta_title: item.meta_title || '', meta_description: item.meta_description || '', sort_order: item.sort_order || 0, is_active: item.is_active }); else Object.assign(form, { title: '', content: '', meta_title: '', meta_description: '', sort_order: 0, is_active: true }); showForm.value = true }
-async function save() { saving.value = true; try { if (editing.value) await cmsApi.update(editing.value.id, form); else await cmsApi.store(form); toast.success('Saved.'); showForm.value = false; load() } finally { saving.value = false } }
+const columns = [
+    { key: 'title', label: 'Page' },
+    { key: 'status', label: 'Status', class: 'w-24' },
+    { key: 'actions', label: '', class: 'w-20 text-right' }
+]
+
+async function load() {
+    loading.value = true;
+    try {
+        const r = await cmsApi.list();
+        pages.value = r.data.data || []
+    } finally {
+        loading.value = false
+    }
+}
+
+function openForm(item = null) {
+    editing.value = item;
+    if (item) Object.assign(form, { title: item.title, content: item.content || '', meta_title: item.meta_title || '',          meta_description: item.meta_description || '', sort_order: item.sort_order || 0, is_active: item.is_active });
+    else Object.assign(form, { title: '', content: '', meta_title: '', meta_description: '', sort_order: 0, is_active: true });
+    showForm.value = true
+}
+
+async function save() {
+    saving.value = true;
+    try {
+        if (editing.value) await cmsApi.update(editing.value.id, form);
+        else await cmsApi.store(form);
+        toast.success('Saved.');
+        showForm.value = false;
+        load()
+    } finally {
+        saving.value = false
+    }
+}
+
 function confirmDelete(item) { deleteTarget.value = item }
-async function doDelete() { deleting.value = true; try { await cmsApi.destroy(deleteTarget.value.id); toast.success('Deleted.'); deleteTarget.value = null; load() } finally { deleting.value = false } }
+
+async function doDelete() {
+    deleting.value = true;
+    try {
+        await cmsApi.destroy(deleteTarget.value.id);
+        toast.success('Deleted.');
+        deleteTarget.value = null;
+        load()
+    } finally {
+        deleting.value = false
+    }
+}
+
 onMounted(load)
 </script>

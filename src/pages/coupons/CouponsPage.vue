@@ -48,6 +48,14 @@
             <div class="flex gap-3 pt-2">
               <button type="submit" :disabled="saving" class="btn-primary flex-1 justify-center">{{ saving?'Saving...':'Save Coupon' }}</button>
               <button type="button" @click="showForm=false" class="btn-ghost px-5">Cancel</button>
+
+               <button
+                  type="button"
+                  @click="showForm = false"
+                  class="px-5 py-2 rounded-lg border border-gray-300 text-gray-600 hover:border-red-400 hover:text-red-500 transition"
+              >
+                Cancel
+              </button>
             </div>
           </form>
         </div>

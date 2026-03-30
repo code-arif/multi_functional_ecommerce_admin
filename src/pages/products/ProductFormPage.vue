@@ -390,7 +390,7 @@
         <button
             type="button"
             @click="$router.push('/products')"
-            class="border border-gray-300 text-gray-700 px-6 py-2.5 rounded-lg hover:border-red-400 hover:text-red-500 transition"
+            class="border border-gray-300 text-gray-700 px-6 py-1 rounded-lg hover:border-red-400 hover:text-red-500 transition"
         >
           Cancel
         </button>
