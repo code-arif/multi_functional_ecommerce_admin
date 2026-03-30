@@ -32,12 +32,12 @@
         <td class="table-cell">
           <div class="flex items-center justify-end gap-1 whitespace-nowrap">
             <button @click="openForm(item)"
-                    class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 transition-colors">
+                    class="inline-flex items-center gap-1 px-2 py-1.5 rounded-lg text-xs font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 transition-colors">
               <PencilIcon class="w-3.5 h-3.5"/>
 
             </button>
             <button @click="confirmDelete(item)"
-                    class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-red-500 bg-red-50 hover:bg-red-100 transition-colors">
+                    class="inline-flex items-center gap-1 px-2 py-1.5 rounded-lg text-xs font-medium text-red-500 bg-red-50 hover:bg-red-100 transition-colors">
               <TrashIcon class="w-3.5 h-3.5"/>
 
             </button>
