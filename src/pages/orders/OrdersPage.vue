@@ -10,7 +10,7 @@
                 {{ tab.label }}
                 <span v-if="tab.count" class="text-[10px] px-1.5 py-0.5 rounded-full"
                     :class="statusFilter === tab.value ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-500'">{{
-                    tab.count }}</span>
+                        tab.count }}</span>
             </button>
         </div>
 
@@ -23,8 +23,8 @@
                     <p class="text-gray-400 text-xs">{{ formatDate(item.created_at) }}</p>
                 </td>
                 <td class="table-cell">
-                    <p class="font-semibold text-gray-800 text-sm">{{ item.shipping_name }}</p>
-                    <p class="text-gray-400 text-xs">{{ item.shipping_phone }}</p>
+                    <p class="font-semibold text-gray-800 text-sm">{{ item.shipping_address?.name }}</p>
+                    <p class="text-gray-400 text-xs">{{ item.shipping_address?.phone }}</p>
                 </td>
                 <td class="table-cell">
                     <StatusBadge :value="item.status" />
@@ -37,7 +37,10 @@
                     <p class="text-xs text-gray-400 uppercase">{{ item.payment_method }}</p>
                 </td>
                 <td class="table-cell text-right">
-                    <router-link :to="`/orders/${item.id}`" class="btn-ghost text-xs py-1.5 px-3">View →</router-link>
+                    <router-link :to="`/orders/${item.id}`"
+                        class="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-gray-50 hover:bg-gray-100 transition">
+                        <Eye class="w-3 h-3 text-gray-700"></Eye>
+                    </router-link>
                 </td>
             </template>
         </DataTable>
@@ -50,6 +53,7 @@ import PageHeader from '@/components/common/PageHeader.vue'
 import DataTable from '@/components/common/DataTable.vue'
 import StatusBadge from '@/components/common/StatusBadge.vue'
 import { orderApi } from '@/api'
+import { Eye } from 'lucide-vue-next'
 
 const orders = ref([]), pagination = ref(null), loading = ref(true)
 const search = ref(''), statusFilter = ref('')
