@@ -38,22 +38,59 @@
             </div>
           </div>
         </td>
+
         <td class="table-cell">
           <StatusBadge :value="item.type" />
         </td>
-        <td class="table-cell">
+
+        <!-- <td class="table-cell">
           <p class="font-semibold text-gray-900 text-sm">৳{{ Number(item.current_price).toLocaleString() }}</p>
           <p v-if="item.is_on_sale" class="text-xs text-gray-400 line-through">৳{{
             Number(item.price).toLocaleString()
           }}</p>
+        </td> -->
+
+        <td class="table-cell">
+          <!-- Variable product: price range -->
+          <template v-if="item.type === 'variable'">
+            <p class="font-semibold text-gray-900 text-sm">
+              <template v-if="item.price_range?.min === item.price_range?.max">
+                ৳{{ Number(item.price_range.min).toLocaleString() }}
+              </template>
+              <template v-else>
+                ৳{{ Number(item.price_range?.min).toLocaleString() }} – ৳{{
+                  Number(item.price_range?.max).toLocaleString() }}
+              </template>
+            </p>
+            <p class="text-xs text-gray-400">Variable</p>
+          </template>
+
+          <!-- Simple / Affiliate product -->
+          <template v-else>
+            <p class="font-semibold text-gray-900 text-sm">৳{{ Number(item.current_price).toLocaleString() }}</p>
+            <p v-if="item.is_on_sale" class="text-xs text-gray-400 line-through">
+              ৳{{ Number(item.price).toLocaleString() }}
+            </p>
+          </template>
         </td>
+
         <td class="table-cell">
           <span :class="item.stock_quantity <= 5 ? 'text-red-600 font-bold' : 'text-gray-700'" class="text-sm">{{
             item.stock_quantity }}</span>
         </td>
+
         <td class="table-cell">
           <StatusBadge :value="item.status" />
         </td>
+
+        <td class="table-cell">
+          <StatusBadge :value="item.category?.name" />
+        </td>
+
+        <td class="table-cell">
+          <StatusBadge :value="item.brand?.name" />
+        </td>
+
         <td class="table-cell text-right">
           <div class="flex items-center justify-end gap-1">
             <!-- View button -->
@@ -65,12 +102,13 @@
               class="p-1.5 rounded-lg text-blue-500 bg-blue-50 hover:bg-blue-100 transition" title="Edit">
               <PencilIcon class="w-4 h-4" />
             </router-link>
-            <button @click="confirmDelete(item)" class="p-1.5 rounded-lg text-red-400 bg-red-50 hover:bg-red-100 transition"
-              title="Delete">
+            <button @click="confirmDelete(item)"
+              class="p-1.5 rounded-lg text-red-400 bg-red-50 hover:bg-red-100 transition" title="Delete">
               <TrashIcon class="w-4 h-4" />
             </button>
           </div>
         </td>
+
       </template>
     </DataTable>
 
@@ -101,6 +139,8 @@ const columns = [
   { key: 'price', label: 'Price', class: 'w-28' },
   { key: 'stock', label: 'Stock', class: 'w-20' },
   { key: 'status', label: 'Status', class: 'w-24' },
+  { key: 'category', label: 'Category', class: 'w-24' },
+  { key: 'brand', label: 'Brand', class: 'w-24' },
   { key: 'actions', label: 'Action', class: 'w-28 text-right' },
 ]
 

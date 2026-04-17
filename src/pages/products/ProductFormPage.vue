@@ -4,9 +4,9 @@
                 :subtitle="isEdit ? `Editing: ${form.name}` : 'Create a new product'">
       <button
           @click="$router.push('/products')"
-          class="border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:border-[#4CAF50] hover:text-[#4CAF50] transition"
+          class="border border-gray-300 text-gray-700 px-4 py-1 rounded-lg hover:border-[#4CAF50] hover:text-[#4CAF50] transition"
       >
-        ← Back
+        Back
       </button>
     </PageHeader>
 

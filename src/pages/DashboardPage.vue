@@ -68,7 +68,6 @@
         <div class="flex items-center justify-between p-4 border-b border-gray-100">
           <h3 class="font-bold text-gray-900">Recent Orders</h3>
           <router-link to="/orders" class="text-xs text-[#2E7D32] font-semibold hover:underline">View All
-            →
           </router-link>
         </div>
         <div v-if="loadingOrders" class="p-6 text-center text-gray-400 text-sm">Loading...</div>
@@ -97,7 +96,6 @@
         <div class="flex items-center justify-between p-4 border-b border-gray-100">
           <h3 class="font-bold text-gray-900">Top Selling Products</h3>
           <router-link to="/reports" class="text-xs text-[#2E7D32] font-semibold hover:underline">Full Report
-            →
           </router-link>
         </div>
         <div v-if="loadingTop" class="p-6 text-center text-gray-400 text-sm">Loading...</div>

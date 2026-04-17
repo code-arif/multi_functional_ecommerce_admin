@@ -1,8 +1,13 @@
 <template>
-    <div class="max-w-5xl">
+    <div class="max-w-full xl:max-w-7xl w-full">
         <PageHeader :title="`Order #${order?.order_number || ''}`"
             :subtitle="order ? formatDate(order.created_at) : ''">
-            <button @click="$router.push('/orders')" class="btn-ghost">← Orders</button>
+
+            <button @click="$router.push('/orders')"
+                class="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold text-[#2E7D32] border border-[#2E7D32] rounded-lg hover:bg-[#2E7D32] hover:text-white transition-all duration-200">
+                <ArrowLeft class="w-4 h-4" />
+                Orders
+            </button>
         </PageHeader>
 
         <div v-if="loading" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -54,8 +59,9 @@
                                             <img v-if="item.product_image" :src="`/storage/${item.product_image}`"
                                                 class="w-12 h-12 rounded-lg object-cover bg-gray-100 shrink-0" />
                                             <div v-else
-                                                class="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center shrink-0 text-xl">
-                                                📦</div>
+                                                class="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center shrink-0">
+                                                <Package class="w-5 h-5 text-gray-400" />
+                                            </div>
                                             <div>
                                                 <p class="font-semibold text-gray-900 text-sm">{{ item.product_name }}
                                                 </p>
@@ -137,15 +143,28 @@
                 <div class="space-y-5">
                     <div class="card p-5">
                         <h3 class="font-bold text-gray-900 mb-3">Customer</h3>
-                        <div class="text-sm space-y-1.5 text-gray-600">
+
+                        <div class="text-sm space-y-2 text-gray-600">
                             <p class="font-semibold text-gray-900">{{ order.shipping_name }}</p>
-                            <p v-if="order.shipping_email">📧 {{ order.shipping_email }}</p>
-                            <p>📞 {{ order.shipping_phone }}</p>
+
+                            <p v-if="order.shipping_email" class="flex items-center gap-2">
+                                <Mail class="w-4 h-4 text-gray-400" />
+                                {{ order.shipping_email }}
+                            </p>
+
+                            <p class="flex items-center gap-2">
+                                <Phone class="w-4 h-4 text-gray-400" />
+                                {{ order.shipping_phone }}
+                            </p>
+
                             <div v-if="order.user" class="pt-2 border-t border-gray-100 mt-2">
-                                <p class="text-xs text-gray-400 mb-1">Account</p>
+                                <p class="text-xs text-gray-400 mb-2">Account</p>
+
                                 <router-link :to="`/users/${order.user.id}`"
-                                    class="text-[#2E7D32] text-xs font-semibold hover:underline">View Customer
-                                    →</router-link>
+                                    class="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold text-[#2E7D32] border border-[#2E7D32] rounded-lg hover:bg-[#2E7D32] hover:text-white transition-all duration-200">
+                                    View Customer
+                                    <ArrowRight class="w-4 h-4" />
+                                </router-link>
                             </div>
                         </div>
                     </div>
@@ -185,6 +204,14 @@ import { useToast } from 'vue-toastification'
 import PageHeader from '@/components/common/PageHeader.vue'
 import StatusBadge from '@/components/common/StatusBadge.vue'
 import { orderApi } from '@/api'
+
+import {
+    ArrowLeft,
+    ArrowRight,
+    Mail,
+    Phone,
+    Package
+} from 'lucide-vue-next'
 
 const route = useRoute(), toast = useToast()
 const order = ref(null), loading = ref(true)

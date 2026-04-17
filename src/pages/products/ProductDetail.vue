@@ -4,7 +4,7 @@
     <PageHeader :title="product?.name || 'Product Details'" :subtitle="product?.sku ? `SKU: ${product.sku}` : ''">
       <div class="flex items-center gap-2">
         <button @click="$router.push('/products')"
-                class="border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:border-[#4CAF50] hover:text-[#4CAF50] transition text-sm">
+          class="border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:border-[#4CAF50] hover:text-[#4CAF50] transition text-sm">
           ← Back
         </button>
         <router-link :to="`/products/${product?.id}/edit`" class="btn-primary text-sm" v-if="product">
@@ -17,8 +17,8 @@
     <div v-if="loading" class="flex items-center justify-center py-24">
       <div class="flex flex-col items-center gap-3 text-gray-400">
         <svg class="w-8 h-8 animate-spin text-[#2E7D32]" fill="none" viewBox="0 0 24 24">
-          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
-          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
         </svg>
         <span class="text-sm">Loading product...</span>
       </div>
@@ -35,35 +35,34 @@
     <!-- Content -->
     <div v-else-if="product" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-      <!-- ── Left column ──────────────────────────────────────── -->
+      <!-- Left column -->
       <div class="lg:col-span-2 space-y-6">
 
         <!-- Images gallery -->
         <div class="card p-5">
-          <div class="flex gap-4">
-            <!-- Main image -->
-            <div class="flex-1 aspect-square rounded-xl overflow-hidden bg-gray-100 max-w-sm">
-              <img v-if="activeImage"
-                   :src="activeImage"
-                   class="w-full h-full object-cover"
-                   :alt="product.name"/>
-              <div v-else class="w-full h-full flex items-center justify-center text-gray-300 text-5xl">
-                📦
+          <div class="flex gap-4 items-start">
+
+            <!-- Main Image -->
+            <div class="flex-1 aspect-square rounded-xl overflow-hidden bg-gray-100">
+              <img v-if="activeImage" :src="activeImage" class="w-full h-full object-cover" :alt="product.name" />
+
+              <div v-else class="w-full h-full flex items-center justify-center text-gray-300">
+                <Package class="w-10 h-10" />
               </div>
             </div>
-            <!-- Thumbs strip -->
-            <div v-if="allImages.length > 1" class="flex flex-col gap-2 w-20">
-              <button v-for="(img, i) in allImages" :key="i"
-                      @click="activeImage = img.url"
-                      :class="[
-                                    'w-20 h-20 rounded-lg overflow-hidden border-2 transition shrink-0',
-                                    activeImage === img.url
-                                        ? 'border-[#4CAF50]'
-                                        : 'border-transparent hover:border-gray-300'
-                                ]">
-                <img :src="img.url" class="w-full h-full object-cover" :alt="`Image ${i+1}`"/>
+
+            <!-- Thumbnails -->
+            <div v-if="allImages.length > 1" class="flex flex-col gap-2 w-28 max-h-[630px] overflow-y-auto pr-1">
+              <button v-for="(img, i) in allImages" :key="i" @click="activeImage = img.url" :class="[
+                'w-17 h-17 rounded-xl overflow-hidden border-2 shrink-0 transition',
+                activeImage === img.url
+                  ? 'border-[#4CAF50]'
+                  : 'border-gray-200 hover:border-gray-400'
+              ]">
+                <img :src="img.url" class="w-full h-full object-cover" />
               </button>
             </div>
+
           </div>
         </div>
 
@@ -78,7 +77,7 @@
               </div>
               <div>
                 <p class="text-gray-400 text-xs mb-1">Type</p>
-                <StatusBadge :value="product.type"/>
+                <StatusBadge :value="product.type" />
               </div>
             </div>
             <div class="grid grid-cols-2 gap-4">
@@ -98,13 +97,13 @@
             <div v-if="product.description">
               <p class="text-gray-400 text-xs mb-1">Description</p>
               <div class="prose prose-sm max-w-none text-gray-700 border border-gray-100 rounded-lg p-3"
-                   v-html="product.description"/>
+                v-html="product.description" />
             </div>
           </div>
         </div>
 
         <!-- Pricing & Inventory -->
-        <div v-if="product.type !== 'affiliate'" class="card p-5">
+        <!-- <div v-if="product.type !== 'affiliate'" class="card p-5">
           <h3 class="font-bold text-gray-900 mb-4">Pricing & Inventory</h3>
           <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div class="bg-green-50 rounded-xl p-3">
@@ -121,21 +120,86 @@
             </div>
             <div class="bg-gray-50 rounded-xl p-3">
               <p class="text-xs text-gray-400 mb-1">Stock</p>
-              <p :class="product.stock_quantity <= 5 ? 'text-red-600' : 'text-gray-700'"
-                 class="font-bold text-lg">
+              <p :class="product.stock_quantity <= 5 ? 'text-red-600' : 'text-gray-700'" class="font-bold text-lg">
                 {{ product.stock_quantity }}
               </p>
             </div>
             <div class="bg-gray-50 rounded-xl p-3">
               <p class="text-xs text-gray-400 mb-1">Stock Status</p>
-              <StatusBadge :value="product.stock_status"/>
+              <StatusBadge :value="product.stock_status" />
             </div>
           </div>
           <div v-if="product.is_on_sale"
-               class="mt-3 inline-flex items-center gap-1.5 bg-orange-50 text-orange-600 text-xs font-semibold px-3 py-1.5 rounded-full">
-            <Flame class="w-4 h-4"/>
+            class="mt-3 inline-flex items-center gap-1.5 bg-orange-50 text-orange-600 text-xs font-semibold px-3 py-1.5 rounded-full">
+            <Flame class="w-4 h-4" />
             On Sale — {{ product.discount_percentage }}% off
           </div>
+        </div> -->
+
+        <!-- Pricing & Inventory -->
+        <div v-if="product.type !== 'affiliate'" class="card p-5">
+          <h3 class="font-bold text-gray-900 mb-4">Pricing & Inventory</h3>
+
+          <!-- Variable product -->
+          <template v-if="product.type === 'variable'">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div class="bg-green-50 rounded-xl p-3">
+                <p class="text-xs text-green-600 mb-1">Starting Price</p>
+                <p class="text-green-800 font-bold text-lg">৳{{ Number(product.price_range?.min).toLocaleString() }}</p>
+              </div>
+              <div class="bg-gray-50 rounded-xl p-3">
+                <p class="text-xs text-gray-400 mb-1">Highest Price</p>
+                <p class="text-gray-700 font-bold text-lg">৳{{ Number(product.price_range?.max).toLocaleString() }}</p>
+              </div>
+              <div class="bg-gray-50 rounded-xl p-3">
+                <p class="text-xs text-gray-400 mb-1">Total Stock</p>
+                <p :class="product.stock_quantity <= 5 ? 'text-red-600' : 'text-gray-700'" class="font-bold text-lg">
+                  {{ product.stock_quantity }}
+                </p>
+              </div>
+              <div class="bg-gray-50 rounded-xl p-3">
+                <p class="text-xs text-gray-400 mb-1">Stock Status</p>
+                <StatusBadge :value="product.stock_status" />
+              </div>
+            </div>
+            <p class="mt-3 text-xs text-gray-400">
+              ৳{{ Number(product.price_range?.min).toLocaleString() }} –
+              ৳{{ Number(product.price_range?.max).toLocaleString() }} · per variant price
+            </p>
+          </template>
+
+          <!-- Simple product -->
+          <template v-else>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div class="bg-green-50 rounded-xl p-3">
+                <p class="text-xs text-green-600 mb-1">Current Price</p>
+                <p class="text-green-800 font-bold text-lg">৳{{ Number(product.current_price).toLocaleString() }}</p>
+              </div>
+              <div v-if="product.sale_price" class="bg-orange-50 rounded-xl p-3">
+                <p class="text-xs text-orange-500 mb-1">Regular Price</p>
+                <p class="text-orange-700 font-semibold line-through">৳{{ Number(product.price).toLocaleString() }}</p>
+              </div>
+              <div v-else class="bg-gray-50 rounded-xl p-3">
+                <p class="text-xs text-gray-400 mb-1">Regular Price</p>
+                <p class="text-gray-700 font-semibold">৳{{ Number(product.price).toLocaleString() }}</p>
+              </div>
+              <div class="bg-gray-50 rounded-xl p-3">
+                <p class="text-xs text-gray-400 mb-1">Stock</p>
+                <p :class="product.stock_quantity <= 5 ? 'text-red-600' : 'text-gray-700'" class="font-bold text-lg">
+                  {{ product.stock_quantity }}
+                </p>
+              </div>
+              <div class="bg-gray-50 rounded-xl p-3">
+                <p class="text-xs text-gray-400 mb-1">Stock Status</p>
+                <StatusBadge :value="product.stock_status" />
+              </div>
+            </div>
+            <div v-if="product.is_on_sale"
+              class="mt-3 inline-flex items-center gap-1.5 bg-orange-50 text-orange-600 text-xs font-semibold px-3 py-1.5 rounded-full">
+              <Flame class="w-4 h-4" />
+              On Sale — {{ product.discount_percentage }}% off
+            </div>
+          </template>
         </div>
 
         <!-- Affiliate info -->
@@ -149,7 +213,7 @@
             <div v-if="product.affiliate_link">
               <p class="text-gray-400 text-xs mb-1">Affiliate Link</p>
               <a :href="product.affiliate_link" target="_blank"
-                 class="text-[#4CAF50] hover:underline break-all text-xs">
+                class="text-[#4CAF50] hover:underline break-all text-xs">
                 {{ product.affiliate_link }}
               </a>
             </div>
@@ -167,13 +231,12 @@
             <div v-for="attr in product.attributes" :key="attr.id">
               <p class="text-xs text-gray-400 mb-2">{{ attr.name }}</p>
               <div class="flex flex-wrap gap-2">
-                                <span v-for="val in attr.values" :key="val.id"
-                                      class="inline-flex items-center gap-1.5 bg-green-50 text-[#2E7D32] text-xs font-semibold px-2.5 py-1 rounded-full">
-                                    <span v-if="val.color_code"
-                                          :style="{ background: val.color_code }"
-                                          class="w-3 h-3 rounded-full inline-block border border-white"/>
-                                    {{ val.value }}
-                                </span>
+                <span v-for="val in attr.values" :key="val.id"
+                  class="inline-flex items-center gap-1.5 bg-green-50 text-[#2E7D32] text-xs font-semibold px-2.5 py-1 rounded-full">
+                  <span v-if="val.color_code" :style="{ background: val.color_code }"
+                    class="w-3 h-3 rounded-full inline-block border border-white" />
+                  {{ val.value }}
+                </span>
               </div>
             </div>
           </div>
@@ -186,32 +249,30 @@
           <div class="overflow-x-auto">
             <table class="w-full text-sm">
               <thead>
-              <tr class="bg-gray-50">
-                <th class="table-header">Combination</th>
-                <th class="table-header">Price</th>
-                <th class="table-header">Stock</th>
-                <th class="table-header">SKU</th>
-                <th class="table-header">Status</th>
-              </tr>
+                <tr class="bg-gray-50">
+                  <th class="table-header">Combination</th>
+                  <th class="table-header">Price</th>
+                  <th class="table-header">Stock</th>
+                  <th class="table-header">SKU</th>
+                  <th class="table-header">Status</th>
+                </tr>
               </thead>
               <tbody>
-              <tr v-for="variant in product.variants" :key="variant.id"
-                  class="border-b border-gray-100">
-                <td class="table-cell text-xs text-gray-600">
-                  {{ Object.entries(variant.attributes || {}).map(([k, v]) => `${k}: ${v}`).join(', ') }}
-                </td>
-                <td class="table-cell font-semibold">৳{{ Number(variant.current_price).toLocaleString() }}</td>
-                <td class="table-cell">
-                                        <span
-                                            :class="variant.stock_quantity <= 5 ? 'text-red-600 font-bold' : 'text-gray-700'">
-                                            {{ variant.stock_quantity }}
-                                        </span>
-                </td>
-                <td class="table-cell font-mono text-xs text-gray-500">{{ variant.sku || '—' }}</td>
-                <td class="table-cell">
-                  <StatusBadge :value="variant.is_in_stock ? 'active' : 'inactive'"/>
-                </td>
-              </tr>
+                <tr v-for="variant in product.variants" :key="variant.id" class="border-b border-gray-100">
+                  <td class="table-cell text-xs text-gray-600">
+                    {{Object.entries(variant.attributes || {}).map(([k, v]) => `${k}: ${v}`).join(', ')}}
+                  </td>
+                  <td class="table-cell font-semibold">৳{{ Number(variant.current_price).toLocaleString() }}</td>
+                  <td class="table-cell">
+                    <span :class="variant.stock_quantity <= 5 ? 'text-red-600 font-bold' : 'text-gray-700'">
+                      {{ variant.stock_quantity }}
+                    </span>
+                  </td>
+                  <td class="table-cell font-mono text-xs text-gray-500">{{ variant.sku || '—' }}</td>
+                  <td class="table-cell">
+                    <StatusBadge :value="variant.is_in_stock ? 'active' : 'inactive'" />
+                  </td>
+                </tr>
               </tbody>
             </table>
           </div>
@@ -224,12 +285,11 @@
             <span class="text-gray-400 font-normal text-sm ml-1">({{ product.reviews.length }})</span>
           </h3>
           <div class="space-y-4">
-            <div v-for="review in product.reviews" :key="review.id"
-                 class="border border-gray-100 rounded-xl p-4">
+            <div v-for="review in product.reviews" :key="review.id" class="border border-gray-100 rounded-xl p-4">
               <div class="flex items-center justify-between mb-2">
                 <div class="flex items-center gap-2">
                   <div
-                      class="w-8 h-8 rounded-full bg-[#4CAF50] flex items-center justify-center text-white text-xs font-bold">
+                    class="w-8 h-8 rounded-full bg-[#4CAF50] flex items-center justify-center text-white text-xs font-bold">
                     {{ review.user?.name?.[0]?.toUpperCase() || 'U' }}
                   </div>
                   <div>
@@ -238,9 +298,8 @@
                   </div>
                 </div>
                 <div class="flex gap-0.5">
-                                    <span v-for="s in 5" :key="s"
-                                          :class="s <= review.rating ? 'text-yellow-400' : 'text-gray-200'"
-                                          class="text-sm">★</span>
+                  <span v-for="s in 5" :key="s" :class="s <= review.rating ? 'text-yellow-400' : 'text-gray-200'"
+                    class="text-sm">★</span>
                 </div>
               </div>
               <p class="text-sm text-gray-600">{{ review.comment }}</p>
@@ -277,7 +336,7 @@
           <div class="space-y-3">
             <div class="flex items-center justify-between">
               <span class="text-sm text-gray-500">Publish Status</span>
-              <StatusBadge :value="product.status"/>
+              <StatusBadge :value="product.status" />
             </div>
             <div class="flex items-center justify-between">
               <span class="text-sm text-gray-500">Featured</span>
@@ -286,16 +345,16 @@
             <div class="flex items-center justify-between">
               <span class="text-sm text-gray-500">New</span>
               <span :class="product.is_new ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-400'"
-                    class="text-xs font-semibold px-2 py-0.5 rounded-full">
-                                {{ product.is_new ? 'New' : 'No' }}
-                            </span>
+                class="text-xs font-semibold px-2 py-0.5 rounded-full">
+                {{ product.is_new ? 'New' : 'No' }}
+              </span>
             </div>
             <div class="flex items-center justify-between">
               <span class="text-sm text-gray-500">Bestseller</span>
               <span :class="product.is_bestseller ? 'bg-orange-100 text-orange-600' : 'bg-gray-100 text-gray-400'"
-                    class="text-xs font-semibold px-2 py-0.5 rounded-full">
-                                {{ product.is_bestseller ? 'Yes' : 'No' }}
-                            </span>
+                class="text-xs font-semibold px-2 py-0.5 rounded-full">
+                {{ product.is_bestseller ? 'Yes' : 'No' }}
+              </span>
             </div>
           </div>
         </div>
@@ -317,8 +376,8 @@
               <div class="flex items-center gap-1">
                 <span class="text-yellow-400 text-sm">★</span>
                 <span class="text-sm font-bold text-gray-900">
-                                    {{ product.average_rating ? Number(product.average_rating).toFixed(1) : '—' }}
-                                </span>
+                  {{ product.average_rating ? Number(product.average_rating).toFixed(1) : '—' }}
+                </span>
               </div>
             </div>
           </div>
@@ -336,7 +395,7 @@
               <p class="text-gray-400 text-xs mb-1">Brand</p>
               <div class="flex items-center gap-2">
                 <img v-if="product.brand?.logo_url" :src="product.brand.logo_url"
-                     class="w-5 h-5 object-contain rounded"/>
+                  class="w-5 h-5 object-contain rounded" />
                 <p class="text-gray-700 font-medium">{{ product.brand?.name || 'None' }}</p>
               </div>
             </div>
@@ -351,10 +410,10 @@
         <div v-if="product.tags?.length" class="card p-5">
           <h3 class="font-bold text-gray-900 mb-3">Tags</h3>
           <div class="flex flex-wrap gap-2">
-                        <span v-for="tag in product.tags" :key="tag"
-                              class="bg-gray-100 text-gray-600 text-xs px-2.5 py-1 rounded-full">
-                            {{ tag }}
-                        </span>
+            <span v-for="tag in product.tags" :key="tag"
+              class="bg-gray-100 text-gray-600 text-xs px-2.5 py-1 rounded-full">
+              {{ tag }}
+            </span>
           </div>
         </div>
 
@@ -378,13 +437,13 @@
           <h3 class="font-bold text-gray-900 mb-3">Actions</h3>
           <div class="space-y-2">
             <router-link :to="`/products/${product.id}/edit`"
-                         class="flex items-center gap-2 w-full text-sm text-[#2E7D32] hover:bg-green-50 px-3 py-2 rounded-lg transition">
-              <PencilSquareIcon class="w-4 h-4"/>
+              class="flex items-center gap-2 w-full text-sm text-[#2E7D32] hover:bg-green-50 px-3 py-2 rounded-lg transition">
+              <PencilSquareIcon class="w-4 h-4" />
               Edit Product
             </router-link>
             <button @click="confirmDelete(product)"
-                    class="flex items-center gap-2 w-full text-sm text-red-500 hover:bg-red-50 px-3 py-2 rounded-lg transition">
-              <TrashIcon class="w-4 h-4"/>
+              class="flex items-center gap-2 w-full text-sm text-red-500 hover:bg-red-50 px-3 py-2 rounded-lg transition">
+              <TrashIcon class="w-4 h-4" />
               Delete Product
             </button>
           </div>
@@ -393,26 +452,22 @@
     </div>
 
     <!-- Delete modal -->
-    <ConfirmModal
-        :show="!!deleteTarget"
-        title="Delete Product"
-        :message="`Delete '${deleteTarget?.name}'? This cannot be undone.`"
-        :loading="deleting"
-        @confirm="doDelete"
-        @cancel="deleteTarget = null"/>
+    <ConfirmModal :show="!!deleteTarget" title="Delete Product"
+      :message="`Delete '${deleteTarget?.name}'? This cannot be undone.`" :loading="deleting" @confirm="doDelete"
+      @cancel="deleteTarget = null" />
   </div>
 </template>
 
 <script setup>
-import {ref, computed, onMounted} from 'vue'
-import {useRoute, useRouter} from 'vue-router'
-import {useToast} from 'vue-toastification'
+import { ref, computed, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useToast } from 'vue-toastification'
 import PageHeader from '@/components/common/PageHeader.vue'
 import StatusBadge from '@/components/common/StatusBadge.vue'
 import ConfirmModal from '@/components/common/ConfirmModal.vue'
-import {productApi} from '@/api'
-import {PencilIcon, TrashIcon, PencilSquareIcon} from '@heroicons/vue/24/outline'
-import {Flame} from 'lucide-vue-next'
+import { productApi } from '@/api'
+import { PencilIcon, TrashIcon, PencilSquareIcon } from '@heroicons/vue/24/outline'
+import { Flame } from 'lucide-vue-next'
 
 const route = useRoute()
 const router = useRouter()
@@ -429,11 +484,11 @@ const deleting = ref(false)
 const allImages = computed(() => {
   const imgs = []
   if (product.value?.thumbnail_url) {
-    imgs.push({url: product.value.thumbnail_url, is_primary: true})
+    imgs.push({ url: product.value.thumbnail_url, is_primary: true })
   }
   product.value?.images?.forEach(img => {
     if (img.url !== product.value?.thumbnail_url) {
-      imgs.push({url: img.url, is_primary: img.is_primary})
+      imgs.push({ url: img.url, is_primary: img.is_primary })
     }
   })
   return imgs
@@ -449,9 +504,9 @@ async function load() {
     // Set first image as active
     const primary = product.value?.images?.find(i => i.is_primary)
     activeImage.value = primary?.url
-        || product.value?.thumbnail_url
-        || product.value?.images?.[0]?.url
-        || null
+      || product.value?.thumbnail_url
+      || product.value?.images?.[0]?.url
+      || null
   } catch (e) {
     error.value = e.response?.data?.message || 'Something went wrong.'
   } finally {
