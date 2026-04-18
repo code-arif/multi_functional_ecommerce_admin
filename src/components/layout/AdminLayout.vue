@@ -19,7 +19,7 @@
                     <!-- Section header -->
                     <p v-if="item.section && sidebarOpen"
                         class="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-3 pt-4 pb-1">{{
-                        item.section }}</p>
+                            item.section }}</p>
 
                     <!-- Nav link -->
                     <router-link v-else-if="item.to" :to="item.to"
@@ -32,7 +32,7 @@
                         <!-- Badge -->
                         <span v-if="item.badge && sidebarOpen"
                             class="ml-auto text-[10px] font-bold bg-red-500 text-white px-1.5 py-0.5 rounded-full">{{
-                            item.badge }}</span>
+                                item.badge }}</span>
                         <!-- Tooltip when collapsed -->
                         <div v-if="!sidebarOpen"
                             class="absolute left-full ml-3 px-2.5 py-1.5 bg-slate-800 text-white text-xs font-medium rounded-lg whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 shadow-lg">

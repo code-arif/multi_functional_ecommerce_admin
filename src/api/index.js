@@ -90,8 +90,8 @@ export const bannerApi = {
 export const affiliateApi = {
   list: p => client.get('/admin/affiliate-products', { params: p }),
   store: d => client.post('/admin/affiliate-products/store', d, { headers: { 'Content-Type': 'multipart/form-data' } }),
-  update: (id,d) => client.post(`/admin/affiliate-products/${id}/update?_method=PUT`, d, { headers: { 'Content-Type': 'multipart/form-data' } }),
-  destroy: id => client.delete(`/admin/affiliate-products/${id}/delete`),
+  update: (id,d) => client.post('/admin/affiliate-products/'+id+'/update', d, { headers: { 'Content-Type': 'multipart/form-data' } }),
+  destroy: id => client.delete('/admin/affiliate-products/'+id+'/delete'),
 }
 
 // CMS Pages
