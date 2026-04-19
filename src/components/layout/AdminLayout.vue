@@ -81,9 +81,9 @@
 
                 <div class="ml-auto flex items-center gap-2">
                     <!-- Notifications -->
-                    <button class="relative p-2 rounded-lg text-gray-500 hover:bg-gray-100 transition">
+                    <button @click="openNotificationModal" class="relative p-2 rounded-lg text-gray-500 hover:bg-gray-100 transition">
                         <BellIcon class="w-5 h-5" />
-                        <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full"></span>
+                        <span v-if="unreadCount > 0" class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full"></span>
                     </button>
                     <!-- View Store -->
                     <a :href="storeUrl" target="_blank"
@@ -103,6 +103,16 @@
             </main>
         </div>
     </div>
+
+    <!-- Notification Modal -->
+    <NotificationModal
+        v-model:isOpen="isNotificationModalOpen"
+        :notifications="notifications"
+        @mark-as-read="markAsRead"
+        @mark-all-as-read="markAllAsRead"
+        @delete="deleteNotification"
+        @delete-selected="deleteSelectedNotifications"
+    />
 </template>
 
 <script setup>
@@ -116,11 +126,84 @@ import {
     ChartBarIcon, CogIcon, Bars3Icon, BellIcon,
     ArrowRightOnRectangleIcon, ArrowTopRightOnSquareIcon
 } from '@heroicons/vue/24/outline'
+import NotificationModal from '@/components/common/NotificationModal.vue'
 
 const auth = useAuthStore()
 const route = useRoute()
 const sidebarOpen = ref(true)
 const storeUrl = import.meta.env.VITE_STORE_URL || 'http://localhost:3000'
+
+// Notification state
+const isNotificationModalOpen = ref(false)
+const notifications = ref([
+    {
+        id: 1,
+        title: 'New order received',
+        message: 'Order #ORD-1234 has been placed by John Doe.',
+        type: 'order',
+        isRead: false,
+        createdAt: new Date(Date.now() - 1000 * 60 * 15) // 15 minutes ago
+    },
+    {
+        id: 2,
+        title: 'Low stock alert',
+        message: 'Product "Eco Water Bottle" is running low on stock (only 5 left).',
+        type: 'inventory',
+        isRead: false,
+        createdAt: new Date(Date.now() - 1000 * 60 * 60) // 1 hour ago
+    },
+    {
+        id: 3,
+        title: 'New user registered',
+        message: 'Sarah Johnson has created a new customer account.',
+        type: 'user',
+        isRead: true,
+        createdAt: new Date(Date.now() - 1000 * 60 * 60 * 5) // 5 hours ago
+    },
+    {
+        id: 4,
+        title: 'Product review',
+        message: 'New 5-star review on "Bamboo Toothbrush" by Mike Wilson.',
+        type: 'review',
+        isRead: false,
+        createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24) // 1 day ago
+    },
+    {
+        id: 5,
+        title: 'Affiliate sale',
+        message: 'You earned $45.00 from affiliate sale #AFF-789.',
+        type: 'affiliate',
+        isRead: true,
+        createdAt: new Date(Date.now() - 1000 * 60 * 60 * 48) // 2 days ago
+    }
+])
+
+const unreadCount = computed(() => notifications.value.filter(n => !n.isRead).length)
+
+const openNotificationModal = () => {
+    isNotificationModalOpen.value = true
+}
+
+const markAsRead = (notificationId) => {
+    const notification = notifications.value.find(n => n.id === notificationId)
+    if (notification) {
+        notification.isRead = true
+    }
+}
+
+const markAllAsRead = () => {
+    notifications.value.forEach(n => {
+        n.isRead = true
+    })
+}
+
+const deleteNotification = (notificationId) => {
+    notifications.value = notifications.value.filter(n => n.id !== notificationId)
+}
+
+const deleteSelectedNotifications = (notificationIds) => {
+    notifications.value = notifications.value.filter(n => !notificationIds.includes(n.id))
+}
 
 const navItems = [
     { to: '/', name: 'Dashboard', icon: Squares2X2Icon },

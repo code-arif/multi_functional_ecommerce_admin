@@ -151,7 +151,7 @@
               </button>
 
               <button type="button" @click="showForm = false"
-                class="px-5 py-2 rounded-lg border border-gray-300 text-gray-600 hover:border-red-400 hover:text-red-500 transition">
+                class="px-5 py-1 rounded-lg border border-gray-300 text-gray-600 hover:border-red-400 hover:text-red-500 transition">
                 Cancel
               </button>
             </div>
