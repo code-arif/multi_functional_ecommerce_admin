@@ -124,6 +124,12 @@
                         <ArrowTopRightOnSquareIcon class="w-4 h-4" />
                         View Store
                     </a>
+
+                    <!-- Admin Profile -->
+                    <button @click="isProfileModalOpen = true"
+                        class="relative rounded-full overflow-hidden ring-2 ring-slate-200 hover:ring-green-500 transition shrink-0">
+                        <img src="https://i.pravatar.cc/100?img=12" alt="Admin" class="w-10 h-10 object-cover" />
+                    </button>
                 </div>
             </header>
 
@@ -142,6 +148,138 @@
     <NotificationModal v-model:isOpen="isNotificationModalOpen" :notifications="notifications"
         @mark-as-read="markAsRead" @mark-all-as-read="markAllAsRead" @delete="deleteNotification"
         @delete-selected="deleteSelectedNotifications" />
+
+    <!-- ===========================
+ADD THIS BELOW NOTIFICATION MODAL
+=========================== -->
+
+    <!-- Profile Modal -->
+    <div v-if="isProfileModalOpen" class="fixed inset-0 z-[70] flex items-center justify-center bg-black/50 px-4">
+
+        <div class="w-full max-w-2xl bg-white rounded-2xl shadow-2xl overflow-hidden animate-fadeIn">
+
+            <!-- Header -->
+            <div class="flex items-center justify-between px-6 py-4 border-b border-slate-200">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-800">Update Profile</h2>
+                    <p class="text-xs text-slate-500">Manage admin account information</p>
+                </div>
+
+                <button @click="isProfileModalOpen = false"
+                    class="w-9 h-9 rounded-xl hover:bg-slate-100 flex items-center justify-center text-slate-600 text-xl">
+                    ×
+                </button>
+            </div>
+
+            <!-- Body -->
+            <div class="p-6 space-y-6 max-h-[80vh] overflow-y-auto">
+
+                <!-- Avatar -->
+                <div class="flex items-center gap-4">
+                    <img src="https://i.pravatar.cc/100?img=12"
+                        class="w-20 h-20 rounded-full object-cover ring-4 ring-slate-100" />
+
+                    <div>
+                        <button
+                            class="px-4 py-2 rounded-xl bg-green-600 text-white text-sm font-semibold hover:bg-green-700 transition">
+                            Change Photo
+                        </button>
+
+                        <p class="text-xs text-slate-500 mt-2">
+                            JPG, PNG up to 2MB
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Form Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+                    <!-- Name -->
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">
+                            Full Name
+                        </label>
+
+                        <input type="text" value="Eco Admin"
+                            class="w-full rounded-xl border border-slate-300 px-4 py-3 focus:ring-2 focus:ring-green-500 outline-none" />
+                    </div>
+
+                    <!-- Email -->
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">
+                            Email
+                        </label>
+
+                        <input type="email" value="admin@eco.com"
+                            class="w-full rounded-xl border border-slate-300 px-4 py-3 focus:ring-2 focus:ring-green-500 outline-none" />
+                    </div>
+
+                    <!-- Phone -->
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">
+                            Phone
+                        </label>
+
+                        <input type="text" value="+8801700000000"
+                            class="w-full rounded-xl border border-slate-300 px-4 py-3 focus:ring-2 focus:ring-green-500 outline-none" />
+                    </div>
+
+                    <!-- Status -->
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">
+                            Status
+                        </label>
+
+                        <select
+                            class="w-full rounded-xl border border-slate-300 px-4 py-3 focus:ring-2 focus:ring-green-500 outline-none">
+                            <option>active</option>
+                            <option>inactive</option>
+                            <option>banned</option>
+                        </select>
+                    </div>
+
+                    <!-- Password -->
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">
+                            New Password
+                        </label>
+
+                        <input type="password" placeholder="••••••••"
+                            class="w-full rounded-xl border border-slate-300 px-4 py-3 focus:ring-2 focus:ring-green-500 outline-none" />
+                    </div>
+
+                    <!-- Confirm Password -->
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">
+                            Confirm Password
+                        </label>
+
+                        <input type="password" placeholder="••••••••"
+                            class="w-full rounded-xl border border-slate-300 px-4 py-3 focus:ring-2 focus:ring-green-500 outline-none" />
+                    </div>
+                </div>
+
+                <!-- Verified -->
+                <div
+                    class="rounded-xl bg-green-50 border border-green-100 px-4 py-3 text-sm text-green-700 font-medium">
+                    Email Verified ✔
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="px-6 py-4 border-t border-slate-200 flex justify-end gap-3">
+                <button @click="isProfileModalOpen = false"
+                    class="px-5 py-2.5 rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-50 transition">
+                    Cancel
+                </button>
+
+                <button
+                    class="px-5 py-2.5 rounded-xl bg-green-600 text-white font-semibold hover:bg-green-700 transition">
+                    Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script setup>
@@ -174,6 +312,9 @@ import {
     HomeModernIcon,
     ChatBubbleLeftRightIcon,
     EnvelopeIcon,
+    UserGroupIcon,
+    IdentificationIcon,
+    LockOpenIcon 
 } from '@heroicons/vue/24/outline'
 
 const route = useRoute()
@@ -186,6 +327,7 @@ const storeUrl = import.meta.env.VITE_STORE_URL || 'http://localhost:3000'
    Notification Old Features Keep
 ------------------------------*/
 const isNotificationModalOpen = ref(false)
+const isProfileModalOpen = ref(false)
 
 const notifications = ref([
     {
@@ -266,7 +408,9 @@ const navGroups = [
         icon: ClipboardDocumentListIcon,
         items: [
             { name: 'All Orders', to: '/orders', icon: ClipboardDocumentListIcon },
-            { name: 'Transactions', to: '/transactions', icon: BanknotesIcon, pending: true }
+            { name: 'Transactions', to: '/transactions', icon: BanknotesIcon, pending: true },
+            // { name: 'Shipping Methods', to: '/shipping-methods', icon: TruckIcon, pending: true },
+
         ]
     },
     {
@@ -280,7 +424,12 @@ const navGroups = [
     {
         name: 'Users',
         icon: UsersIcon,
-        items: [{ name: 'Customers', to: '/users', icon: UsersIcon }]
+        items: [
+            { name: 'Customers', to: '/users', icon: UsersIcon },
+            { name: 'Admins', to: '/admins', icon: UserGroupIcon, pending: true },
+            { name: 'Roles', to: '/roles', icon: IdentificationIcon, pending: true },
+            { name: 'Permissions', to: '/permissions', icon: LockOpenIcon, pending: true },
+        ]
     },
     {
         name: 'Content',
@@ -387,5 +536,21 @@ const currentPageTitle = computed(() => {
 .slide-leave-from {
     opacity: 1;
     max-height: 500px;
+}
+
+.animate-fadeIn {
+    animation: fadeIn 0.18s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(.96);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 </style>
