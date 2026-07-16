@@ -322,7 +322,7 @@ ADD THIS BELOW NOTIFICATION MODAL
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
+import { ref, reactive, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import NotificationModal from '@/components/common/NotificationModal.vue'
@@ -362,7 +362,13 @@ import {
 const route = useRoute()
 const auth = useAuthStore()
 
-const sidebarOpen = ref(true)
+const SIDEBAR_STATE_KEY = 'sidebar_open_state'
+const sidebarOpen = ref(localStorage.getItem(SIDEBAR_STATE_KEY) !== 'false')
+
+watch(sidebarOpen, val => {
+    localStorage.setItem(SIDEBAR_STATE_KEY, val)
+})
+
 const storeUrl = import.meta.env.VITE_STORE_URL || 'http://localhost:3000'
 
 /* -----------------------------
@@ -445,7 +451,30 @@ onUnmounted(() => {
 /* -----------------------------
    Sidebar New Navigation
 ------------------------------*/
+const STORAGE_KEY = 'sidebar_groups_state'
 const openGroups = reactive({})
+
+function saveGroupsState() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(openGroups))
+}
+
+function loadGroupsState() {
+    try {
+        const saved = localStorage.getItem(STORAGE_KEY)
+        if (saved) {
+            const parsed = JSON.parse(saved)
+            // Only restore groups that exist in navGroups
+            const groupNames = navGroups.map(g => g.name)
+            for (const name of groupNames) {
+                if (typeof parsed[name] === 'boolean') {
+                    openGroups[name] = parsed[name]
+                }
+            }
+            return true
+        }
+    } catch {}
+    return false
+}
 
 const navGroups = [
     {
@@ -553,9 +582,14 @@ function toggleAllGroups() {
     navGroups.forEach(group => {
         openGroups[group.name] = expand
     })
+    saveGroupsState()
 }
 
 function initializeGroups() {
+    // Try restoring from localStorage first
+    if (loadGroupsState()) return
+
+    // Fallback: auto-expand groups based on current route
     navGroups.forEach(group => {
         if (group.items.some(item => item.to === '/')) {
             openGroups[group.name] = route.path === '/'
@@ -565,12 +599,14 @@ function initializeGroups() {
             )
         }
     })
+    saveGroupsState()
 }
 
 initializeGroups()
 
 function toggleGroup(name) {
     openGroups[name] = !openGroups[name]
+    saveGroupsState()
 }
 
 function isActive(path) {
