@@ -129,7 +129,16 @@ import {
     UserGroupIcon,
     IdentificationIcon,
     LockOpenIcon,
-    BellIcon
+    BellIcon,
+    TruckIcon,
+    ShareIcon,
+    SwatchIcon,
+    MagnifyingGlassIcon,
+    CreditCardIcon,
+    GlobeAltIcon,
+    ShieldCheckIcon,
+    WrenchScrewdriverIcon,
+    RadioIcon
 } from '@heroicons/vue/24/outline'
 
 defineProps({
@@ -223,7 +232,23 @@ const navGroups = [
     },
     {
         name: 'System', icon: Cog6ToothIcon,
-        items: [{ name: 'Settings', to: '/settings', icon: Cog6ToothIcon }]
+        items: [
+            { name: 'General', to: '/settings/general', icon: Cog6ToothIcon },
+            { name: 'Shipping', to: '/settings/shipping', icon: TruckIcon },
+            { name: 'SEO', to: '/settings/seo', icon: MagnifyingGlassIcon },
+            { name: 'Social Media', to: '/settings/social', icon: ShareIcon },
+            { name: 'Branding', to: '/settings/branding', icon: SwatchIcon },
+            { name: 'Mail', to: '/settings/mail', icon: EnvelopeIcon },
+            { name: 'Reverb / WebSocket', to: '/settings/reverb', icon: RadioIcon },
+            { name: 'Payment Gateways', to: '/settings/payment', icon: CreditCardIcon },
+            { name: 'Tax & VAT', to: '/settings/tax', icon: TagIcon },
+            { name: 'Notifications', to: '/settings/notifications', icon: BellIcon },
+            { name: 'Customer', to: '/settings/customers', icon: UsersIcon },
+            { name: 'Legal Pages', to: '/settings/legal', icon: DocumentTextIcon },
+            { name: 'Localization', to: '/settings/localization', icon: GlobeAltIcon },
+            { name: 'Security', to: '/settings/security', icon: ShieldCheckIcon },
+            { name: 'Maintenance', to: '/settings/maintenance', icon: WrenchScrewdriverIcon },
+        ]
     }
 ]
 
