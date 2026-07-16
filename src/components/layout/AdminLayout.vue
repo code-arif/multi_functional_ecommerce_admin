@@ -11,10 +11,24 @@
                     E
                 </div>
 
-                <div v-if="sidebarOpen" class="min-w-0">
+                <div v-if="sidebarOpen" class="min-w-0 flex-1">
                     <p class="font-black text-lg leading-none">EcoAdmin</p>
                     <p class="text-[11px] text-slate-400">Super Admin</p>
                 </div>
+
+                <!-- Expand/Collapse All -->
+                <button v-if="sidebarOpen" @click="toggleAllGroups"
+                    class="p-1.5 rounded-lg hover:bg-slate-800 transition group relative"
+                    :title="allGroupsExpanded ? 'Collapse all' : 'Expand all'">
+                    <component :is="allGroupsExpanded ? ChevronDoubleUpIcon : ChevronDoubleDownIcon"
+                        class="w-4 h-4 text-slate-500 group-hover:text-slate-300 transition" />
+
+                    <!-- Tooltip -->
+                    <div
+                        class="absolute -bottom-8 right-0 px-2 py-1 bg-slate-800 text-[10px] rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap transition z-50">
+                        {{ allGroupsExpanded ? 'Collapse all' : 'Expand all' }}
+                    </div>
+                </button>
             </div>
 
             <!-- Navigation -->
@@ -315,6 +329,8 @@ import NotificationModal from '@/components/common/NotificationModal.vue'
 
 import {
     Bars3Icon,
+    ChevronDoubleUpIcon,
+    ChevronDoubleDownIcon,
     ChevronDownIcon,
     Squares2X2Icon,
     BuildingStorefrontIcon,
@@ -527,6 +543,17 @@ const navGroups = [
         items: [{ name: 'Settings', to: '/settings', icon: Cog6ToothIcon }]
     }
 ]
+
+const allGroupsExpanded = computed(() =>
+    navGroups.every(group => openGroups[group.name])
+)
+
+function toggleAllGroups() {
+    const expand = !allGroupsExpanded.value
+    navGroups.forEach(group => {
+        openGroups[group.name] = expand
+    })
+}
 
 function initializeGroups() {
     navGroups.forEach(group => {
