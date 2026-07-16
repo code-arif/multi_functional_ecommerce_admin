@@ -45,8 +45,11 @@ watch(sidebarOpen, val => {
 const isProfileModalOpen = ref(false)
 
 const notifications = ref([
-    { id: 1, title: 'New order received', message: 'Order #ORD-1234 has been placed.', isRead: false },
-    { id: 2, title: 'Low stock alert', message: 'Only 5 products left.', isRead: false },
+    { id: 1, type: 'order', title: 'New order received', message: 'Order #ORD-1234 has been placed.', isRead: false },
+    { id: 2, type: 'inventory', title: 'Low stock alert', message: 'Only 5 products left.', isRead: false },
+    { id: 3, type: 'user', title: 'New customer registered', message: 'Sarah Johnson created an account.', isRead: true },
+    { id: 4, type: 'review', title: 'New 5-star review', message: 'Product "Wireless Headphones" received a 5-star review.', isRead: false },
+    { id: 5, type: 'affiliate', title: 'Affiliate commission earned', message: 'You earned $24.50 from affiliate sales this week.', isRead: false },
 ])
 
 const unreadCount = computed(() =>

@@ -24,8 +24,26 @@
                 </div>
             </div>
 
-            <div class="max-h-[420px] overflow-y-auto divide-y divide-slate-50">
-                <div v-for="notification in notifications" :key="notification.id"
+            <!-- Filter Chips -->
+            <div class="flex items-center gap-1.5 px-4 py-2.5 border-b border-slate-100 overflow-x-auto">
+                <button v-for="tab in filterTabs" :key="tab.key" @click="activeTab = tab.key"
+                    class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all"
+                    :class="activeTab === tab.key
+                        ? 'bg-green-600 text-white shadow-sm'
+                        : 'text-slate-600 bg-slate-100 hover:bg-slate-200'">
+                    <component :is="tab.icon" class="w-3.5 h-3.5" />
+                    {{ tab.label }}
+                    <span v-if="tabUnreadCount(tab.key) > 0"
+                        class="text-[10px] px-1.5 py-0.5 rounded-full"
+                        :class="activeTab === tab.key ? 'bg-white/20 text-white' : 'bg-slate-300 text-slate-700'">
+                        {{ tabUnreadCount(tab.key) }}
+                    </span>
+                </button>
+            </div>
+
+            <!-- List -->
+            <div class="max-h-[380px] overflow-y-auto divide-y divide-slate-50">
+                <div v-for="notification in filteredNotifications" :key="notification.id"
                     class="relative flex items-start gap-3 px-5 py-3.5 hover:bg-slate-50 transition cursor-pointer group"
                     :class="{ 'bg-green-50/30': !notification.isRead }"
                     @click="!notification.isRead && handleMarkRead(notification.id)">
@@ -64,16 +82,18 @@
                 </div>
             </div>
 
-            <div v-if="!notifications.length" class="py-12 text-center">
+            <div v-if="!filteredNotifications.length" class="py-12 text-center">
                 <BellIcon class="w-10 h-10 text-slate-300 mx-auto mb-2" />
-                <p class="text-sm text-slate-400">No notifications</p>
+                <p class="text-sm text-slate-400">
+                    {{ activeTab === 'all' ? 'No notifications' : `No ${activeTab} notifications` }}
+                </p>
             </div>
         </div>
     </transition>
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { ref, computed } from 'vue'
 import {
     BellIcon,
     XMarkIcon,
@@ -93,9 +113,34 @@ const props = defineProps({
 
 const emit = defineEmits(['update:isOpen', 'markAsRead', 'markAllAsRead', 'delete'])
 
+/* ---------- Filter Tabs ---------- */
+const filterTabs = [
+    { key: 'all', label: 'All', icon: BellIcon },
+    { key: 'order', label: 'Orders', icon: ShoppingBagIcon },
+    { key: 'inventory', label: 'Inventory', icon: ExclamationTriangleIcon },
+    { key: 'user', label: 'Users', icon: UserPlusIcon },
+    { key: 'review', label: 'Reviews', icon: StarIcon },
+    { key: 'affiliate', label: 'Affiliate', icon: CurrencyDollarIcon },
+]
+
+const activeTab = ref('all')
+
+const filteredNotifications = computed(() => {
+    if (activeTab.value === 'all') return props.notifications
+    return props.notifications.filter(n => n.type === activeTab.value)
+})
+
 const unreadCount = computed(() => props.notifications.filter(n => !n.isRead).length)
 
-const close = () => emit('update:isOpen', false)
+const tabUnreadCount = (key) => {
+    if (key === 'all') return props.notifications.filter(n => !n.isRead).length
+    return props.notifications.filter(n => n.type === key && !n.isRead).length
+}
+
+const close = () => {
+    activeTab.value = 'all'
+    emit('update:isOpen', false)
+}
 const handleMarkRead = (id) => emit('markAsRead', id)
 const handleMarkAllRead = () => emit('markAllAsRead')
 const handleDelete = (id) => emit('delete', id)
