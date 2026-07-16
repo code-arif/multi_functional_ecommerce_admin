@@ -1,178 +1,16 @@
 <template>
     <div class="flex h-screen overflow-hidden bg-slate-50">
-        <!-- Sidebar -->
-        <aside :class="[
-            'fixed inset-y-0 left-0 z-50 bg-slate-900 text-white transition-all duration-300 flex flex-col lg:relative',
-            sidebarOpen ? 'w-72' : 'w-0 lg:w-20 overflow-hidden'
-        ]">
-            <!-- Logo -->
-            <div class="h-16 border-b border-white/10 flex items-center px-4 gap-3 shrink-0">
-                <div class="w-10 h-10 rounded-xl bg-green-600 flex items-center justify-center font-black shrink-0">
-                    E
-                </div>
+        <Sidebar :sidebarOpen="sidebarOpen" />
 
-                <div v-if="sidebarOpen" class="min-w-0 flex-1">
-                    <p class="font-black text-lg leading-none">EcoAdmin</p>
-                    <p class="text-[11px] text-slate-400">Super Admin</p>
-                </div>
-
-                <!-- Expand/Collapse All -->
-                <button v-if="sidebarOpen" @click="toggleAllGroups"
-                    class="p-1.5 rounded-lg hover:bg-slate-800 transition group relative"
-                    :title="allGroupsExpanded ? 'Collapse all' : 'Expand all'">
-                    <component :is="allGroupsExpanded ? ChevronDoubleUpIcon : ChevronDoubleDownIcon"
-                        class="w-4 h-4 text-slate-500 group-hover:text-slate-300 transition" />
-
-                    <!-- Tooltip -->
-                    <div
-                        class="absolute -bottom-8 right-0 px-2 py-1 bg-slate-800 text-[10px] rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap transition z-50">
-                        {{ allGroupsExpanded ? 'Collapse all' : 'Expand all' }}
-                    </div>
-                </button>
-            </div>
-
-            <!-- Navigation -->
-            <nav class="flex-1 overflow-y-auto px-3 py-4 space-y-2">
-                <div v-for="group in navGroups" :key="group.name" class="space-y-1">
-                    <!-- Group Button -->
-                    <button @click="toggleGroup(group.name)"
-                        class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-800 transition relative group">
-                        <component :is="group.icon" class="w-5 h-5 shrink-0 text-slate-300" />
-
-                        <span v-if="sidebarOpen" class="text-sm font-semibold flex-1 text-left">
-                            {{ group.name }}
-                        </span>
-
-                        <ChevronDownIcon v-if="sidebarOpen" class="w-4 h-4 transition-transform"
-                            :class="openGroups[group.name] ? 'rotate-180' : ''" />
-
-                        <!-- Tooltip -->
-                        <div v-if="!sidebarOpen"
-                            class="absolute left-full ml-3 px-2 py-1 bg-slate-800 text-xs rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap transition z-50">
-                            {{ group.name }}
-                        </div>
-                    </button>
-
-                    <!-- Children -->
-                    <transition name="slide">
-                        <div v-if="openGroups[group.name] && sidebarOpen"
-                            class="ml-4 pl-3 border-l border-slate-700 space-y-1 overflow-hidden">
-                            <router-link v-for="item in group.items" :key="item.name" :to="item.to"
-                                class="router-link-item flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition" :class="isActive(item.to)
-                                    ? 'bg-green-600 text-white'
-                                    : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-                                    ">
-                                <component :is="item.icon" class="w-4 h-4 shrink-0" />
-
-                                <span class="truncate">
-                                    {{ item.name }}
-                                </span>
-
-                                <span v-if="item.pending"
-                                    class="ml-auto text-[10px] px-1.5 py-0.5 rounded bg-amber-500 text-white font-bold">
-                                    P
-                                </span>
-                            </router-link>
-                        </div>
-                    </transition>
-                </div>
-            </nav>
-
-            <!-- User -->
-            <div class="border-t border-white/10 p-3 shrink-0">
-                <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-full bg-green-600 flex items-center justify-center font-bold shrink-0">
-                        {{ auth.userName.charAt(0).toUpperCase() }}
-                    </div>
-
-                    <div v-if="sidebarOpen" class="flex-1 min-w-0">
-                        <p class="text-sm font-semibold truncate">
-                            {{ auth.userName }}
-                        </p>
-                        <p class="text-xs text-slate-400 truncate">
-                            {{ auth.userEmail }}
-                        </p>
-                    </div>
-
-                </div>
-            </div>
-        </aside>
-
-        <!-- Mobile Overlay -->
         <div v-if="sidebarOpen" @click="sidebarOpen = false" class="fixed inset-0 bg-black/40 z-40 lg:hidden" />
 
-        <!-- Content -->
         <div class="flex-1 min-w-0 flex flex-col overflow-hidden">
-            <!-- Header -->
-            <header class="h-16 bg-white border-b border-slate-200 flex items-center px-4 lg:px-6 gap-4 shrink-0">
-                <!-- Toggle -->
-                <button @click="sidebarOpen = !sidebarOpen" class="p-2 rounded-lg hover:bg-slate-100 transition">
-                    <Bars3Icon class="w-5 h-5 text-slate-700" />
-                </button>
+            <Navbar
+                :unreadCount="unreadCount"
+                @toggle-sidebar="sidebarOpen = !sidebarOpen"
+                @open-notification="isNotificationModalOpen = true"
+            />
 
-                <!-- Page Title -->
-                <div>
-                    <h1 class="font-bold text-slate-800">
-                        {{ currentPageTitle }}
-                    </h1>
-                </div>
-
-                <!-- Right -->
-                <div class="ml-auto flex items-center gap-2">
-                    <!-- Notification -->
-                    <button @click="openNotificationModal"
-                        class="relative p-2 rounded-lg hover:bg-slate-100 transition">
-                        <BellIcon class="w-5 h-5 text-slate-700" />
-
-                        <span v-if="unreadCount > 0"
-                            class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-red-500" />
-                    </button>
-
-                    <!-- View Store -->
-                    <a :href="storeUrl" target="_blank"
-                        class="hidden sm:flex items-center gap-1.5 text-xs font-semibold text-green-700 border border-green-600 px-3 py-2 rounded-lg hover:bg-green-50 transition">
-                        <ArrowTopRightOnSquareIcon class="w-4 h-4" />
-                        View Store
-                    </a>
-
-                    <!-- Admin Profile Dropdown -->
-                    <div class="relative" ref="profileDropdownRef">
-                        <button @click="toggleProfileDropdown"
-                            class="relative rounded-full overflow-hidden ring-2 transition shrink-0"
-                            :class="isProfileDropdownOpen ? 'ring-green-500' : 'ring-slate-200 hover:ring-green-500'">
-                            <img src="https://i.pravatar.cc/100?img=12" alt="Admin" class="w-10 h-10 object-cover" />
-                        </button>
-
-                        <!-- Dropdown Menu -->
-                        <transition name="dropdown">
-                            <div v-if="isProfileDropdownOpen"
-                                class="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-slate-200 py-1 z-[80] overflow-hidden">
-                                <!-- User Info Header -->
-                                <div class="px-4 py-3 border-b border-slate-100">
-                                    <p class="text-sm font-semibold text-slate-800 truncate">{{ auth.userName }}</p>
-                                    <p class="text-xs text-slate-500 truncate">{{ auth.userEmail }}</p>
-                                </div>
-
-                                <!-- Profile -->
-                                <button @click="openProfileFromDropdown"
-                                    class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition">
-                                    <UserIcon class="w-4 h-4" />
-                                    Profile
-                                </button>
-
-                                <!-- Logout -->
-                                <button @click="auth.logout()"
-                                    class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition border-t border-slate-100">
-                                    <ArrowRightOnRectangleIcon class="w-4 h-4" />
-                                    Logout
-                                </button>
-                            </div>
-                        </transition>
-                    </div>
-                </div>
-            </header>
-
-            <!-- Main -->
             <main class="flex-1 overflow-y-auto p-4 lg:p-6">
                 <router-view v-slot="{ Component }">
                     <transition name="fade" mode="out-in">
@@ -183,184 +21,78 @@
         </div>
     </div>
 
-    <!-- Notification Modal -->
-    <NotificationModal v-model:isOpen="isNotificationModalOpen" :notifications="notifications"
-        @mark-as-read="markAsRead" @mark-all-as-read="markAllAsRead" @delete="deleteNotification"
-        @delete-selected="deleteSelectedNotifications" />
+    <NotificationModal
+        v-model:isOpen="isNotificationModalOpen"
+        :notifications="notifications"
+        @mark-as-read="markAsRead"
+        @mark-all-as-read="markAllAsRead"
+        @delete="deleteNotification"
+        @delete-selected="deleteSelectedNotifications"
+    />
 
-    <!-- ===========================
-ADD THIS BELOW NOTIFICATION MODAL
-=========================== -->
-
-    <!-- Profile Modal -->
     <div v-if="isProfileModalOpen" class="fixed inset-0 z-[70] flex items-center justify-center bg-black/50 px-4">
-
         <div class="w-full max-w-2xl bg-white rounded-2xl shadow-2xl overflow-hidden animate-fadeIn">
-
-            <!-- Header -->
             <div class="flex items-center justify-between px-6 py-4 border-b border-slate-200">
                 <div>
                     <h2 class="text-lg font-bold text-slate-800">Update Profile</h2>
                     <p class="text-xs text-slate-500">Manage admin account information</p>
                 </div>
-
                 <button @click="isProfileModalOpen = false"
-                    class="w-9 h-9 rounded-xl hover:bg-slate-100 flex items-center justify-center text-slate-600 text-xl">
-                    ×
-                </button>
+                    class="w-9 h-9 rounded-xl hover:bg-slate-100 flex items-center justify-center text-slate-600 text-xl">&times;</button>
             </div>
-
-            <!-- Body -->
             <div class="p-6 space-y-6 max-h-[80vh] overflow-y-auto">
-
-                <!-- Avatar -->
                 <div class="flex items-center gap-4">
-                    <img src="https://i.pravatar.cc/100?img=12"
-                        class="w-20 h-20 rounded-full object-cover ring-4 ring-slate-100" />
-
+                    <img src="https://i.pravatar.cc/100?img=12" class="w-20 h-20 rounded-full object-cover ring-4 ring-slate-100" />
                     <div>
-                        <button
-                            class="px-4 py-2 rounded-xl bg-green-600 text-white text-sm font-semibold hover:bg-green-700 transition">
-                            Change Photo
-                        </button>
-
-                        <p class="text-xs text-slate-500 mt-2">
-                            JPG, PNG up to 2MB
-                        </p>
+                        <button class="px-4 py-2 rounded-xl bg-green-600 text-white text-sm font-semibold hover:bg-green-700 transition">Change Photo</button>
+                        <p class="text-xs text-slate-500 mt-2">JPG, PNG up to 2MB</p>
                     </div>
                 </div>
-
-                <!-- Form Grid -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-
-                    <!-- Name -->
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-2">
-                            Full Name
-                        </label>
-
-                        <input type="text" value="Eco Admin"
-                            class="w-full rounded-xl border border-slate-300 px-4 py-3 focus:ring-2 focus:ring-green-500 outline-none" />
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">Full Name</label>
+                        <input type="text" value="Eco Admin" class="w-full rounded-xl border border-slate-300 px-4 py-3 focus:ring-2 focus:ring-green-500 outline-none" />
                     </div>
-
-                    <!-- Email -->
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-2">
-                            Email
-                        </label>
-
-                        <input type="email" value="admin@eco.com"
-                            class="w-full rounded-xl border border-slate-300 px-4 py-3 focus:ring-2 focus:ring-green-500 outline-none" />
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">Email</label>
+                        <input type="email" value="admin@eco.com" class="w-full rounded-xl border border-slate-300 px-4 py-3 focus:ring-2 focus:ring-green-500 outline-none" />
                     </div>
-
-                    <!-- Phone -->
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-2">
-                            Phone
-                        </label>
-
-                        <input type="text" value="+8801700000000"
-                            class="w-full rounded-xl border border-slate-300 px-4 py-3 focus:ring-2 focus:ring-green-500 outline-none" />
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">Phone</label>
+                        <input type="text" value="+8801700000000" class="w-full rounded-xl border border-slate-300 px-4 py-3 focus:ring-2 focus:ring-green-500 outline-none" />
                     </div>
-
-                    <!-- Status -->
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-2">
-                            Status
-                        </label>
-
-                        <select
-                            class="w-full rounded-xl border border-slate-300 px-4 py-3 focus:ring-2 focus:ring-green-500 outline-none">
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">Status</label>
+                        <select class="w-full rounded-xl border border-slate-300 px-4 py-3 focus:ring-2 focus:ring-green-500 outline-none">
                             <option>active</option>
                             <option>inactive</option>
                             <option>banned</option>
                         </select>
                     </div>
-
-                    <!-- Password -->
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-2">
-                            New Password
-                        </label>
-
-                        <input type="password" placeholder="••••••••"
-                            class="w-full rounded-xl border border-slate-300 px-4 py-3 focus:ring-2 focus:ring-green-500 outline-none" />
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">New Password</label>
+                        <input type="password" placeholder="••••••••" class="w-full rounded-xl border border-slate-300 px-4 py-3 focus:ring-2 focus:ring-green-500 outline-none" />
                     </div>
-
-                    <!-- Confirm Password -->
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-2">
-                            Confirm Password
-                        </label>
-
-                        <input type="password" placeholder="••••••••"
-                            class="w-full rounded-xl border border-slate-300 px-4 py-3 focus:ring-2 focus:ring-green-500 outline-none" />
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">Confirm Password</label>
+                        <input type="password" placeholder="••••••••" class="w-full rounded-xl border border-slate-300 px-4 py-3 focus:ring-2 focus:ring-green-500 outline-none" />
                     </div>
                 </div>
-
-                <!-- Verified -->
-                <div
-                    class="rounded-xl bg-green-50 border border-green-100 px-4 py-3 text-sm text-green-700 font-medium">
-                    Email Verified ✔
-                </div>
+                <div class="rounded-xl bg-green-50 border border-green-100 px-4 py-3 text-sm text-green-700 font-medium">Email Verified &#10003;</div>
             </div>
-
-            <!-- Footer -->
             <div class="px-6 py-4 border-t border-slate-200 flex justify-end gap-3">
-                <button @click="isProfileModalOpen = false"
-                    class="px-5 py-2.5 rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-50 transition">
-                    Cancel
-                </button>
-
-                <button
-                    class="px-5 py-2.5 rounded-xl bg-green-600 text-white font-semibold hover:bg-green-700 transition">
-                    Save Changes
-                </button>
+                <button @click="isProfileModalOpen = false" class="px-5 py-2.5 rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-50 transition">Cancel</button>
+                <button class="px-5 py-2.5 rounded-xl bg-green-600 text-white font-semibold hover:bg-green-700 transition">Save Changes</button>
             </div>
         </div>
     </div>
 </template>
 
 <script setup>
-import { ref, reactive, computed, watch, onMounted, onUnmounted } from 'vue'
-import { useRoute } from 'vue-router'
-import { useAuthStore } from '@/stores/auth'
+import { ref, computed, watch } from 'vue'
+import Sidebar from '@/components/layout/Sidebar.vue'
+import Navbar from '@/components/layout/Navbar.vue'
 import NotificationModal from '@/components/common/NotificationModal.vue'
-
-import {
-    Bars3Icon,
-    ChevronDoubleUpIcon,
-    ChevronDoubleDownIcon,
-    ChevronDownIcon,
-    Squares2X2Icon,
-    BuildingStorefrontIcon,
-    ShoppingBagIcon,
-    ClipboardDocumentListIcon,
-    BanknotesIcon,
-    MegaphoneIcon,
-    UsersIcon,
-    DocumentTextIcon,
-    ChartBarIcon,
-    Cog6ToothIcon,
-    TicketIcon,
-    TagIcon,
-    StarIcon,
-    BellIcon,
-    UserIcon,
-    ArrowRightOnRectangleIcon,
-    ArrowTopRightOnSquareIcon,
-    LinkIcon,
-    PhotoIcon,
-    HomeModernIcon,
-    ChatBubbleLeftRightIcon,
-    EnvelopeIcon,
-    UserGroupIcon,
-    IdentificationIcon,
-    LockOpenIcon 
-} from '@heroicons/vue/24/outline'
-
-const route = useRoute()
-const auth = useAuthStore()
 
 const SIDEBAR_STATE_KEY = 'sidebar_open_state'
 const sidebarOpen = ref(localStorage.getItem(SIDEBAR_STATE_KEY) !== 'false')
@@ -369,36 +101,18 @@ watch(sidebarOpen, val => {
     localStorage.setItem(SIDEBAR_STATE_KEY, val)
 })
 
-const storeUrl = import.meta.env.VITE_STORE_URL || 'http://localhost:3000'
-
-/* -----------------------------
-   Notification Old Features Keep
-------------------------------*/
+/* ---------- Notifications ---------- */
 const isNotificationModalOpen = ref(false)
 const isProfileModalOpen = ref(false)
 
 const notifications = ref([
-    {
-        id: 1,
-        title: 'New order received',
-        message: 'Order #ORD-1234 has been placed.',
-        isRead: false
-    },
-    {
-        id: 2,
-        title: 'Low stock alert',
-        message: 'Only 5 products left.',
-        isRead: false
-    },
+    { id: 1, title: 'New order received', message: 'Order #ORD-1234 has been placed.', isRead: false },
+    { id: 2, title: 'Low stock alert', message: 'Only 5 products left.', isRead: false },
 ])
 
 const unreadCount = computed(() =>
     notifications.value.filter(n => !n.isRead).length
 )
-
-const openNotificationModal = () => {
-    isNotificationModalOpen.value = true
-}
 
 const markAsRead = id => {
     const item = notifications.value.find(n => n.id === id)
@@ -414,217 +128,8 @@ const deleteNotification = id => {
 }
 
 const deleteSelectedNotifications = ids => {
-    notifications.value = notifications.value.filter(
-        n => !ids.includes(n.id)
-    )
+    notifications.value = notifications.value.filter(n => !ids.includes(n.id))
 }
-
-/* -----------------------------
-   Profile Dropdown
-------------------------------*/
-const isProfileDropdownOpen = ref(false)
-const profileDropdownRef = ref(null)
-
-function toggleProfileDropdown() {
-    isProfileDropdownOpen.value = !isProfileDropdownOpen.value
-}
-
-function openProfileFromDropdown() {
-    isProfileDropdownOpen.value = false
-    isProfileModalOpen.value = true
-}
-
-function handleClickOutside(event) {
-    if (profileDropdownRef.value && !profileDropdownRef.value.contains(event.target)) {
-        isProfileDropdownOpen.value = false
-    }
-}
-
-onMounted(() => {
-    document.addEventListener('click', handleClickOutside)
-})
-
-onUnmounted(() => {
-    document.removeEventListener('click', handleClickOutside)
-})
-
-/* -----------------------------
-   Sidebar New Navigation
-------------------------------*/
-const STORAGE_KEY = 'sidebar_groups_state'
-const openGroups = reactive({})
-
-function saveGroupsState() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(openGroups))
-}
-
-function loadGroupsState() {
-    try {
-        const saved = localStorage.getItem(STORAGE_KEY)
-        if (saved) {
-            const parsed = JSON.parse(saved)
-            // Only restore groups that exist in navGroups
-            const groupNames = navGroups.map(g => g.name)
-            for (const name of groupNames) {
-                if (typeof parsed[name] === 'boolean') {
-                    openGroups[name] = parsed[name]
-                }
-            }
-            return true
-        }
-    } catch {}
-    return false
-}
-
-const navGroups = [
-    {
-        name: 'Dashboard',
-        icon: Squares2X2Icon,
-        items: [{ name: 'Overview', to: '/', icon: Squares2X2Icon }]
-    },
-    {
-        name: 'Marketplace',
-        icon: BuildingStorefrontIcon,
-        items: [
-            { name: 'All Vendors', to: '/vendors', icon: BuildingStorefrontIcon, pending: true },
-            { name: 'Pending Approval Vendors', to: '/vendors/pending', icon: ClipboardDocumentListIcon, pending: true },
-            { name: 'All Shops', to: '/shops', icon: HomeModernIcon, pending: true },
-            { name: 'Pending Approval Shops', to: '/shops/pending', icon: ClipboardDocumentListIcon, pending: true }
-        ]
-    },
-    {
-        name: 'Catalog',
-        icon: ShoppingBagIcon,
-        items: [
-            { name: 'Products', to: '/products', icon: ShoppingBagIcon },
-            { name: 'Categories', to: '/categories', icon: TagIcon },
-            { name: 'Brands', to: '/brands', icon: StarIcon },
-            { name: 'Coupons', to: '/coupons', icon: TicketIcon },
-            { name: 'Affiliate', to: '/affiliate', icon: LinkIcon },
-        ]
-    },
-    {
-        name: 'Orders',
-        icon: ClipboardDocumentListIcon,
-        items: [
-            { name: 'All Orders', to: '/orders', icon: ClipboardDocumentListIcon },
-            { name: 'Transactions', to: '/transactions', icon: BanknotesIcon, pending: true },
-            // { name: 'Shipping Methods', to: '/shipping-methods', icon: TruckIcon, pending: true },
-
-        ]
-    },
-    {
-        name: 'Marketing',
-        icon: MegaphoneIcon,
-        items: [
-            { name: 'Campaigns', to: '/campaigns', icon: MegaphoneIcon, pending: true },
-            { name: 'Reviews', to: '/reviews', icon: StarIcon }
-        ]
-    },
-    {
-        name: 'Users',
-        icon: UsersIcon,
-        items: [
-            { name: 'Customers', to: '/users', icon: UsersIcon },
-            { name: 'Admins', to: '/admins', icon: UserGroupIcon, pending: true },
-            { name: 'Roles', to: '/roles', icon: IdentificationIcon, pending: true },
-            { name: 'Permissions', to: '/permissions', icon: LockOpenIcon, pending: true },
-        ]
-    },
-    {
-        name: 'Content',
-        icon: DocumentTextIcon,
-        items: [
-            { name: 'CMS Pages', to: '/cms', icon: DocumentTextIcon },
-            { name: 'Banners', to: '/banners', icon: PhotoIcon },
-        ]
-    },
-    {
-        name: 'Reports',
-        icon: ChartBarIcon,
-        items: [
-            { name: 'Sales Reports', to: '/reports', icon: ChartBarIcon },
-            { name: 'Customer Reports', to: '/reports/customer', icon: UsersIcon, pending: true },
-            { name: 'Product Reports', to: '/reports/product', icon: ShoppingBagIcon, pending: true },
-            { name: 'Vendor Reports', to: '/reports/vendor', icon: BuildingStorefrontIcon, pending: true },
-            { name: 'Shop Reports', to: '/reports/shop', icon: HomeModernIcon, pending: true },
-            { name: 'Affiliate Reports', to: '/reports/affiliate', icon: LinkIcon, pending: true },
-            { name: 'Coupon Reports', to: '/reports/coupon', icon: TicketIcon, pending: true },
-            { name: 'Campaign Reports', to: '/reports/campaign', icon: MegaphoneIcon, pending: true },
-            { name: 'Review Reports', to: '/reports/review', icon: StarIcon, pending: true },
-            { name: 'Notification Reports', to: '/reports/notification', icon: BellIcon, pending: true },
-            { name: 'Email Reports', to: '/reports/email', icon: EnvelopeIcon, pending: true },
-            { name: 'System Reports', to: '/reports/system', icon: Cog6ToothIcon, pending: true },
-        ]
-    },
-    {
-        name: 'Messages',
-        icon: ChatBubbleLeftRightIcon,
-        items: [
-            { name: 'Chat', to: '/messages', icon: ChatBubbleLeftRightIcon, pending: true },
-            { name: 'Notifications', to: '/notifications', icon: BellIcon, pending: true },
-            { name: 'Emails', to: '/emails', icon: EnvelopeIcon, pending: true },
-        ]
-    },
-    {
-        name: 'System',
-        icon: Cog6ToothIcon,
-        items: [{ name: 'Settings', to: '/settings', icon: Cog6ToothIcon }]
-    }
-]
-
-const allGroupsExpanded = computed(() =>
-    navGroups.every(group => openGroups[group.name])
-)
-
-function toggleAllGroups() {
-    const expand = !allGroupsExpanded.value
-    navGroups.forEach(group => {
-        openGroups[group.name] = expand
-    })
-    saveGroupsState()
-}
-
-function initializeGroups() {
-    // Try restoring from localStorage first
-    if (loadGroupsState()) return
-
-    // Fallback: auto-expand groups based on current route
-    navGroups.forEach(group => {
-        if (group.items.some(item => item.to === '/')) {
-            openGroups[group.name] = route.path === '/'
-        } else {
-            openGroups[group.name] = group.items.some(item =>
-                route.path.startsWith(item.to)
-            )
-        }
-    })
-    saveGroupsState()
-}
-
-initializeGroups()
-
-function toggleGroup(name) {
-    openGroups[name] = !openGroups[name]
-    saveGroupsState()
-}
-
-function isActive(path) {
-    if (path === '/') return route.path === '/'
-    return route.path.startsWith(path)
-}
-
-const currentPageTitle = computed(() => {
-    const path = route.path
-
-    for (const group of navGroups) {
-        for (const item of group.items) {
-            if (path.startsWith(item.to)) return item.name
-        }
-    }
-
-    return 'Dashboard'
-})
 </script>
 
 <style scoped>
@@ -638,104 +143,12 @@ const currentPageTitle = computed(() => {
     opacity: 0;
 }
 
-.slide-enter-active {
-    transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
-    overflow: hidden;
-}
-
-.slide-leave-active {
-    transition: max-height 0.2s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.15s ease;
-    overflow: hidden;
-}
-
-.slide-enter-from,
-.slide-leave-to {
-    opacity: 0;
-    max-height: 0;
-}
-
-.slide-enter-to,
-.slide-leave-from {
-    opacity: 1;
-    max-height: 500px;
-}
-
-/* Staggered children slide in */
-.slide-enter-active .router-link-item {
-    animation: slideInChild 0.3s cubic-bezier(0.4, 0, 0.2, 1) both;
-}
-
-.slide-leave-active .router-link-item {
-    animation: slideOutChild 0.15s ease both;
-}
-
-.router-link-item:nth-child(1) { animation-delay: 0ms; }
-.router-link-item:nth-child(2) { animation-delay: 20ms; }
-.router-link-item:nth-child(3) { animation-delay: 40ms; }
-.router-link-item:nth-child(4) { animation-delay: 60ms; }
-.router-link-item:nth-child(5) { animation-delay: 80ms; }
-.router-link-item:nth-child(6) { animation-delay: 100ms; }
-.router-link-item:nth-child(7) { animation-delay: 120ms; }
-.router-link-item:nth-child(8) { animation-delay: 140ms; }
-.router-link-item:nth-child(9) { animation-delay: 160ms; }
-.router-link-item:nth-child(10) { animation-delay: 180ms; }
-.router-link-item:nth-child(11) { animation-delay: 200ms; }
-.router-link-item:nth-child(12) { animation-delay: 220ms; }
-
-@keyframes slideInChild {
-    from {
-        opacity: 0;
-        transform: translateX(-12px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-@keyframes slideOutChild {
-    from {
-        opacity: 1;
-        transform: translateX(0);
-    }
-    to {
-        opacity: 0;
-        transform: translateX(-8px);
-    }
-}
-
 .animate-fadeIn {
     animation: fadeIn 0.18s ease;
 }
 
 @keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: scale(.96);
-    }
-
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-/* Dropdown transition */
-.dropdown-enter-active {
-    transition: all 0.18s ease-out;
-}
-
-.dropdown-leave-active {
-    transition: all 0.12s ease-in;
-}
-
-.dropdown-enter-from {
-    opacity: 0;
-    transform: translateY(-6px) scale(.96);
-}
-
-.dropdown-leave-to {
-    opacity: 0;
-    transform: translateY(-4px) scale(.96);
+    from { opacity: 0; transform: scale(.96); }
+    to { opacity: 1; transform: scale(1); }
 }
 </style>
