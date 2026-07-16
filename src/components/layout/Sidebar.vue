@@ -28,58 +28,93 @@
             </button>
         </div>
 
+        <!-- Search -->
+        <div v-if="sidebarOpen" class="px-3 pt-3 pb-1 shrink-0">
+            <div class="relative">
+                <MagnifyingGlassIcon class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none" />
+                <input v-model="searchQuery" type="text" placeholder="Search pages..."
+                    class="w-full bg-slate-800 border border-slate-700 rounded-lg pl-9 pr-8 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:border-green-500 transition"
+                    @keydown.escape="searchQuery = ''" />
+                <button v-if="searchQuery" @click="searchQuery = ''"
+                    class="absolute right-2 top-1/2 -translate-y-1/2 p-0.5 rounded text-slate-500 hover:text-slate-300 hover:bg-slate-700 transition">
+                    <XMarkIcon class="w-3.5 h-3.5" />
+                </button>
+            </div>
+        </div>
+
         <!-- Navigation -->
-        <nav class="flex-1 overflow-y-auto px-3 py-4 space-y-2">
-            <template v-for="group in navGroups" :key="group.name">
-                <!-- Direct Link (e.g. Dashboard) -->
-                <router-link v-if="group.direct" :to="group.to"
-                    class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition relative group"
-                    :class="isActive(group.to) ? 'bg-green-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white'">
-                    <component :is="group.icon" class="w-5 h-5 shrink-0" />
-                    <span v-if="sidebarOpen" class="text-sm font-semibold flex-1 text-left">{{ group.name }}</span>
-                    <div v-if="!sidebarOpen"
-                        class="absolute left-full ml-3 px-2 py-1 bg-slate-800 text-xs rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap transition z-50">
-                        {{ group.name }}
-                    </div>
-                </router-link>
+        <nav class="flex-1 overflow-y-auto px-3 py-3 space-y-2">
+            <!-- Search Results (flat list) -->
+            <template v-if="searchQuery && sidebarOpen">
+                <div v-for="item in searchResults" :key="item.to" class="space-y-1">
+                    <router-link :to="item.to" @click="searchQuery = ''"
+                        class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition"
+                        :class="isActive(item.to)
+                            ? 'bg-green-600 text-white'
+                            : 'text-slate-300 hover:bg-slate-800 hover:text-white'">
+                        <component :is="item.icon" class="w-4 h-4 shrink-0" />
+                        <span class="truncate flex-1">{{ item.name }}</span>
+                        <span class="text-[10px] text-slate-500 shrink-0">{{ item.group }}</span>
+                    </router-link>
+                </div>
+                <div v-if="!searchResults.length" class="text-center py-8 text-xs text-slate-500">
+                    No results for "{{ searchQuery }}"
+                </div>
+            </template>
 
-                <!-- Dropdown Group -->
-                <div v-else class="space-y-1">
-                    <button @click="toggleGroup(group.name)"
-                        class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-800 transition relative group">
-                        <component :is="group.icon" class="w-5 h-5 shrink-0 text-slate-300" />
-
-                        <span v-if="sidebarOpen" class="text-sm font-semibold flex-1 text-left">
-                            {{ group.name }}
-                        </span>
-
-                        <ChevronDownIcon v-if="sidebarOpen" class="w-4 h-4 transition-transform"
-                            :class="openGroups[group.name] ? 'rotate-180' : ''" />
-
+            <!-- Normal Navigation (hidden when searching) -->
+            <template v-else>
+                <template v-for="group in navGroups" :key="group.name">
+                    <!-- Direct Link (e.g. Dashboard) -->
+                    <router-link v-if="group.direct" :to="group.to"
+                        class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition relative group"
+                        :class="isActive(group.to) ? 'bg-green-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white'">
+                        <component :is="group.icon" class="w-5 h-5 shrink-0" />
+                        <span v-if="sidebarOpen" class="text-sm font-semibold flex-1 text-left">{{ group.name }}</span>
                         <div v-if="!sidebarOpen"
                             class="absolute left-full ml-3 px-2 py-1 bg-slate-800 text-xs rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap transition z-50">
                             {{ group.name }}
                         </div>
-                    </button>
+                    </router-link>
 
-                    <transition name="slide">
-                        <div v-if="openGroups[group.name] && sidebarOpen"
-                            class="ml-4 pl-3 border-l border-slate-700 space-y-1 overflow-hidden">
-                            <router-link v-for="item in group.items" :key="item.name" :to="item.to"
-                                class="router-link-item flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition"
-                                :class="isActive(item.to)
-                                    ? 'bg-green-600 text-white'
-                                    : 'text-slate-300 hover:bg-slate-800 hover:text-white'">
-                                <component :is="item.icon" class="w-4 h-4 shrink-0" />
-                                <span class="truncate">{{ item.name }}</span>
-                                <span v-if="item.pending"
-                                    class="ml-auto text-[10px] px-1.5 py-0.5 rounded bg-amber-500 text-white font-bold">
-                                    P
-                                </span>
-                            </router-link>
-                        </div>
-                    </transition>
-                </div>
+                    <!-- Dropdown Group -->
+                    <div v-else class="space-y-1">
+                        <button @click="toggleGroup(group.name)"
+                            class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-800 transition relative group">
+                            <component :is="group.icon" class="w-5 h-5 shrink-0 text-slate-300" />
+
+                            <span v-if="sidebarOpen" class="text-sm font-semibold flex-1 text-left">
+                                {{ group.name }}
+                            </span>
+
+                            <ChevronDownIcon v-if="sidebarOpen" class="w-4 h-4 transition-transform"
+                                :class="openGroups[group.name] ? 'rotate-180' : ''" />
+
+                            <div v-if="!sidebarOpen"
+                                class="absolute left-full ml-3 px-2 py-1 bg-slate-800 text-xs rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap transition z-50">
+                                {{ group.name }}
+                            </div>
+                        </button>
+
+                        <transition name="slide">
+                            <div v-if="openGroups[group.name] && sidebarOpen"
+                                class="ml-4 pl-3 border-l border-slate-700 space-y-1 overflow-hidden">
+                                <router-link v-for="item in group.items" :key="item.name" :to="item.to"
+                                    class="router-link-item flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition"
+                                    :class="isActive(item.to)
+                                        ? 'bg-green-600 text-white'
+                                        : 'text-slate-300 hover:bg-slate-800 hover:text-white'">
+                                    <component :is="item.icon" class="w-4 h-4 shrink-0" />
+                                    <span class="truncate">{{ item.name }}</span>
+                                    <span v-if="item.pending"
+                                        class="ml-auto text-[10px] px-1.5 py-0.5 rounded bg-amber-500 text-white font-bold">
+                                        P
+                                    </span>
+                                </router-link>
+                            </div>
+                        </transition>
+                    </div>
+                </template>
             </template>
         </nav>
 
@@ -108,6 +143,7 @@ import {
     ChevronDoubleUpIcon,
     ChevronDoubleDownIcon,
     ChevronDownIcon,
+    XMarkIcon,
     Squares2X2Icon,
     BuildingStorefrontIcon,
     ShoppingBagIcon,
@@ -251,6 +287,29 @@ const navGroups = [
         ]
     }
 ]
+
+/* ---------- Search ---------- */
+const searchQuery = ref('')
+
+const searchResults = computed(() => {
+    const q = searchQuery.value.toLowerCase().trim()
+    if (!q) return []
+    const results = []
+    for (const group of navGroups) {
+        if (group.direct) {
+            if (group.name.toLowerCase().includes(q)) {
+                results.push({ ...group, group: '' })
+            }
+        } else {
+            for (const item of group.items) {
+                if (item.name.toLowerCase().includes(q)) {
+                    results.push({ ...item, group: group.name })
+                }
+            }
+        }
+    }
+    return results
+})
 
 const allGroupsExpanded = computed(() =>
     navGroups.filter(g => !g.direct).every(group => openGroups[group.name])
