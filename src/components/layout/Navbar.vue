@@ -13,11 +13,21 @@
         <!-- Right -->
         <div class="ml-auto flex items-center gap-2">
             <!-- Notification -->
-            <button @click="$emit('open-notification')"
-                class="relative p-2 rounded-lg hover:bg-slate-100 transition">
-                <BellIcon class="w-5 h-5 text-slate-700" />
-                <span v-if="unreadCount > 0" class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-red-500" />
-            </button>
+            <div class="relative" ref="notificationRef">
+                <button @click="toggleNotification"
+                    class="relative p-2 rounded-lg hover:bg-slate-100 transition">
+                    <BellIcon class="w-5 h-5 text-slate-700" />
+                    <span v-if="unreadCount > 0" class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-red-500" />
+                </button>
+
+                <NotificationModal
+                    v-model:isOpen="isNotificationOpen"
+                    :notifications="notifications"
+                    @mark-as-read="id => emit('markAsRead', id)"
+                    @mark-all-as-read="emit('markAllAsRead')"
+                    @delete="id => emit('deleteNotification', id)"
+                />
+            </div>
 
             <!-- Admin Profile Dropdown -->
             <div class="relative" ref="profileDropdownRef">
@@ -71,17 +81,28 @@ import {
     UserIcon,
     ArrowRightOnRectangleIcon
 } from '@heroicons/vue/24/outline'
+import NotificationModal from '@/components/common/NotificationModal.vue'
 
 defineProps({
-    unreadCount: { type: Number, default: 0 }
+    unreadCount: { type: Number, default: 0 },
+    notifications: { type: Array, default: () => [] }
 })
 
-const emit = defineEmits(['toggle-sidebar', 'open-notification', 'open-profile'])
+const emit = defineEmits(['toggle-sidebar', 'open-notification', 'open-profile', 'markAsRead', 'markAllAsRead', 'deleteNotification'])
 
 const route = useRoute()
 const auth = useAuthStore()
 
 const storeUrl = import.meta.env.VITE_STORE_URL || 'http://localhost:3000'
+
+/* ---------- Notification Panel ---------- */
+const isNotificationOpen = ref(false)
+const notificationRef = ref(null)
+
+function toggleNotification() {
+    isNotificationOpen.value = !isNotificationOpen.value
+    if (isNotificationOpen.value) isProfileDropdownOpen.value = false
+}
 
 /* ---------- Profile Dropdown ---------- */
 const isProfileDropdownOpen = ref(false)
@@ -89,6 +110,7 @@ const profileDropdownRef = ref(null)
 
 function toggleProfileDropdown() {
     isProfileDropdownOpen.value = !isProfileDropdownOpen.value
+    if (isProfileDropdownOpen.value) isNotificationOpen.value = false
 }
 
 function openProfile() {
@@ -99,6 +121,9 @@ function openProfile() {
 function handleClickOutside(event) {
     if (profileDropdownRef.value && !profileDropdownRef.value.contains(event.target)) {
         isProfileDropdownOpen.value = false
+    }
+    if (notificationRef.value && !notificationRef.value.contains(event.target)) {
+        isNotificationOpen.value = false
     }
 }
 

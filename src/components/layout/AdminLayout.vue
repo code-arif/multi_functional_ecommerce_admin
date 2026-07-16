@@ -7,9 +7,12 @@
         <div class="flex-1 min-w-0 flex flex-col overflow-hidden">
             <Navbar
                 :unreadCount="unreadCount"
+                :notifications="notifications"
                 @toggle-sidebar="sidebarOpen = !sidebarOpen"
-                @open-notification="isNotificationModalOpen = true"
                 @open-profile="isProfileModalOpen = true"
+                @mark-as-read="markAsRead"
+                @mark-all-as-read="markAllAsRead"
+                @delete-notification="deleteNotification"
             />
 
             <main class="flex-1 overflow-y-auto p-4 lg:p-6">
@@ -22,15 +25,6 @@
         </div>
     </div>
 
-    <NotificationModal
-        v-model:isOpen="isNotificationModalOpen"
-        :notifications="notifications"
-        @mark-as-read="markAsRead"
-        @mark-all-as-read="markAllAsRead"
-        @delete="deleteNotification"
-        @delete-selected="deleteSelectedNotifications"
-    />
-
     <ProfileModal v-model="isProfileModalOpen" />
 </template>
 
@@ -38,7 +32,6 @@
 import { ref, computed, watch } from 'vue'
 import Sidebar from '@/components/layout/Sidebar.vue'
 import Navbar from '@/components/layout/Navbar.vue'
-import NotificationModal from '@/components/common/NotificationModal.vue'
 import ProfileModal from '@/components/common/ProfileModal.vue'
 
 const SIDEBAR_STATE_KEY = 'sidebar_open_state'
@@ -49,7 +42,6 @@ watch(sidebarOpen, val => {
 })
 
 /* ---------- Notifications ---------- */
-const isNotificationModalOpen = ref(false)
 const isProfileModalOpen = ref(false)
 
 const notifications = ref([
@@ -72,10 +64,6 @@ const markAllAsRead = () => {
 
 const deleteNotification = id => {
     notifications.value = notifications.value.filter(n => n.id !== id)
-}
-
-const deleteSelectedNotifications = ids => {
-    notifications.value = notifications.value.filter(n => !ids.includes(n.id))
 }
 </script>
 
