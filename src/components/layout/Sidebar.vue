@@ -263,7 +263,7 @@ const navGroups = [
         items: [
             { name: 'Chat', to: '/messages', icon: ChatBubbleLeftRightIcon, pending: true },
             { name: 'Notifications', to: '/notifications', icon: BellIcon, pending: true },
-            { name: 'Emails', to: '/emails', icon: EnvelopeIcon, pending: true },
+            { name: 'Emails', to: '/emails', icon: EnvelopeIcon },
         ]
     },
     {

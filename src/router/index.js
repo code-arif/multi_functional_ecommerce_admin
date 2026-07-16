@@ -44,6 +44,9 @@ import CmsPage from "@/pages/cms/CmsPage.vue";
 // Banners
 import BannersPage from "@/pages/banners/BannersPage.vue";
 
+// Emails
+import EmailsPage from "@/pages/emails/EmailsPage.vue";
+
 // Reports
 import ReportsPage from "@/pages/reports/ReportsPage.vue";
 
@@ -178,6 +181,13 @@ const routes = [
                 path: "banners",
                 name: "banners",
                 component: BannersPage,
+            },
+
+            // Emails
+            {
+                path: "emails",
+                name: "emails",
+                component: EmailsPage,
             },
 
             // Reports
