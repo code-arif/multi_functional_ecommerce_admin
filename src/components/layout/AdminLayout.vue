@@ -80,10 +80,6 @@
                         </p>
                     </div>
 
-                    <button v-if="sidebarOpen" @click="auth.logout()"
-                        class="p-2 rounded-lg hover:bg-slate-800 transition">
-                        <ArrowRightOnRectangleIcon class="w-5 h-5 text-slate-400" />
-                    </button>
                 </div>
             </div>
         </aside>
@@ -125,11 +121,40 @@
                         View Store
                     </a>
 
-                    <!-- Admin Profile -->
-                    <button @click="isProfileModalOpen = true"
-                        class="relative rounded-full overflow-hidden ring-2 ring-slate-200 hover:ring-green-500 transition shrink-0">
-                        <img src="https://i.pravatar.cc/100?img=12" alt="Admin" class="w-10 h-10 object-cover" />
-                    </button>
+                    <!-- Admin Profile Dropdown -->
+                    <div class="relative" ref="profileDropdownRef">
+                        <button @click="toggleProfileDropdown"
+                            class="relative rounded-full overflow-hidden ring-2 transition shrink-0"
+                            :class="isProfileDropdownOpen ? 'ring-green-500' : 'ring-slate-200 hover:ring-green-500'">
+                            <img src="https://i.pravatar.cc/100?img=12" alt="Admin" class="w-10 h-10 object-cover" />
+                        </button>
+
+                        <!-- Dropdown Menu -->
+                        <transition name="dropdown">
+                            <div v-if="isProfileDropdownOpen"
+                                class="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-slate-200 py-1 z-[80] overflow-hidden">
+                                <!-- User Info Header -->
+                                <div class="px-4 py-3 border-b border-slate-100">
+                                    <p class="text-sm font-semibold text-slate-800 truncate">{{ auth.userName }}</p>
+                                    <p class="text-xs text-slate-500 truncate">{{ auth.userEmail }}</p>
+                                </div>
+
+                                <!-- Profile -->
+                                <button @click="openProfileFromDropdown"
+                                    class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition">
+                                    <UserIcon class="w-4 h-4" />
+                                    Profile
+                                </button>
+
+                                <!-- Logout -->
+                                <button @click="auth.logout()"
+                                    class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition border-t border-slate-100">
+                                    <ArrowRightOnRectangleIcon class="w-4 h-4" />
+                                    Logout
+                                </button>
+                            </div>
+                        </transition>
+                    </div>
                 </div>
             </header>
 
@@ -283,7 +308,7 @@ ADD THIS BELOW NOTIFICATION MODAL
 </template>
 
 <script setup>
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import NotificationModal from '@/components/common/NotificationModal.vue'
@@ -305,6 +330,7 @@ import {
     TagIcon,
     StarIcon,
     BellIcon,
+    UserIcon,
     ArrowRightOnRectangleIcon,
     ArrowTopRightOnSquareIcon,
     LinkIcon,
@@ -370,6 +396,35 @@ const deleteSelectedNotifications = ids => {
         n => !ids.includes(n.id)
     )
 }
+
+/* -----------------------------
+   Profile Dropdown
+------------------------------*/
+const isProfileDropdownOpen = ref(false)
+const profileDropdownRef = ref(null)
+
+function toggleProfileDropdown() {
+    isProfileDropdownOpen.value = !isProfileDropdownOpen.value
+}
+
+function openProfileFromDropdown() {
+    isProfileDropdownOpen.value = false
+    isProfileModalOpen.value = true
+}
+
+function handleClickOutside(event) {
+    if (profileDropdownRef.value && !profileDropdownRef.value.contains(event.target)) {
+        isProfileDropdownOpen.value = false
+    }
+}
+
+onMounted(() => {
+    document.addEventListener('click', handleClickOutside)
+})
+
+onUnmounted(() => {
+    document.removeEventListener('click', handleClickOutside)
+})
 
 /* -----------------------------
    Sidebar New Navigation
@@ -552,5 +607,24 @@ const currentPageTitle = computed(() => {
         opacity: 1;
         transform: scale(1);
     }
+}
+
+/* Dropdown transition */
+.dropdown-enter-active {
+    transition: all 0.18s ease-out;
+}
+
+.dropdown-leave-active {
+    transition: all 0.12s ease-in;
+}
+
+.dropdown-enter-from {
+    opacity: 0;
+    transform: translateY(-6px) scale(.96);
+}
+
+.dropdown-leave-to {
+    opacity: 0;
+    transform: translateY(-4px) scale(.96);
 }
 </style>
