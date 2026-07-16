@@ -41,10 +41,10 @@
 
                     <!-- Children -->
                     <transition name="slide">
-                        <div v-show="openGroups[group.name] && sidebarOpen"
-                            class="ml-4 pl-3 border-l border-slate-700 space-y-1">
+                        <div v-if="openGroups[group.name] && sidebarOpen"
+                            class="ml-4 pl-3 border-l border-slate-700 space-y-1 overflow-hidden">
                             <router-link v-for="item in group.items" :key="item.name" :to="item.to"
-                                class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition" :class="isActive(item.to)
+                                class="router-link-item flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition" :class="isActive(item.to)
                                     ? 'bg-green-600 text-white'
                                     : 'text-slate-300 hover:bg-slate-800 hover:text-white'
                                     ">
@@ -575,9 +575,13 @@ const currentPageTitle = computed(() => {
     opacity: 0;
 }
 
-.slide-enter-active,
+.slide-enter-active {
+    transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
+    overflow: hidden;
+}
+
 .slide-leave-active {
-    transition: all 0.25s ease;
+    transition: max-height 0.2s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.15s ease;
     overflow: hidden;
 }
 
@@ -591,6 +595,50 @@ const currentPageTitle = computed(() => {
 .slide-leave-from {
     opacity: 1;
     max-height: 500px;
+}
+
+/* Staggered children slide in */
+.slide-enter-active .router-link-item {
+    animation: slideInChild 0.3s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+.slide-leave-active .router-link-item {
+    animation: slideOutChild 0.15s ease both;
+}
+
+.router-link-item:nth-child(1) { animation-delay: 0ms; }
+.router-link-item:nth-child(2) { animation-delay: 20ms; }
+.router-link-item:nth-child(3) { animation-delay: 40ms; }
+.router-link-item:nth-child(4) { animation-delay: 60ms; }
+.router-link-item:nth-child(5) { animation-delay: 80ms; }
+.router-link-item:nth-child(6) { animation-delay: 100ms; }
+.router-link-item:nth-child(7) { animation-delay: 120ms; }
+.router-link-item:nth-child(8) { animation-delay: 140ms; }
+.router-link-item:nth-child(9) { animation-delay: 160ms; }
+.router-link-item:nth-child(10) { animation-delay: 180ms; }
+.router-link-item:nth-child(11) { animation-delay: 200ms; }
+.router-link-item:nth-child(12) { animation-delay: 220ms; }
+
+@keyframes slideInChild {
+    from {
+        opacity: 0;
+        transform: translateX(-12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideOutChild {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(-8px);
+    }
 }
 
 .animate-fadeIn {
