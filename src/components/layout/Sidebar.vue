@@ -30,45 +30,57 @@
 
         <!-- Navigation -->
         <nav class="flex-1 overflow-y-auto px-3 py-4 space-y-2">
-            <div v-for="group in navGroups" :key="group.name" class="space-y-1">
-                <!-- Group Button -->
-                <button @click="toggleGroup(group.name)"
-                    class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-800 transition relative group">
-                    <component :is="group.icon" class="w-5 h-5 shrink-0 text-slate-300" />
-
-                    <span v-if="sidebarOpen" class="text-sm font-semibold flex-1 text-left">
-                        {{ group.name }}
-                    </span>
-
-                    <ChevronDownIcon v-if="sidebarOpen" class="w-4 h-4 transition-transform"
-                        :class="openGroups[group.name] ? 'rotate-180' : ''" />
-
-                    <!-- Tooltip -->
+            <template v-for="group in navGroups" :key="group.name">
+                <!-- Direct Link (e.g. Dashboard) -->
+                <router-link v-if="group.direct" :to="group.to"
+                    class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition relative group"
+                    :class="isActive(group.to) ? 'bg-green-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white'">
+                    <component :is="group.icon" class="w-5 h-5 shrink-0" />
+                    <span v-if="sidebarOpen" class="text-sm font-semibold flex-1 text-left">{{ group.name }}</span>
                     <div v-if="!sidebarOpen"
                         class="absolute left-full ml-3 px-2 py-1 bg-slate-800 text-xs rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap transition z-50">
                         {{ group.name }}
                     </div>
-                </button>
+                </router-link>
 
-                <!-- Children -->
-                <transition name="slide">
-                    <div v-if="openGroups[group.name] && sidebarOpen"
-                        class="ml-4 pl-3 border-l border-slate-700 space-y-1 overflow-hidden">
-                        <router-link v-for="item in group.items" :key="item.name" :to="item.to"
-                            class="router-link-item flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition"
-                            :class="isActive(item.to)
-                                ? 'bg-green-600 text-white'
-                                : 'text-slate-300 hover:bg-slate-800 hover:text-white'">
-                            <component :is="item.icon" class="w-4 h-4 shrink-0" />
-                            <span class="truncate">{{ item.name }}</span>
-                            <span v-if="item.pending"
-                                class="ml-auto text-[10px] px-1.5 py-0.5 rounded bg-amber-500 text-white font-bold">
-                                P
-                            </span>
-                        </router-link>
-                    </div>
-                </transition>
-            </div>
+                <!-- Dropdown Group -->
+                <div v-else class="space-y-1">
+                    <button @click="toggleGroup(group.name)"
+                        class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-800 transition relative group">
+                        <component :is="group.icon" class="w-5 h-5 shrink-0 text-slate-300" />
+
+                        <span v-if="sidebarOpen" class="text-sm font-semibold flex-1 text-left">
+                            {{ group.name }}
+                        </span>
+
+                        <ChevronDownIcon v-if="sidebarOpen" class="w-4 h-4 transition-transform"
+                            :class="openGroups[group.name] ? 'rotate-180' : ''" />
+
+                        <div v-if="!sidebarOpen"
+                            class="absolute left-full ml-3 px-2 py-1 bg-slate-800 text-xs rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap transition z-50">
+                            {{ group.name }}
+                        </div>
+                    </button>
+
+                    <transition name="slide">
+                        <div v-if="openGroups[group.name] && sidebarOpen"
+                            class="ml-4 pl-3 border-l border-slate-700 space-y-1 overflow-hidden">
+                            <router-link v-for="item in group.items" :key="item.name" :to="item.to"
+                                class="router-link-item flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition"
+                                :class="isActive(item.to)
+                                    ? 'bg-green-600 text-white'
+                                    : 'text-slate-300 hover:bg-slate-800 hover:text-white'">
+                                <component :is="item.icon" class="w-4 h-4 shrink-0" />
+                                <span class="truncate">{{ item.name }}</span>
+                                <span v-if="item.pending"
+                                    class="ml-auto text-[10px] px-1.5 py-0.5 rounded bg-amber-500 text-white font-bold">
+                                    P
+                                </span>
+                            </router-link>
+                        </div>
+                    </transition>
+                </div>
+            </template>
         </nav>
 
         <!-- User -->
@@ -133,7 +145,7 @@ const openGroups = reactive({})
 const navGroups = [
     {
         name: 'Dashboard', icon: Squares2X2Icon,
-        items: [{ name: 'Overview', to: '/', icon: Squares2X2Icon }]
+        direct: true, to: '/'
     },
     {
         name: 'Marketplace', icon: BuildingStorefrontIcon,
@@ -216,7 +228,7 @@ const navGroups = [
 ]
 
 const allGroupsExpanded = computed(() =>
-    navGroups.every(group => openGroups[group.name])
+    navGroups.filter(g => !g.direct).every(group => openGroups[group.name])
 )
 
 function saveGroupsState() {
@@ -228,7 +240,7 @@ function loadGroupsState() {
         const saved = localStorage.getItem(STORAGE_KEY)
         if (saved) {
             const parsed = JSON.parse(saved)
-            const groupNames = navGroups.map(g => g.name)
+            const groupNames = navGroups.filter(g => !g.direct).map(g => g.name)
             for (const name of groupNames) {
                 if (typeof parsed[name] === 'boolean') {
                     openGroups[name] = parsed[name]
@@ -242,7 +254,7 @@ function loadGroupsState() {
 
 function initializeGroups() {
     if (loadGroupsState()) return
-    navGroups.forEach(group => {
+    navGroups.filter(g => !g.direct).forEach(group => {
         if (group.items.some(item => item.to === '/')) {
             openGroups[group.name] = route.path === '/'
         } else {
@@ -263,7 +275,7 @@ function toggleGroup(name) {
 
 function toggleAllGroups() {
     const expand = !allGroupsExpanded.value
-    navGroups.forEach(group => { openGroups[group.name] = expand })
+    navGroups.filter(g => !g.direct).forEach(group => { openGroups[group.name] = expand })
     saveGroupsState()
 }
 
