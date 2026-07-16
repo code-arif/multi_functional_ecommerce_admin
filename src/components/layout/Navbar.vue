@@ -19,13 +19,6 @@
                 <span v-if="unreadCount > 0" class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-red-500" />
             </button>
 
-            <!-- View Store -->
-            <a :href="storeUrl" target="_blank"
-                class="hidden sm:flex items-center gap-1.5 text-xs font-semibold text-green-700 border border-green-600 px-3 py-2 rounded-lg hover:bg-green-50 transition">
-                <ArrowTopRightOnSquareIcon class="w-4 h-4" />
-                View Store
-            </a>
-
             <!-- Admin Profile Dropdown -->
             <div class="relative" ref="profileDropdownRef">
                 <button @click="toggleProfileDropdown"
@@ -47,6 +40,12 @@
                             <UserIcon class="w-4 h-4" />
                             Profile
                         </button>
+
+                        <a :href="storeUrl" target="_blank" @click="isProfileDropdownOpen = false"
+                            class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition border-t border-slate-100">
+                            <ArrowTopRightOnSquareIcon class="w-4 h-4" />
+                            View Store
+                        </a>
 
                         <button @click="auth.logout()"
                             class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition border-t border-slate-100">
