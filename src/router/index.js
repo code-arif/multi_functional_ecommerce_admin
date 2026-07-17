@@ -29,6 +29,10 @@ import CategoriesPage from "@/pages/categories/CategoriesPage.vue";
 // Brands
 import BrandsPage from "@/pages/brands/BrandsPage.vue";
 
+// Vendors
+import VendorsPage from "@/pages/vendors/VendorsPage.vue";
+import VendorDetailPage from "@/pages/vendors/VendorDetailPage.vue";
+
 // Coupons
 import CouponsPage from "@/pages/coupons/CouponsPage.vue";
 
@@ -147,6 +151,23 @@ const routes = [
                 path: "brands",
                 name: "brands",
                 component: BrandsPage,
+            },
+
+            // Vendors
+            {
+                path: "vendors",
+                name: "vendors",
+                component: VendorsPage,
+            },
+            {
+                path: "vendors/pending",
+                name: "vendors-pending",
+                component: VendorsPage,
+            },
+            {
+                path: "vendors/:id",
+                name: "vendors-detail",
+                component: VendorDetailPage,
             },
 
             // Coupons
