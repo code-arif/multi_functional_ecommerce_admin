@@ -113,9 +113,10 @@ async function uploadFile(key, file) {
     align-items: flex-start;
     gap: 16px;
     padding: 16px;
-    border: 1.5px dashed #d1d5db;
+    border: 1.5px dashed var(--border);
     border-radius: 10px;
-    background: #f8fafc;
+    background: var(--border-light);
+    transition: background-color 0.25s ease, border-color 0.25s ease;
 }
 
 .upload-preview {
@@ -125,9 +126,10 @@ async function uploadFile(key, file) {
 
 .preview-img {
     border-radius: 8px;
-    border: 1px solid #e2e8f0;
-    background: #ffffff;
+    border: 1px solid var(--border);
+    background: var(--surface);
     object-fit: contain;
+    transition: background-color 0.25s ease, border-color 0.25s ease;
 }
 
 .preview-img--logo {
@@ -146,7 +148,7 @@ async function uploadFile(key, file) {
     right: -6px;
     width: 18px;
     height: 18px;
-    background: #ef4444;
+    background: var(--danger);
     color: white;
     border: none;
     border-radius: 50%;
@@ -164,11 +166,12 @@ async function uploadFile(key, file) {
     justify-content: center;
     width: 140px;
     height: 56px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border);
     border-radius: 8px;
-    background: #ffffff;
+    background: var(--surface);
     gap: 4px;
     flex-shrink: 0;
+    transition: background-color 0.25s ease, border-color 0.25s ease;
 }
 
 .upload-placeholder--sm {
@@ -178,12 +181,12 @@ async function uploadFile(key, file) {
 .upload-placeholder__icon {
     width: 18px;
     height: 18px;
-    color: #d1d5db;
+    color: var(--text-muted);
 }
 
 .upload-placeholder__text {
     font-size: 0.6rem;
-    color: #9ca3af;
+    color: var(--text-muted);
     text-align: center;
 }
 
@@ -217,20 +220,12 @@ async function uploadFile(key, file) {
     width: 38px;
     height: 38px;
     padding: 2px;
-    border: 1px solid #d1d5db;
+    border: 1px solid var(--border);
     border-radius: 8px;
     cursor: pointer;
     background: none;
     flex-shrink: 0;
+    transition: border-color 0.25s ease;
 }
 
-.w-3 {
-    width: 12px;
-    height: 12px;
-}
-
-.w-4 {
-    width: 16px;
-    height: 16px;
-}
 </style>

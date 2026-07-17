@@ -147,13 +147,13 @@ async function runCommand(cmd) {
 }
 
 .badge--green {
-    background: #dcfce7;
-    color: #15803d;
+    background: color-mix(in srgb, var(--success) 15%, transparent);
+    color: var(--success);
 }
 
 .badge--red {
-    background: #fee2e2;
-    color: #dc2626;
+    background: color-mix(in srgb, var(--danger) 15%, transparent);
+    color: var(--danger);
 }
 
 .commands-grid {
@@ -168,9 +168,10 @@ async function runCommand(cmd) {
     justify-content: space-between;
     gap: 12px;
     padding: 12px 14px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border);
     border-radius: 8px;
-    background: #f8fafc;
+    background: var(--border-light);
+    transition: background-color 0.25s ease, border-color 0.25s ease;
 }
 
 .command-card__info {
@@ -183,20 +184,20 @@ async function runCommand(cmd) {
 .command-card__icon {
     width: 18px;
     height: 18px;
-    color: #64748b;
+    color: var(--text-secondary);
     flex-shrink: 0;
 }
 
 .command-card__title {
     font-size: 0.8125rem;
     font-weight: 600;
-    color: #0f172a;
+    color: var(--text-primary);
     margin: 0 0 2px;
 }
 
 .command-card__cmd {
     font-size: 0.7rem;
-    color: #94a3b8;
+    color: var(--text-muted);
     font-family: monospace;
     margin: 0;
     white-space: nowrap;
@@ -212,7 +213,7 @@ async function runCommand(cmd) {
 
 .command-output {
     margin-top: 16px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border);
     border-radius: 8px;
     overflow: hidden;
 }
@@ -234,7 +235,7 @@ async function runCommand(cmd) {
     gap: 4px;
     background: none;
     border: none;
-    color: #64748b;
+    color: var(--text-secondary);
     cursor: pointer;
     font-size: 0.72rem;
 }

@@ -94,10 +94,11 @@ const { form, saving, save } = useSettings(allKeys, 'Payment')
 
 <style scoped>
 .gateway-block {
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border);
     border-radius: 10px;
     overflow: hidden;
     margin-bottom: 12px;
+    transition: border-color 0.25s ease;
 }
 
 .gateway-block:last-child {
@@ -109,7 +110,8 @@ const { form, saving, save } = useSettings(allKeys, 'Payment')
     align-items: center;
     justify-content: space-between;
     padding: 14px 16px;
-    background: #f8fafc;
+    background: var(--border-light);
+    transition: background-color 0.25s ease;
 }
 
 .gateway-info {
@@ -121,19 +123,19 @@ const { form, saving, save } = useSettings(allKeys, 'Payment')
 .gateway-icon {
     width: 22px;
     height: 22px;
-    color: #2563eb;
+    color: var(--info);
 }
 
 .gateway-name {
     font-size: 0.875rem;
     font-weight: 600;
-    color: #0f172a;
+    color: var(--text-primary);
     margin: 0 0 2px;
 }
 
 .gateway-desc {
     font-size: 0.75rem;
-    color: #64748b;
+    color: var(--text-secondary);
     margin: 0;
 }
 
@@ -142,7 +144,7 @@ const { form, saving, save } = useSettings(allKeys, 'Payment')
     grid-template-columns: 1fr 1fr;
     gap: 14px;
     padding: 16px;
-    border-top: 1px solid #e2e8f0;
+    border-top: 1px solid var(--border);
 }
 
 @media (max-width: 640px) {
