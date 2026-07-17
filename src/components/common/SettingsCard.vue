@@ -35,10 +35,11 @@ defineEmits(['save'])
 
 <style scoped>
 .s-card {
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
+    background: var(--surface);
+    border: 1px solid var(--border);
     border-radius: 12px;
     overflow: hidden;
+    transition: background-color 0.25s ease, border-color 0.25s ease;
 }
 
 .s-card__header {
@@ -46,13 +47,13 @@ defineEmits(['save'])
     align-items: flex-start;
     gap: 14px;
     padding: 20px 24px 18px;
-    border-bottom: 1px solid #f1f5f9;
+    border-bottom: 1px solid var(--border-light);
 }
 
 .s-card__icon {
     width: 22px;
     height: 22px;
-    color: #2E7D32;
+    color: var(--color-primary);
     margin-top: 2px;
     flex-shrink: 0;
 }
@@ -60,14 +61,14 @@ defineEmits(['save'])
 .s-card__title {
     font-size: 1rem;
     font-weight: 700;
-    color: #0f172a;
+    color: var(--text-primary);
     margin: 0 0 3px;
     letter-spacing: -0.01em;
 }
 
 .s-card__desc {
     font-size: 0.8125rem;
-    color: #64748b;
+    color: var(--text-secondary);
     margin: 0;
 }
 
@@ -77,8 +78,8 @@ defineEmits(['save'])
 
 .s-card__footer {
     padding: 14px 24px;
-    border-top: 1px solid #f1f5f9;
-    background: #f8fafc;
+    border-top: 1px solid var(--border-light);
+    background: var(--border-light);
     display: flex;
     justify-content: flex-end;
 }
@@ -111,7 +112,7 @@ defineEmits(['save'])
 :global(.label) {
     font-size: 0.8rem;
     font-weight: 600;
-    color: #374151;
+    color: var(--text-primary);
     letter-spacing: 0.01em;
 }
 
@@ -125,12 +126,12 @@ defineEmits(['save'])
 :global(.textarea) {
     width: 100%;
     padding: 8px 12px;
-    border: 1px solid #d1d5db;
+    border: 1px solid var(--border);
     border-radius: 8px;
     font-size: 0.875rem;
-    color: #0f172a;
-    background: #ffffff;
-    transition: border-color 0.15s, box-shadow 0.15s;
+    color: var(--text-primary);
+    background: var(--surface);
+    transition: border-color 0.15s, box-shadow 0.15s, background-color 0.25s ease;
     outline: none;
     box-sizing: border-box;
 }
@@ -138,13 +139,13 @@ defineEmits(['save'])
 :global(.input:focus),
 :global(.select:focus),
 :global(.textarea:focus) {
-    border-color: #2E7D32;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary-light) 15%, transparent);
 }
 
 :global(.input::placeholder),
 :global(.textarea::placeholder) {
-    color: #9ca3af;
+    color: var(--text-muted);
 }
 
 :global(.textarea) {
@@ -174,7 +175,7 @@ defineEmits(['save'])
 :global(.input-group__prefix) {
     position: absolute;
     left: 11px;
-    color: #9ca3af;
+    color: var(--text-muted);
     font-size: 0.875rem;
     pointer-events: none;
 }
@@ -186,25 +187,25 @@ defineEmits(['save'])
     border: none;
     padding: 0;
     cursor: pointer;
-    color: #9ca3af;
+    color: var(--text-muted);
     display: flex;
     align-items: center;
     transition: color 0.15s;
 }
 
 :global(.input-group__suffix-btn:hover) {
-    color: #374151;
+    color: var(--text-primary);
 }
 
 :global(.hint) {
     font-size: 0.75rem;
-    color: #94a3b8;
+    color: var(--text-muted);
     margin-top: 2px;
 }
 
 :global(.divider) {
     border: none;
-    border-top: 1px solid #f1f5f9;
+    border-top: 1px solid var(--border-light);
     margin: 20px 0;
 }
 
@@ -219,9 +220,9 @@ defineEmits(['save'])
     align-items: center;
     gap: 8px;
     padding: 9px 16px;
-    background: #f8fafc;
-    color: #374151;
-    border: 1px solid #d1d5db;
+    background: var(--border-light);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
     border-radius: 8px;
     font-size: 0.875rem;
     font-weight: 500;
@@ -230,7 +231,7 @@ defineEmits(['save'])
 }
 
 :global(.btn-secondary:hover) {
-    background: #f1f5f9;
+    background: color-mix(in srgb, var(--border) 60%, transparent);
 }
 
 :global(.btn-danger) {
@@ -269,7 +270,7 @@ defineEmits(['save'])
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    color: #94a3b8;
+    color: var(--text-muted);
     margin-bottom: 14px;
 }
 
@@ -278,7 +279,7 @@ defineEmits(['save'])
     align-items: center;
     justify-content: space-between;
     padding: 12px 0;
-    border-bottom: 1px solid #f1f5f9;
+    border-bottom: 1px solid var(--border-light);
 }
 
 :global(.toggle-row:last-child) {
@@ -294,12 +295,12 @@ defineEmits(['save'])
 :global(.toggle-info__title) {
     font-size: 0.875rem;
     font-weight: 500;
-    color: #0f172a;
+    color: var(--text-primary);
 }
 
 :global(.toggle-info__desc) {
     font-size: 0.75rem;
-    color: #94a3b8;
+    color: var(--text-muted);
 }
 
 /* Toggle switch */
@@ -319,7 +320,7 @@ defineEmits(['save'])
 :global(.toggle__slider) {
     position: absolute;
     inset: 0;
-    background: #d1d5db;
+    background: var(--border);
     border-radius: 999px;
     cursor: pointer;
     transition: background 0.2s;
@@ -339,7 +340,7 @@ defineEmits(['save'])
 }
 
 :global(.toggle input:checked + .toggle__slider) {
-    background: #2E7D32;
+    background: var(--color-primary);
 }
 
 :global(.toggle input:checked + .toggle__slider::before) {

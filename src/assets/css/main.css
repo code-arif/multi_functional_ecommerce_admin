@@ -4,6 +4,80 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ========================================================================
+   THEME-AWARE UTILITY OVERRIDES
+   Maps Tailwind's hardcoded gray color utilities to our CSS custom
+   properties so ALL pages become theme-aware without editing each
+   component file individually.
+   ======================================================================== */
+@layer utilities {
+    /* ── Text colors ── */
+    .text-gray-900, .text-gray-800 {
+        color: var(--text-primary) !important;
+    }
+    .text-gray-700, .text-gray-600 {
+        color: var(--text-secondary) !important;
+    }
+    .text-gray-500, .text-gray-400, .text-gray-300 {
+        color: var(--text-muted) !important;
+    }
+
+    /* ── Background colors ── */
+    .bg-gray-50, .bg-gray-100 {
+        background-color: var(--border-light) !important;
+    }
+
+    /* ── Border colors ── */
+    .border-gray-100 {
+        border-color: var(--border-light) !important;
+    }
+    .border-gray-200, .border-gray-300 {
+        border-color: var(--border) !important;
+    }
+
+    /* ── Hover states ── */
+    .hover\:bg-gray-50:hover, .hover\:bg-gray-100:hover {
+        background-color: var(--border-light) !important;
+    }
+    .hover\:bg-gray-50\/60:hover {
+        background-color: color-mix(in srgb, var(--border-light) 60%, transparent) !important;
+    }
+
+    /* ── Primary color (hardcoded hex → theme variable) ── */
+    .text-\[\#2E7D32\] {
+        color: var(--color-primary) !important;
+    }
+    .bg-\[\#2E7D32\] {
+        background-color: var(--color-primary) !important;
+    }
+    .border-\[\#2E7D32\] {
+        border-color: var(--color-primary) !important;
+    }
+    .text-\[\#4CAF50\] {
+        color: var(--color-primary-light) !important;
+    }
+    .hover\:border-\[\#4CAF50\]:hover {
+        border-color: var(--color-primary) !important;
+    }
+    .hover\:text-\[\#4CAF50\]:hover {
+        color: var(--color-primary) !important;
+    }
+    .hover\:bg-green-50:hover {
+        background-color: var(--color-primary-pale) !important;
+    }
+
+    /* ── Focus ring ── */
+    .focus\:ring-\[\#4CAF50\]\/40:focus {
+        --tw-ring-color: color-mix(in srgb, var(--color-primary-light) 40%, transparent) !important;
+    }
+    .focus\:ring-green-500\/50:focus {
+        --tw-ring-color: color-mix(in srgb, var(--color-primary) 50%, transparent) !important;
+    }
+    .focus\:border-\[\#4CAF50\]:focus {
+        border-color: var(--color-primary) !important;
+    }
+}
+
 :root {
     --sidebar-width: 256px;
     --header-height: 60px;

@@ -69,20 +69,20 @@ const navItems = [
 .settings-header {
     margin-bottom: 28px;
     padding-bottom: 20px;
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid var(--border);
 }
 
 .settings-title {
     font-size: 1.5rem;
     font-weight: 700;
-    color: #0f172a;
+    color: var(--text-primary);
     letter-spacing: -0.025em;
     margin: 0 0 4px;
 }
 
 .settings-subtitle {
     font-size: 0.875rem;
-    color: #64748b;
+    color: var(--text-muted);
     margin: 0;
 }
 
@@ -96,12 +96,13 @@ const navItems = [
 .settings-sidebar {
     width: 240px;
     flex-shrink: 0;
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
+    background: var(--surface);
+    border: 1px solid var(--border);
     border-radius: 12px;
     padding: 8px;
     position: sticky;
     top: 24px;
+    transition: background-color 0.25s ease, border-color 0.25s ease;
 }
 
 .sidebar-nav {
@@ -117,7 +118,7 @@ const navItems = [
     padding: 9px 12px;
     border-radius: 8px;
     text-decoration: none;
-    color: #475569;
+    color: var(--navbar-text);
     font-size: 0.8125rem;
     font-weight: 500;
     transition: background 0.15s, color 0.15s;
@@ -125,25 +126,25 @@ const navItems = [
 }
 
 .nav-item:hover {
-    background: #f1f5f9;
-    color: #0f172a;
+    background: var(--border-light);
+    color: var(--text-primary);
 }
 
 .nav-item--active {
-    background: #eff6ff;
-    color: #2E7D32;
+    background: var(--color-primary-pale);
+    color: var(--color-primary);
 }
 
 .nav-item--active .nav-icon,
 .nav-item--active .nav-arrow {
-    color: #2E7D32;
+    color: var(--color-primary);
 }
 
 .nav-icon {
     width: 16px;
     height: 16px;
     flex-shrink: 0;
-    color: #94a3b8;
+    color: var(--text-muted);
     transition: color 0.15s;
 }
 
@@ -154,12 +155,12 @@ const navItems = [
 .nav-arrow {
     width: 14px;
     height: 14px;
-    color: #cbd5e1;
+    color: var(--text-muted);
     transition: color 0.15s;
 }
 
 .nav-item:hover .nav-arrow {
-    color: #94a3b8;
+    color: var(--text-secondary);
 }
 
 /* ─── Content ─── */
