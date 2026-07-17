@@ -21,52 +21,41 @@
             <!-- Theme Switcher -->
             <div class="relative" ref="themeSwitcherRef">
                 <button @click="isThemeOpen = !isThemeOpen"
-                    class="navbar-btn p-2 rounded-lg transition"
+                    class="navbar-btn p-2 rounded-lg transition flex items-center justify-center"
                     :style="{
-                        color: 'var(--navbar-text)',
                         backgroundColor: isThemeOpen ? 'var(--border-light)' : 'transparent'
                     }"
                     @mouseenter="e => { if(!isThemeOpen) e.target.style.backgroundColor = 'var(--border-light)' }"
                     @mouseleave="e => { if(!isThemeOpen) e.target.style.backgroundColor = 'transparent' }"
-                    title="Change theme">
-                    <SwatchIcon class="w-5 h-5" />
+                    :title="'Theme: ' + (theme.themes.find(t => t.id === theme.colorTheme)?.label || theme.colorTheme)">
+                    <span class="w-[18px] h-[18px] rounded-full ring-2 ring-offset-1 transition-all"
+                        :style="{
+                            backgroundColor: currentThemeColor,
+                            '--tw-ring-color': currentThemeColor
+                        }"></span>
                 </button>
 
                 <transition name="dropdown">
                     <div v-if="isThemeOpen"
-                        class="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-slate-200 py-2 z-[80] overflow-hidden"
+                        class="absolute right-0 mt-2 w-[280px] rounded-xl shadow-lg border py-3 px-3 z-[80] overflow-hidden"
                         :style="{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)', boxShadow: 'var(--shadow-dropdown)' }">
-                        <!-- Color Theme Picker -->
-                        <div class="px-3 pb-2 border-b"
-                            :style="{ borderColor: 'var(--border)' }">
-                            <p class="text-xs font-semibold uppercase tracking-wide mb-2"
-                                :style="{ color: 'var(--text-muted)' }">Color Theme</p>
-                            <div class="flex gap-2">
-                                <button v-for="t in theme.themes" :key="t.id"
-                                    @click="theme.setColorTheme(t.id)"
-                                    class="flex-1 flex flex-col items-center gap-1 px-2 py-2 rounded-lg text-xs font-medium transition-all"
-                                    :class="theme.colorTheme === t.id
-                                        ? 'ring-2 shadow-sm'
-                                        : 'opacity-70 hover:opacity-100'"
-                                    :style="{
-                                        backgroundColor: theme.colorTheme === t.id
-                                            ? t.id === 'default' ? '#E8F5E9'
-                                                : t.id === 'tint' ? '#DBEAFE'
-                                                : '#CCFBF1'
-                                            : 'transparent',
-                                        ringColor: t.id === 'default' ? '#2E7D32'
-                                            : t.id === 'tint' ? '#2563EB'
-                                            : '#0D9488',
-                                        color: theme.colorTheme === t.id
-                                            ? t.id === 'default' ? '#1B5E20'
-                                                : t.id === 'tint' ? '#1D4ED8'
-                                                : '#0F766E'
-                                            : 'var(--navbar-text)'
-                                    }">
-                                    <span class="text-lg">{{ t.icon }}</span>
-                                    <span>{{ t.label }}</span>
-                                </button>
-                            </div>
+                        <p class="text-xs font-semibold uppercase tracking-wide mb-3"
+                            :style="{ color: 'var(--text-muted)' }">Color Theme</p>
+                        <div class="grid grid-cols-4 gap-2">
+                            <button v-for="t in theme.themes" :key="t.id"
+                                @click="theme.setColorTheme(t.id)"
+                                class="flex flex-col items-center gap-1.5 py-2 px-1 rounded-lg transition-all"
+                                :class="theme.colorTheme === t.id ? 'ring-2 shadow-sm' : 'opacity-75 hover:opacity-100'"
+                                :style="{
+                                    backgroundColor: theme.colorTheme === t.id ? t.light : 'transparent',
+                                    '--tw-ring-color': t.color,
+                                    color: theme.colorTheme === t.id ? t.color : 'var(--navbar-text)'
+                                }"
+                                :title="t.label">
+                                <span class="w-6 h-6 rounded-full"
+                                    :style="{ backgroundColor: t.color }"></span>
+                                <span class="text-[10px] font-medium truncate w-full text-center">{{ t.label }}</span>
+                            </button>
                         </div>
                     </div>
                 </transition>
@@ -175,8 +164,7 @@ import {
     BellIcon,
     ArrowTopRightOnSquareIcon,
     UserIcon,
-    ArrowRightOnRectangleIcon,
-    SwatchIcon
+    ArrowRightOnRectangleIcon
 } from '@heroicons/vue/24/outline'
 import NotificationModal from '@/components/common/NotificationModal.vue'
 
@@ -192,6 +180,12 @@ const auth = useAuthStore()
 const theme = useThemeStore()
 
 const storeUrl = import.meta.env.VITE_STORE_URL || 'http://localhost:3000'
+
+/* ---------- Current theme color for trigger button ---------- */
+const currentThemeColor = computed(() => {
+    const found = theme.themes.find(t => t.id === theme.colorTheme)
+    return found?.color || '#2E7D32'
+})
 
 /* ---------- Theme Switcher ---------- */
 const isThemeOpen = ref(false)

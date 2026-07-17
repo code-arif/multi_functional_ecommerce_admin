@@ -11,14 +11,13 @@
                     <button v-for="t in themes" :key="t.id" @click="selectTheme(t.id)"
                         class="theme-card"
                         :class="{ 'theme-card--active': selectedTheme === t.id }"
-                        :style="getThemeCardStyle(t.id, selectedTheme === t.id)">
+                        :style="getThemeCardStyle(t, selectedTheme === t.id)">
                         <div class="theme-swatches">
-                            <div class="theme-swatch theme-swatch--primary" :style="{ background: getThemePrimaryColor(t.id) }" />
-                            <div class="theme-swatch theme-swatch--light" :style="{ background: getThemeLightColor(t.id) }" />
-                            <div class="theme-swatch theme-swatch--sidebar" :style="{ background: getThemeSidebarColor(t.id) }" />
+                            <div class="theme-swatch theme-swatch--primary" :style="{ background: t.color }" />
+                            <div class="theme-swatch theme-swatch--light" :style="{ background: t.light }" />
+                            <div class="theme-swatch theme-swatch--sidebar" :style="{ background: '#0F172A' }" />
                         </div>
                         <div class="theme-info">
-                            <span class="theme-emoji">{{ t.icon }}</span>
                             <span class="theme-name">{{ t.label }}</span>
                         </div>
                         <div v-if="selectedTheme === t.id" class="theme-check">
@@ -48,11 +47,7 @@ const themeStore = useThemeStore()
 const keys = ['theme_color']
 const { form, saving, save } = useSettings(keys, 'Theme')
 
-const themes = [
-    { id: 'default', label: 'Default', icon: '🌿' },
-    { id: 'tint', label: 'Tint', icon: '🎨' },
-    { id: 'dark-aqua', label: 'Dark Aqua', icon: '🌊' },
-]
+const themes = themeStore.themes
 
 const selectedTheme = ref(themeStore.colorTheme)
 
@@ -62,26 +57,10 @@ watch(selectedTheme, (val) => {
 }, { immediate: true })
 
 /* ─── Theme preview helpers ─── */
-function getThemePrimaryColor(id) {
-    return { default: '#2E7D32', tint: '#2563EB', 'dark-aqua': '#0D9488' }[id]
-}
-
-function getThemeLightColor(id) {
-    return { default: '#E8F5E9', tint: '#DBEAFE', 'dark-aqua': '#CCFBF1' }[id]
-}
-
-function getThemeSidebarColor(id) {
-    return '#0F172A'
-}
-
-function getThemeCardStyle(id, active) {
-    const borderColor = active ? getThemePrimaryColor(id) : '#e2e8f0'
-    const bgColor = active
-        ? { default: '#f0fdf4', tint: '#eff6ff', 'dark-aqua': '#f0fdfa' }[id]
-        : '#ffffff'
+function getThemeCardStyle(t, active) {
     return {
-        borderColor,
-        backgroundColor: bgColor,
+        borderColor: active ? t.color : '#e2e8f0',
+        backgroundColor: active ? t.light : '#ffffff',
     }
 }
 
@@ -96,7 +75,7 @@ function selectTheme(id) {
 /* ─── Theme Card Grid ─── */
 .theme-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 12px;
     margin-top: 4px;
 }
@@ -149,11 +128,6 @@ function selectTheme(id) {
     font-size: 0.8125rem;
     font-weight: 600;
     color: #1e293b;
-}
-
-.theme-emoji {
-    font-size: 1rem;
-    line-height: 1;
 }
 
 .theme-name {

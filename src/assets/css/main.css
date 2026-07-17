@@ -276,6 +276,171 @@
     --shadow-dropdown: 0 10px 40px rgba(0,0,0,0.12);
 }
 
+/* ROYAL (Violet) — Light */
+[data-theme="royal"] {
+    --color-primary: #7C3AED;
+    --color-primary-light: #A78BFA;
+    --color-primary-pale: #EDE9FE;
+    --color-primary-dark: #5B21B6;
+    --app-bg: #F5F3FF;
+    --surface: #ffffff;
+    --text-primary: #1E293B;
+    --text-secondary: #64748B;
+    --text-muted: #94A3B8;
+    --border: #E2E8F0;
+    --border-light: #F1F5F9;
+    --sidebar-bg: #0F172A;
+    --sidebar-hover: #1E293B;
+    --sidebar-text: #CBD5E1;
+    --sidebar-text-muted: #64748B;
+    --sidebar-border: rgba(255,255,255,0.08);
+    --sidebar-active-bg: #7C3AED;
+    --sidebar-active-text: #ffffff;
+    --sidebar-search-bg: #1E293B;
+    --sidebar-search-border: #334155;
+    --sidebar-search-placeholder: #64748B;
+    --sidebar-logo-bg: #7C3AED;
+    --navbar-bg: #ffffff;
+    --navbar-border: #E2E8F0;
+    --navbar-text: #475569;
+    --navbar-text-muted: #94A3B8;
+    --shadow-card: 0 1px 8px rgba(0,0,0,0.06);
+    --shadow-modal: 0 20px 60px rgba(0,0,0,0.15);
+    --shadow-dropdown: 0 10px 40px rgba(0,0,0,0.12);
+}
+
+/* CRIMSON (Red) — Light */
+[data-theme="crimson"] {
+    --color-primary: #DC2626;
+    --color-primary-light: #F87171;
+    --color-primary-pale: #FEE2E2;
+    --color-primary-dark: #B91C1C;
+    --app-bg: #FFF5F5;
+    --surface: #ffffff;
+    --text-primary: #1E293B;
+    --text-secondary: #64748B;
+    --text-muted: #94A3B8;
+    --border: #E2E8F0;
+    --border-light: #F1F5F9;
+    --sidebar-bg: #0F172A;
+    --sidebar-hover: #1E293B;
+    --sidebar-text: #CBD5E1;
+    --sidebar-text-muted: #64748B;
+    --sidebar-border: rgba(255,255,255,0.08);
+    --sidebar-active-bg: #DC2626;
+    --sidebar-active-text: #ffffff;
+    --sidebar-search-bg: #1E293B;
+    --sidebar-search-border: #334155;
+    --sidebar-search-placeholder: #64748B;
+    --sidebar-logo-bg: #DC2626;
+    --navbar-bg: #ffffff;
+    --navbar-border: #E2E8F0;
+    --navbar-text: #475569;
+    --navbar-text-muted: #94A3B8;
+    --shadow-card: 0 1px 8px rgba(0,0,0,0.06);
+    --shadow-modal: 0 20px 60px rgba(0,0,0,0.15);
+    --shadow-dropdown: 0 10px 40px rgba(0,0,0,0.12);
+}
+
+/* AMBER (Warmth) — Light */
+[data-theme="amber"] {
+    --color-primary: #D97706;
+    --color-primary-light: #FBBF24;
+    --color-primary-pale: #FEF3C7;
+    --color-primary-dark: #B45309;
+    --app-bg: #FFFBEB;
+    --surface: #ffffff;
+    --text-primary: #1E293B;
+    --text-secondary: #64748B;
+    --text-muted: #94A3B8;
+    --border: #E2E8F0;
+    --border-light: #F1F5F9;
+    --sidebar-bg: #0F172A;
+    --sidebar-hover: #1E293B;
+    --sidebar-text: #CBD5E1;
+    --sidebar-text-muted: #64748B;
+    --sidebar-border: rgba(255,255,255,0.08);
+    --sidebar-active-bg: #D97706;
+    --sidebar-active-text: #ffffff;
+    --sidebar-search-bg: #1E293B;
+    --sidebar-search-border: #334155;
+    --sidebar-search-placeholder: #64748B;
+    --sidebar-logo-bg: #D97706;
+    --navbar-bg: #ffffff;
+    --navbar-border: #E2E8F0;
+    --navbar-text: #475569;
+    --navbar-text-muted: #94A3B8;
+    --shadow-card: 0 1px 8px rgba(0,0,0,0.06);
+    --shadow-modal: 0 20px 60px rgba(0,0,0,0.15);
+    --shadow-dropdown: 0 10px 40px rgba(0,0,0,0.12);
+}
+
+/* ROSE (Modern Pink) — Light */
+[data-theme="rose"] {
+    --color-primary: #E11D48;
+    --color-primary-light: #FB7185;
+    --color-primary-pale: #FFE4E6;
+    --color-primary-dark: #BE123C;
+    --app-bg: #FFF1F2;
+    --surface: #ffffff;
+    --text-primary: #1E293B;
+    --text-secondary: #64748B;
+    --text-muted: #94A3B8;
+    --border: #E2E8F0;
+    --border-light: #F1F5F9;
+    --sidebar-bg: #0F172A;
+    --sidebar-hover: #1E293B;
+    --sidebar-text: #CBD5E1;
+    --sidebar-text-muted: #64748B;
+    --sidebar-border: rgba(255,255,255,0.08);
+    --sidebar-active-bg: #E11D48;
+    --sidebar-active-text: #ffffff;
+    --sidebar-search-bg: #1E293B;
+    --sidebar-search-border: #334155;
+    --sidebar-search-placeholder: #64748B;
+    --sidebar-logo-bg: #E11D48;
+    --navbar-bg: #ffffff;
+    --navbar-border: #E2E8F0;
+    --navbar-text: #475569;
+    --navbar-text-muted: #94A3B8;
+    --shadow-card: 0 1px 8px rgba(0,0,0,0.06);
+    --shadow-modal: 0 20px 60px rgba(0,0,0,0.15);
+    --shadow-dropdown: 0 10px 40px rgba(0,0,0,0.12);
+}
+
+/* INDIGO (Professional) — Light */
+[data-theme="indigo"] {
+    --color-primary: #6366F1;
+    --color-primary-light: #818CF8;
+    --color-primary-pale: #E0E7FF;
+    --color-primary-dark: #4F46E5;
+    --app-bg: #F0EFFF;
+    --surface: #ffffff;
+    --text-primary: #1E293B;
+    --text-secondary: #64748B;
+    --text-muted: #94A3B8;
+    --border: #E2E8F0;
+    --border-light: #F1F5F9;
+    --sidebar-bg: #0F172A;
+    --sidebar-hover: #1E293B;
+    --sidebar-text: #CBD5E1;
+    --sidebar-text-muted: #64748B;
+    --sidebar-border: rgba(255,255,255,0.08);
+    --sidebar-active-bg: #6366F1;
+    --sidebar-active-text: #ffffff;
+    --sidebar-search-bg: #1E293B;
+    --sidebar-search-border: #334155;
+    --sidebar-search-placeholder: #64748B;
+    --sidebar-logo-bg: #6366F1;
+    --navbar-bg: #ffffff;
+    --navbar-border: #E2E8F0;
+    --navbar-text: #475569;
+    --navbar-text-muted: #94A3B8;
+    --shadow-card: 0 1px 8px rgba(0,0,0,0.06);
+    --shadow-modal: 0 20px 60px rgba(0,0,0,0.15);
+    --shadow-dropdown: 0 10px 40px rgba(0,0,0,0.12);
+}
+
 body {
     font-family: "Roboto", sans-serif;
     background: var(--app-bg);
