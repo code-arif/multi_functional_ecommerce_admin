@@ -5,16 +5,16 @@
 
     <!-- Stat Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-      <StatCard label="Today's Revenue" :value="stats.today_sales" :icon="DollarSign" prefix="৳" :variant="0"/>
-      <StatCard label="Monthly Revenue" :value="stats.monthly_sales" :icon="ChartBar" prefix="৳" :variant="1"/>
-      <StatCard label="Total Orders" :value="stats.total_orders" :icon="ShoppingCart" :variant="2"/>
-      <StatCard label="Pending Orders" :value="stats.pending_orders" :icon="Clock" :variant="3"/>
+      <StatCard label="Today's Revenue" :value="stats.today_sales" :icon="DollarSign" prefix="৳" iconBg="dash-stat-icon-0" iconColor="dash-stat-icon-0" />
+      <StatCard label="Monthly Revenue" :value="stats.monthly_sales" :icon="ChartBar" prefix="৳" iconBg="dash-stat-icon-1" iconColor="dash-stat-icon-1" />
+      <StatCard label="Total Orders" :value="stats.total_orders" :icon="ShoppingCart" iconBg="dash-stat-icon-2" iconColor="dash-stat-icon-2" />
+      <StatCard label="Pending Orders" :value="stats.pending_orders" :icon="Clock" iconBg="dash-stat-icon-3" iconColor="dash-stat-icon-3" />
     </div>
     <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-      <StatCard label="Total Customers" :value="stats.total_customers" :icon="Users" :variant="4"/>
-      <StatCard label="Active Products" :value="stats.total_products" :icon="ListIndentIncrease" :variant="5"/>
-      <StatCard label="Low Stock Items" :value="stats.low_stock_products" :icon="FileExclamationPoint" :variant="6"/>
-      <StatCard label="This Month Sales" :value="stats.revenue_this_month" :icon="Banknote" prefix="৳" :variant="7"/>
+      <StatCard label="Total Customers" :value="stats.total_customers" :icon="Users" iconBg="dash-stat-icon-4" iconColor="dash-stat-icon-4" />
+      <StatCard label="Active Products" :value="stats.total_products" :icon="ListIndentIncrease" iconBg="dash-stat-icon-5" iconColor="dash-stat-icon-5" />
+      <StatCard label="Low Stock Items" :value="stats.low_stock_products" :icon="FileExclamationPoint" iconBg="dash-stat-icon-6" iconColor="dash-stat-icon-6" />
+      <StatCard label="This Month Sales" :value="stats.revenue_this_month" :icon="Banknote" prefix="৳" iconBg="dash-stat-icon-7" iconColor="dash-stat-icon-7" />
     </div>
 
     <!-- Charts row -->
@@ -375,5 +375,38 @@ onUnmounted(() => {
 .dash-rank-2 { color: #FB923C; }
 .dash-rank:not(.dash-rank-0):not(.dash-rank-1):not(.dash-rank-2) {
   color: var(--text-muted);
+}
+
+/* ─── Stat card icon theme variants ─── */
+:deep(.dash-stat-icon-0),
+:deep(.dash-stat-icon-5) {
+  background-color: color-mix(in srgb, var(--color-primary) 15%, transparent);
+  color: var(--color-primary);
+}
+
+:deep(.dash-stat-icon-1),
+:deep(.dash-stat-icon-4) {
+  background-color: color-mix(in srgb, var(--info) 15%, transparent);
+  color: var(--info);
+}
+
+:deep(.dash-stat-icon-2) {
+  background-color: color-mix(in srgb, var(--success) 15%, transparent);
+  color: var(--success);
+}
+
+:deep(.dash-stat-icon-3) {
+  background-color: color-mix(in srgb, var(--warning) 15%, transparent);
+  color: var(--warning);
+}
+
+:deep(.dash-stat-icon-6) {
+  background-color: color-mix(in srgb, var(--danger) 15%, transparent);
+  color: var(--danger);
+}
+
+:deep(.dash-stat-icon-7) {
+  background-color: color-mix(in srgb, var(--color-primary-light) 15%, transparent);
+  color: var(--color-primary-light);
 }
 </style>
