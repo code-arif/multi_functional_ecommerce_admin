@@ -1,23 +1,91 @@
 <template>
-    <header class="h-16 bg-white border-b border-slate-200 flex items-center px-4 lg:px-6 gap-4 shrink-0">
+    <header class="navbar h-16 flex items-center px-4 lg:px-6 gap-2 shrink-0"
+        :style="{
+            backgroundColor: 'var(--navbar-bg)',
+            borderBottom: '1px solid var(--navbar-border)'
+        }">
         <!-- Toggle -->
-        <button @click="$emit('toggle-sidebar')" class="p-2 rounded-lg hover:bg-slate-100 transition">
-            <Bars3Icon class="w-5 h-5 text-slate-700" />
+        <button @click="$emit('toggle-sidebar')"
+            class="navbar-btn p-2 rounded-lg transition"
+            :style="{ color: 'var(--navbar-text)' }">
+            <Bars3Icon class="w-5 h-5" />
         </button>
 
         <!-- Page Title -->
         <div>
-            <h1 class="font-bold text-slate-800">{{ pageTitle }}</h1>
+            <h1 class="font-bold" :style="{ color: 'var(--text-primary)' }">{{ pageTitle }}</h1>
         </div>
 
         <!-- Right -->
-        <div class="ml-auto flex items-center gap-2">
+        <div class="ml-auto flex items-center gap-1">
+            <!-- Theme Switcher -->
+            <div class="relative" ref="themeSwitcherRef">
+                <button @click="isThemeOpen = !isThemeOpen"
+                    class="navbar-btn p-2 rounded-lg transition"
+                    :style="{
+                        color: 'var(--navbar-text)',
+                        backgroundColor: isThemeOpen ? 'var(--border-light)' : 'transparent'
+                    }"
+                    @mouseenter="e => { if(!isThemeOpen) e.target.style.backgroundColor = 'var(--border-light)' }"
+                    @mouseleave="e => { if(!isThemeOpen) e.target.style.backgroundColor = 'transparent' }"
+                    title="Change theme">
+                    <SwatchIcon class="w-5 h-5" />
+                </button>
+
+                <transition name="dropdown">
+                    <div v-if="isThemeOpen"
+                        class="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-slate-200 py-2 z-[80] overflow-hidden"
+                        :style="{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)', boxShadow: 'var(--shadow-dropdown)' }">
+                        <!-- Color Theme Picker -->
+                        <div class="px-3 pb-2 border-b"
+                            :style="{ borderColor: 'var(--border)' }">
+                            <p class="text-xs font-semibold uppercase tracking-wide mb-2"
+                                :style="{ color: 'var(--text-muted)' }">Color Theme</p>
+                            <div class="flex gap-2">
+                                <button v-for="t in theme.themes" :key="t.id"
+                                    @click="theme.setColorTheme(t.id)"
+                                    class="flex-1 flex flex-col items-center gap-1 px-2 py-2 rounded-lg text-xs font-medium transition-all"
+                                    :class="theme.colorTheme === t.id
+                                        ? 'ring-2 shadow-sm'
+                                        : 'opacity-70 hover:opacity-100'"
+                                    :style="{
+                                        backgroundColor: theme.colorTheme === t.id
+                                            ? t.id === 'default' ? '#E8F5E9'
+                                                : t.id === 'tint' ? '#DBEAFE'
+                                                : '#CCFBF1'
+                                            : 'transparent',
+                                        ringColor: t.id === 'default' ? '#2E7D32'
+                                            : t.id === 'tint' ? '#2563EB'
+                                            : '#0D9488',
+                                        color: theme.colorTheme === t.id
+                                            ? t.id === 'default' ? '#1B5E20'
+                                                : t.id === 'tint' ? '#1D4ED8'
+                                                : '#0F766E'
+                                            : 'var(--navbar-text)'
+                                    }">
+                                    <span class="text-lg">{{ t.icon }}</span>
+                                    <span>{{ t.label }}</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </transition>
+            </div>
+
             <!-- Notification -->
             <div class="relative" ref="notificationRef">
                 <button @click="toggleNotification"
-                    class="relative p-2 rounded-lg hover:bg-slate-100 transition">
-                    <BellIcon class="w-5 h-5 text-slate-700" />
-                    <span v-if="unreadCount > 0" class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-red-500" />
+                    class="navbar-btn p-2 rounded-lg transition"
+                    :style="{
+                        color: 'var(--navbar-text)',
+                        backgroundColor: isNotificationOpen ? 'var(--border-light)' : 'transparent'
+                    }"
+                    @mouseenter="e => { if(!isNotificationOpen) e.target.style.backgroundColor = 'var(--border-light)' }"
+                    @mouseleave="e => { if(!isNotificationOpen) e.target.style.backgroundColor = 'transparent' }">
+                    <BellIcon class="w-5 h-5" />
+                    <span v-if="unreadCount > 0"
+                        class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full"
+                        :style="{ backgroundColor: 'var(--danger)' }" />
                 </button>
 
                 <NotificationModal
@@ -32,33 +100,60 @@
             <!-- Admin Profile Dropdown -->
             <div class="relative" ref="profileDropdownRef">
                 <button @click="toggleProfileDropdown"
-                    class="relative rounded-full overflow-hidden ring-2 transition shrink-0"
-                    :class="isProfileDropdownOpen ? 'ring-green-500' : 'ring-slate-200 hover:ring-green-500'">
+                    class="relative rounded-full overflow-hidden transition shrink-0 navbar-profile-ring"
+                    :style="{
+                        boxShadow: isProfileDropdownOpen
+                            ? '0 0 0 2px var(--color-primary)'
+                            : '0 0 0 2px var(--border)'
+                    }">
                     <img src="https://i.pravatar.cc/100?img=12" alt="Admin" class="w-10 h-10 object-cover" />
                 </button>
 
                 <transition name="dropdown">
                     <div v-if="isProfileDropdownOpen"
-                        class="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-slate-200 py-1 z-[80] overflow-hidden">
-                        <div class="px-4 py-3 border-b border-slate-100">
-                            <p class="text-sm font-semibold text-slate-800 truncate">{{ auth.userName }}</p>
-                            <p class="text-xs text-slate-500 truncate">{{ auth.userEmail }}</p>
+                        class="absolute right-0 mt-2 w-56 rounded-xl shadow-lg border py-1 z-[80] overflow-hidden"
+                        :style="{
+                            backgroundColor: 'var(--surface)',
+                            borderColor: 'var(--border)',
+                            boxShadow: 'var(--shadow-dropdown)'
+                        }">
+                        <div class="px-4 py-3 border-b"
+                            :style="{ borderColor: 'var(--border)' }">
+                            <p class="text-sm font-semibold truncate"
+                                :style="{ color: 'var(--text-primary)' }">{{ auth.userName }}</p>
+                            <p class="text-xs truncate"
+                                :style="{ color: 'var(--text-muted)' }">{{ auth.userEmail }}</p>
                         </div>
 
                         <button @click="openProfile"
-                            class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition">
+                            class="w-full flex items-center gap-3 px-4 py-2.5 text-sm transition"
+                            :style="{ color: 'var(--navbar-text)' }"
+                            @mouseenter="e => e.target.style.backgroundColor = 'var(--border-light)'"
+                            @mouseleave="e => e.target.style.backgroundColor = 'transparent'">
                             <UserIcon class="w-4 h-4" />
                             Profile
                         </button>
 
                         <a :href="storeUrl" target="_blank" @click="isProfileDropdownOpen = false"
-                            class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition border-t border-slate-100">
+                            class="w-full flex items-center gap-3 px-4 py-2.5 text-sm transition border-t"
+                            :style="{
+                                color: 'var(--navbar-text)',
+                                borderTopColor: 'var(--border)'
+                            }"
+                            @mouseenter="e => e.target.style.backgroundColor = 'var(--border-light)'"
+                            @mouseleave="e => e.target.style.backgroundColor = 'transparent'">
                             <ArrowTopRightOnSquareIcon class="w-4 h-4" />
                             View Store
                         </a>
 
                         <button @click="auth.logout()"
-                            class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition border-t border-slate-100">
+                            class="w-full flex items-center gap-3 px-4 py-2.5 text-sm transition border-t"
+                            :style="{
+                                color: 'var(--danger)',
+                                borderTopColor: 'var(--border)'
+                            }"
+                            @mouseenter="e => e.target.style.backgroundColor = 'color-mix(in srgb, var(--danger) 8%, transparent)'"
+                            @mouseleave="e => e.target.style.backgroundColor = 'transparent'">
                             <ArrowRightOnRectangleIcon class="w-4 h-4" />
                             Logout
                         </button>
@@ -73,13 +168,15 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useThemeStore } from '@/stores/theme'
 
 import {
     Bars3Icon,
     BellIcon,
     ArrowTopRightOnSquareIcon,
     UserIcon,
-    ArrowRightOnRectangleIcon
+    ArrowRightOnRectangleIcon,
+    SwatchIcon
 } from '@heroicons/vue/24/outline'
 import NotificationModal from '@/components/common/NotificationModal.vue'
 
@@ -92,8 +189,13 @@ const emit = defineEmits(['toggle-sidebar', 'open-notification', 'open-profile',
 
 const route = useRoute()
 const auth = useAuthStore()
+const theme = useThemeStore()
 
 const storeUrl = import.meta.env.VITE_STORE_URL || 'http://localhost:3000'
+
+/* ---------- Theme Switcher ---------- */
+const isThemeOpen = ref(false)
+const themeSwitcherRef = ref(null)
 
 /* ---------- Notification Panel ---------- */
 const isNotificationOpen = ref(false)
@@ -101,7 +203,7 @@ const notificationRef = ref(null)
 
 function toggleNotification() {
     isNotificationOpen.value = !isNotificationOpen.value
-    if (isNotificationOpen.value) isProfileDropdownOpen.value = false
+    if (isNotificationOpen.value) { isProfileDropdownOpen.value = false; isThemeOpen.value = false }
 }
 
 /* ---------- Profile Dropdown ---------- */
@@ -110,7 +212,7 @@ const profileDropdownRef = ref(null)
 
 function toggleProfileDropdown() {
     isProfileDropdownOpen.value = !isProfileDropdownOpen.value
-    if (isProfileDropdownOpen.value) isNotificationOpen.value = false
+    if (isProfileDropdownOpen.value) { isNotificationOpen.value = false; isThemeOpen.value = false }
 }
 
 function openProfile() {
@@ -124,6 +226,9 @@ function handleClickOutside(event) {
     }
     if (notificationRef.value && !notificationRef.value.contains(event.target)) {
         isNotificationOpen.value = false
+    }
+    if (themeSwitcherRef.value && !themeSwitcherRef.value.contains(event.target)) {
+        isThemeOpen.value = false
     }
 }
 
@@ -172,26 +277,39 @@ const pageRoutes = [
 
 const pageTitle = computed(() => {
     const path = route.path
-    // Match most specific path first (longer matches take priority)
     const match = [...pageRoutes].reverse().find(r => path.startsWith(r.path))
     return match?.title || 'Dashboard'
 })
 </script>
 
 <style scoped>
+/* Navbar theme-aware button hover states */
+.navbar-btn {
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+.navbar-btn:hover {
+    background-color: var(--border-light);
+}
+
+/* Profile ring */
+.navbar-profile-ring {
+    transition: box-shadow 0.2s ease;
+}
+.navbar-profile-ring:hover {
+    box-shadow: 0 0 0 2px var(--color-primary) !important;
+}
+
+/* Dropdown transitions */
 .dropdown-enter-active {
     transition: all 0.18s ease-out;
 }
-
 .dropdown-leave-active {
     transition: all 0.12s ease-in;
 }
-
 .dropdown-enter-from {
     opacity: 0;
     transform: translateY(-6px) scale(.96);
 }
-
 .dropdown-leave-to {
     opacity: 0;
     transform: translateY(-4px) scale(.96);

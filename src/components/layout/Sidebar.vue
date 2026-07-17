@@ -1,28 +1,28 @@
 <template>
     <aside :class="[
-        'fixed inset-y-0 left-0 z-50 bg-slate-900 text-white transition-all duration-300 flex flex-col lg:relative',
+        'sidebar fixed inset-y-0 left-0 z-50 transition-all duration-300 flex flex-col lg:relative',
         sidebarOpen ? 'w-72' : 'w-0 lg:w-20 overflow-hidden'
     ]">
         <!-- Logo -->
-        <div class="h-16 border-b border-white/10 flex items-center px-4 gap-3 shrink-0">
-            <div class="w-10 h-10 rounded-xl bg-green-600 flex items-center justify-center font-black shrink-0">
+        <div class="sidebar-logo h-16 flex items-center px-4 gap-3 shrink-0">
+            <div class="logo-icon w-10 h-10 rounded-xl flex items-center justify-center font-black shrink-0 text-white">
                 E
             </div>
 
             <div v-if="sidebarOpen" class="min-w-0 flex-1">
-                <p class="font-black text-lg leading-none">EcoAdmin</p>
-                <p class="text-[11px] text-slate-400">Super Admin</p>
+                <p class="sidebar-brand font-black text-lg leading-none">EcoAdmin</p>
+                <p class="sidebar-subtitle text-[11px]">Super Admin</p>
             </div>
 
             <!-- Expand/Collapse All -->
             <button v-if="sidebarOpen" @click="toggleAllGroups"
-                class="p-1.5 rounded-lg hover:bg-slate-800 transition group relative"
+                class="p-1.5 rounded-lg sidebar-btn-icon transition group relative"
                 :title="allGroupsExpanded ? 'Collapse all' : 'Expand all'">
                 <component :is="allGroupsExpanded ? ChevronDoubleUpIcon : ChevronDoubleDownIcon"
-                    class="w-4 h-4 text-slate-500 group-hover:text-slate-300 transition" />
+                    class="w-4 h-4 transition" />
 
                 <div
-                    class="absolute -bottom-8 right-0 px-2 py-1 bg-slate-800 text-[10px] rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap transition z-50">
+                    class="sidebar-tooltip absolute -bottom-8 right-0 px-2 py-1 text-[10px] rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap transition z-50">
                     {{ allGroupsExpanded ? 'Collapse all' : 'Expand all' }}
                 </div>
             </button>
@@ -31,12 +31,12 @@
         <!-- Search -->
         <div v-if="sidebarOpen" class="px-3 pt-3 pb-1 shrink-0">
             <div class="relative">
-                <MagnifyingGlassIcon class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none" />
+                <MagnifyingGlassIcon class="sidebar-search-icon absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none" />
                 <input v-model="searchQuery" type="text" placeholder="Search pages..."
-                    class="w-full bg-slate-800 border border-slate-700 rounded-lg pl-9 pr-8 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:border-green-500 transition"
+                    class="sidebar-search-input w-full rounded-lg pl-9 pr-8 py-2 text-sm focus:outline-none transition"
                     @keydown.escape="searchQuery = ''" />
                 <button v-if="searchQuery" @click="searchQuery = ''"
-                    class="absolute right-2 top-1/2 -translate-y-1/2 p-0.5 rounded text-slate-500 hover:text-slate-300 hover:bg-slate-700 transition">
+                    class="sidebar-btn-icon absolute right-2 top-1/2 -translate-y-1/2 p-0.5 rounded transition">
                     <XMarkIcon class="w-3.5 h-3.5" />
                 </button>
             </div>
@@ -48,16 +48,14 @@
             <template v-if="searchQuery && sidebarOpen">
                 <div v-for="item in searchResults" :key="item.to" class="space-y-1">
                     <router-link :to="item.to" @click="searchQuery = ''"
-                        class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition"
-                        :class="isActive(item.to)
-                            ? 'bg-green-600 text-white'
-                            : 'text-slate-300 hover:bg-slate-800 hover:text-white'">
+                        class="sidebar-nav-item w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition"
+                        :class="isActive(item.to) ? 'sidebar-nav-active' : ''">
                         <component :is="item.icon" class="w-4 h-4 shrink-0" />
                         <span class="truncate flex-1">{{ item.name }}</span>
-                        <span class="text-[10px] text-slate-500 shrink-0">{{ item.group }}</span>
+                        <span class="sidebar-nav-group-label text-[10px] shrink-0">{{ item.group }}</span>
                     </router-link>
                 </div>
-                <div v-if="!searchResults.length" class="text-center py-8 text-xs text-slate-500">
+                <div v-if="!searchResults.length" class="sidebar-empty text-center py-8 text-xs">
                     No results for "{{ searchQuery }}"
                 </div>
             </template>
@@ -67,12 +65,12 @@
                 <template v-for="group in navGroups" :key="group.name">
                     <!-- Direct Link (e.g. Dashboard) -->
                     <router-link v-if="group.direct" :to="group.to"
-                        class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition relative group"
-                        :class="isActive(group.to) ? 'bg-green-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white'">
+                        class="sidebar-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition relative group"
+                        :class="isActive(group.to) ? 'sidebar-nav-active' : ''">
                         <component :is="group.icon" class="w-5 h-5 shrink-0" />
                         <span v-if="sidebarOpen" class="text-sm font-semibold flex-1 text-left">{{ group.name }}</span>
                         <div v-if="!sidebarOpen"
-                            class="absolute left-full ml-3 px-2 py-1 bg-slate-800 text-xs rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap transition z-50">
+                            class="sidebar-tooltip absolute left-full ml-3 px-2 py-1 text-xs rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap transition z-50">
                             {{ group.name }}
                         </div>
                     </router-link>
@@ -80,34 +78,32 @@
                     <!-- Dropdown Group -->
                     <div v-else class="space-y-1">
                         <button @click="toggleGroup(group.name)"
-                            class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-800 transition relative group">
-                            <component :is="group.icon" class="w-5 h-5 shrink-0 text-slate-300" />
+                            class="sidebar-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition relative group">
+                            <component :is="group.icon" class="w-5 h-5 shrink-0 sidebar-nav-icon" />
 
                             <span v-if="sidebarOpen" class="text-sm font-semibold flex-1 text-left">
                                 {{ group.name }}
                             </span>
 
-                            <ChevronDownIcon v-if="sidebarOpen" class="w-4 h-4 transition-transform"
+                            <ChevronDownIcon v-if="sidebarOpen" class="w-4 h-4 sidebar-chevron transition-transform"
                                 :class="openGroups[group.name] ? 'rotate-180' : ''" />
 
                             <div v-if="!sidebarOpen"
-                                class="absolute left-full ml-3 px-2 py-1 bg-slate-800 text-xs rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap transition z-50">
+                                class="sidebar-tooltip absolute left-full ml-3 px-2 py-1 text-xs rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap transition z-50">
                                 {{ group.name }}
                             </div>
                         </button>
 
                         <transition name="slide">
                             <div v-if="openGroups[group.name] && sidebarOpen"
-                                class="ml-4 pl-3 border-l border-slate-700 space-y-1 overflow-hidden">
+                                class="sidebar-subnav ml-4 pl-3 space-y-1 overflow-hidden">
                                 <router-link v-for="item in group.items" :key="item.name" :to="item.to"
-                                    class="router-link-item flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition"
-                                    :class="isActive(item.to)
-                                        ? 'bg-green-600 text-white'
-                                        : 'text-slate-300 hover:bg-slate-800 hover:text-white'">
+                                    class="sidebar-nav-item router-link-item flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition"
+                                    :class="isActive(item.to) ? 'sidebar-nav-active' : ''">
                                     <component :is="item.icon" class="w-4 h-4 shrink-0" />
                                     <span class="truncate">{{ item.name }}</span>
                                     <span v-if="item.pending"
-                                        class="ml-auto text-[10px] px-1.5 py-0.5 rounded bg-amber-500 text-white font-bold">
+                                        class="sidebar-pending ml-auto text-[10px] px-1.5 py-0.5 rounded font-bold">
                                         P
                                     </span>
                                 </router-link>
@@ -119,15 +115,15 @@
         </nav>
 
         <!-- User -->
-        <div class="border-t border-white/10 p-3 shrink-0">
+        <div class="sidebar-user-section p-3 shrink-0">
             <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-full bg-green-600 flex items-center justify-center font-bold shrink-0">
+                <div class="sidebar-user-avatar w-9 h-9 rounded-full flex items-center justify-center font-bold shrink-0 text-white">
                     {{ auth.userName.charAt(0).toUpperCase() }}
                 </div>
 
                 <div v-if="sidebarOpen" class="flex-1 min-w-0">
-                    <p class="text-sm font-semibold truncate">{{ auth.userName }}</p>
-                    <p class="text-xs text-slate-400 truncate">{{ auth.userEmail }}</p>
+                    <p class="sidebar-user-name text-sm font-semibold truncate">{{ auth.userName }}</p>
+                    <p class="sidebar-user-email text-xs truncate">{{ auth.userEmail }}</p>
                 </div>
             </div>
         </div>
@@ -284,6 +280,7 @@ const navGroups = [
             { name: 'Localization', to: '/settings/localization', icon: GlobeAltIcon },
             { name: 'Security', to: '/settings/security', icon: ShieldCheckIcon },
             { name: 'Maintenance', to: '/settings/maintenance', icon: WrenchScrewdriverIcon },
+            { name: 'Theme', to: '/settings/theme', icon: SwatchIcon },
         ]
     }
 ]
@@ -370,6 +367,128 @@ function isActive(path) {
 </script>
 
 <style scoped>
+/* ========================================================================
+   SIDEBAR — THEME-AWARE STYLES
+   Uses CSS custom properties defined in main.css
+   Sidebar gets the contrast color scheme automatically.
+   ======================================================================== */
+
+/* Sidebar container */
+.sidebar {
+    background-color: var(--sidebar-bg);
+    color: var(--sidebar-text);
+    border-right: 1px solid var(--sidebar-border);
+    transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+}
+
+/* Logo section */
+.sidebar-logo {
+    border-bottom: 1px solid var(--sidebar-border);
+}
+
+.logo-icon {
+    background-color: var(--sidebar-logo-bg);
+}
+
+.sidebar-brand {
+    color: var(--sidebar-text);
+}
+
+.sidebar-subtitle {
+    color: var(--sidebar-text-muted);
+}
+
+/* Search */
+.sidebar-search-input {
+    background-color: var(--sidebar-search-bg);
+    border: 1px solid var(--sidebar-search-border);
+    color: var(--sidebar-text);
+}
+.sidebar-search-input::placeholder {
+    color: var(--sidebar-search-placeholder);
+}
+.sidebar-search-input:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 30%, transparent);
+}
+.sidebar-search-icon {
+    color: var(--sidebar-text-muted);
+}
+
+/* Navigation items */
+.sidebar-nav-item {
+    color: var(--sidebar-text);
+}
+.sidebar-nav-item:hover {
+    background-color: var(--sidebar-hover);
+    color: var(--sidebar-text);
+}
+.sidebar-nav-active {
+    background-color: var(--sidebar-active-bg) !important;
+    color: var(--sidebar-active-text) !important;
+}
+.sidebar-nav-icon {
+    color: var(--sidebar-text);
+}
+.sidebar-chevron {
+    color: var(--sidebar-text-muted);
+}
+
+/* Sub navigation */
+.sidebar-subnav {
+    border-left-color: var(--sidebar-border);
+    border-left-width: 1px;
+    border-left-style: solid;
+}
+
+/* Badges */
+.sidebar-pending {
+    background-color: var(--warning);
+    color: #fff;
+}
+
+/* Tooltips */
+.sidebar-tooltip {
+    background-color: var(--sidebar-hover);
+    color: var(--sidebar-text);
+}
+
+/* Button icons */
+.sidebar-btn-icon {
+    color: var(--sidebar-text-muted);
+}
+.sidebar-btn-icon:hover {
+    color: var(--sidebar-text);
+    background-color: var(--sidebar-hover);
+}
+
+/* Group label in search */
+.sidebar-nav-group-label {
+    color: var(--sidebar-text-muted);
+}
+
+/* Empty state */
+.sidebar-empty {
+    color: var(--sidebar-text-muted);
+}
+
+/* User section */
+.sidebar-user-section {
+    border-top: 1px solid var(--sidebar-border);
+}
+.sidebar-user-avatar {
+    background-color: var(--sidebar-logo-bg);
+}
+.sidebar-user-name {
+    color: var(--sidebar-text);
+}
+.sidebar-user-email {
+    color: var(--sidebar-text-muted);
+}
+
+/* ========================================================================
+   TRANSITION ANIMATIONS
+   ======================================================================== */
 .slide-enter-active {
     transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
     overflow: hidden;

@@ -67,6 +67,7 @@ import LegalSettings from "@/pages/settings/LegalSettings.vue";
 import LocalizationSettings from "@/pages/settings/LocalizationSettings.vue";
 import SecuritySettings from "@/pages/settings/SecuritySettings.vue";
 import MaintenanceSettings from "@/pages/settings/MaintenanceSettings.vue";
+import ThemeSettings from "@/pages/settings/ThemeSettings.vue";
 
 const routes = [
     {
@@ -277,6 +278,11 @@ const routes = [
                         path: "maintenance",
                         name: "settings.maintenance",
                         component: MaintenanceSettings,
+                    },
+                    {
+                        path: "theme",
+                        name: "settings.theme",
+                        component: ThemeSettings,
                     },
                 ],
             },

@@ -1,5 +1,5 @@
 <template>
-    <div class="flex h-screen overflow-hidden bg-slate-50">
+    <div class="flex h-screen overflow-hidden" :style="{ backgroundColor: 'var(--app-bg)' }">
         <Sidebar :sidebarOpen="sidebarOpen" />
 
         <div v-if="sidebarOpen" @click="sidebarOpen = false" class="fixed inset-0 bg-black/40 z-40 lg:hidden" />

@@ -57,6 +57,7 @@ const navItems = [
     { to: '/settings/localization', label: 'Localization', icon: markRaw(Globe) },
     { to: '/settings/security', label: 'Security', icon: markRaw(Shield) },
     { to: '/settings/maintenance', label: 'Maintenance', icon: markRaw(Wrench) },
+    { to: '/settings/theme', label: 'Theme', icon: markRaw(Palette) },
 ]
 </script>
 
