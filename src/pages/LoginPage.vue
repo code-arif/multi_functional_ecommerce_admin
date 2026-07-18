@@ -43,7 +43,7 @@ async function handleLogin() {
               v-model="form.email"
               type="email"
               required
-              class="w-full px-3 py-2.5 bg-[var(--surface)] border border-[var(--border)] rounded text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)] transition-all"
+              class="w-full px-3 py-2.5 bg-[var(--surface)] border border-[var(--border)] rounded text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)] transition-all duration-300 ease-in-out"
               placeholder="admin@ecoshop.com"
             />
             <p v-if="errors.email" class="text-xs text-[var(--danger)] mt-1.5">{{ errors.email[0] }}</p>
@@ -57,7 +57,7 @@ async function handleLogin() {
                 v-model="form.password"
                 :type="showPass ? 'text' : 'password'"
                 required
-                class="w-full px-3 py-2.5 bg-[var(--surface)] border border-[var(--border)] rounded text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)] transition-all"
+                class="w-full px-3 py-2.5 bg-[var(--surface)] border border-[var(--border)] rounded text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)] transition-all duration-300 ease-in-out"
                 placeholder="••••••••"
               />
               <button
