@@ -1,47 +1,3 @@
-<template>
-  <div class="min-h-screen bg-gradient-to-br from-[#0F172A] to-[#1E293B] flex items-center justify-center p-4">
-    <div class="w-full max-w-md">
-      <div class="text-center mb-8">
-        <div class="w-16 h-16 bg-[#2E7D32] rounded-2xl flex items-center justify-center mx-auto mb-4">
-          <span class="text-white font-black text-2xl">E</span>
-        </div>
-        <h1 class="text-2xl font-black text-white">EcoAdmin</h1>
-        <p class="text-slate-400 text-sm mt-1">Sign in to your admin panel</p>
-      </div>
-      <div class="bg-white rounded-2xl p-7" style="box-shadow:0 20px 60px rgba(0,0,0,0.3)">
-        <form @submit.prevent="handleLogin" class="space-y-4">
-          <div>
-            <label class="label">Email Address</label>
-            <input v-model="form.email" type="email" required class="input" placeholder="admin@ecoshop.com"
-                   autofocus/>
-            <p v-if="errors.email" class="text-red-500 text-xs mt-1">{{ errors.email[0] }}</p>
-          </div>
-          <div>
-            <label class="label">Password</label>
-            <div class="relative">
-              <input v-model="form.password" :type="showPass ? 'text' : 'password'" required
-                     class="input pr-10" placeholder="••••••••"/>
-              <button
-                  type="button"
-                  @click="showPass = !showPass"
-                  class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
-              >
-                <Eye v-if="!showPass" class="w-5 h-5"/>
-                <EyeOff v-else class="w-5 h-5"/>
-              </button>
-            </div>
-          </div>
-          <button type="submit" :disabled="loading"
-                  class="btn-primary w-full justify-center py-3 text-base mt-2">
-            {{ loading ? 'Signing in...' : 'Sign In →' }}
-          </button>
-        </form>
-      </div>
-      <p class="text-center text-slate-500 text-xs mt-6">EcoShop Admin Panel v1.0</p>
-    </div>
-  </div>
-</template>
-
 <script setup>
 import {ref, reactive} from 'vue'
 import {useAuthStore} from '@/stores/auth'
@@ -63,3 +19,68 @@ async function handleLogin() {
   }
 }
 </script>
+
+<template>
+  <div class="min-h-screen bg-[#F7F9FC] flex items-center justify-center p-4">
+    <div class="w-full max-w-[400px]">
+      <!-- Unified Card -->
+      <div class="bg-white p-8 rounded-lg shadow-[0_0_0_1px_rgba(0,0,0,0.05),0_2px_4px_rgba(0,0,0,0.05)]">
+        
+        <!-- Consolidated Header -->
+        <div class="mb-8 text-center flex flex-col items-center">
+          <div class="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-black text-white text-lg font-bold mb-4">
+            E
+          </div>
+          <h1 class="text-2xl font-semibold text-[#0A2540]">Sign in</h1>
+          <p class="text-[#425466] mt-1">to continue to EcoShop Admin</p>
+        </div>
+
+        <form @submit.prevent="handleLogin" class="space-y-5">
+          <!-- Email -->
+          <div>
+            <label class="block text-sm font-medium text-[#425466] mb-1.5">Email address</label>
+            <input
+              v-model="form.email"
+              type="email"
+              required
+              class="w-full px-3 py-2.5 bg-white border border-[#E6E8EB] rounded text-sm text-[#0A2540] placeholder-[#A3ACB9] focus:outline-none focus:border-[#635BFF] focus:ring-1 focus:ring-[#635BFF] transition-all"
+              placeholder="admin@ecoshop.com"
+            />
+            <p v-if="errors.email" class="text-xs text-[#DF1B41] mt-1.5">{{ errors.email[0] }}</p>
+          </div>
+
+          <!-- Password -->
+          <div>
+            <label class="block text-sm font-medium text-[#425466] mb-1.5">Password</label>
+            <div class="relative">
+              <input
+                v-model="form.password"
+                :type="showPass ? 'text' : 'password'"
+                required
+                class="w-full px-3 py-2.5 bg-white border border-[#E6E8EB] rounded text-sm text-[#0A2540] placeholder-[#A3ACB9] focus:outline-none focus:border-[#635BFF] focus:ring-1 focus:ring-[#635BFF] transition-all"
+                placeholder="••••••••"
+              />
+              <button
+                type="button"
+                class="absolute right-3 top-2.5 text-[#425466] hover:text-[#635BFF]"
+                @click="showPass = !showPass"
+              >
+                <Eye v-if="!showPass" class="w-4 h-4" />
+                <EyeOff v-else class="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+
+          <!-- Submit -->
+          <button
+            type="submit"
+            :disabled="loading"
+            class="w-full flex items-center justify-center px-4 py-2.5 bg-[#635BFF] text-white rounded font-semibold text-sm hover:bg-[#544DDF] transition-colors disabled:opacity-70 mt-2"
+          >
+            {{ loading ? 'Signing in...' : 'Continue' }}
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</template>
