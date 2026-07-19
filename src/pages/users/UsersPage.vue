@@ -5,12 +5,13 @@
             search-placeholder="Search by name, email..." empty-icon="👥" empty-text="No customers found"
             @search="q => { search = q; load(1) }" @page="load">
             <template #filters>
-                <select v-model="statusFilter" @change="load(1)" class="input-sm w-28">
-                    <option value="">All</option>
-                    <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
-                    <option value="banned">Banned</option>
-                </select>
+                <SelectBox
+                    v-model="statusFilter"
+                    :options="statusOptions"
+                    placeholder="All Status"
+                    size="sm"
+                    @change="load(1)"
+                />
             </template>
             <template #default="{ item }">
                 <td class="table-cell">
@@ -33,12 +34,12 @@
                 <td class="table-cell text-right">
                     <div class="flex items-center justify-end gap-1">
                         <router-link :to="`/users/${item.id}`" class="btn-ghost text-xs py-1.5 px-3">View</router-link>
-                        <select @change="e => changeStatus(item.id, e.target.value)" :value="item.status"
-                            class="input-sm w-24 text-xs">
-                            <option value="active">Active</option>
-                            <option value="inactive">Inactive</option>
-                            <option value="banned">Ban</option>
-                        </select>
+                        <SelectBox
+                            :model-value="item.status"
+                            :options="statusRowOptions"
+                            size="sm"
+                            @change="v => changeStatus(item.id, v)"
+                        />
                     </div>
                 </td>
             </template>
@@ -51,9 +52,24 @@ import { useToast } from 'vue-toastification'
 import PageHeader from '@/components/common/PageHeader.vue'
 import DataTable from '@/components/common/DataTable.vue'
 import StatusBadge from '@/components/common/StatusBadge.vue'
+import SelectBox from '@/components/common/SelectBox.vue'
 import { userApi } from '@/api'
 const toast = useToast()
 const users = ref([]), pagination = ref(null), loading = ref(true), search = ref(''), statusFilter = ref('')
+
+const statusOptions = [
+    { value: '', label: 'All' },
+    { value: 'active', label: 'Active' },
+    { value: 'inactive', label: 'Inactive' },
+    { value: 'banned', label: 'Banned' },
+]
+
+const statusRowOptions = [
+    { value: 'active', label: 'Active' },
+    { value: 'inactive', label: 'Inactive' },
+    { value: 'banned', label: 'Ban' },
+]
+
 const columns = [
     { key: 'name', label: 'Customer', class: '' },
     { key: 'phone', label: 'Phone', class: 'w-32' },
