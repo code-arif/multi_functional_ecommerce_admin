@@ -15,39 +15,43 @@
                 <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
                     <div>
                         <label class="label">Status</label>
-                        <select v-model="filters.status" @change="load(1)" class="input-sm">
-                            <option value="">All Status</option>
-                            <option value="active">Active</option>
-                            <option value="pending">Pending</option>
-                            <option value="suspended">Suspended</option>
-                            <option value="banned">Banned</option>
-                        </select>
+                        <SelectBox
+                            v-model="filters.status"
+                            :options="statusOptions"
+                            placeholder="All Status"
+                            size="sm"
+                            @change="load(1)"
+                        />
                     </div>
                     <div>
                         <label class="label">Verified</label>
-                        <select v-model="filters.verified" @change="load(1)" class="input-sm">
-                            <option value="">All</option>
-                            <option value="1">Verified</option>
-                            <option value="0">Unverified</option>
-                        </select>
+                        <SelectBox
+                            v-model="filters.verified"
+                            :options="verifiedOptions"
+                            placeholder="All"
+                            size="sm"
+                            @change="load(1)"
+                        />
                     </div>
                     <div>
                         <label class="label">Products</label>
-                        <select v-model="filters.products" @change="load(1)" class="input-sm">
-                            <option value="">Any</option>
-                            <option value="low">Low (&lt; 10)</option>
-                            <option value="medium">Medium (10-50)</option>
-                            <option value="high">High (&gt; 50)</option>
-                        </select>
+                        <SelectBox
+                            v-model="filters.products"
+                            :options="productsOptions"
+                            placeholder="Any"
+                            size="sm"
+                            @change="load(1)"
+                        />
                     </div>
                     <div>
                         <label class="label">Rating</label>
-                        <select v-model="filters.rating" @change="load(1)" class="input-sm">
-                            <option value="">Any</option>
-                            <option value="5">★★★★★ (5)</option>
-                            <option value="4">★★★★☆ (4+)</option>
-                            <option value="3">★★★☆☆ (3+)</option>
-                        </select>
+                        <SelectBox
+                            v-model="filters.rating"
+                            :options="ratingOptions"
+                            placeholder="Any"
+                            size="sm"
+                            @change="load(1)"
+                        />
                     </div>
                     <div>
                         <label class="label">Join Date</label>
@@ -62,14 +66,12 @@
                     </div>
                     <div>
                         <label class="label">Sort By</label>
-                        <select v-model="filters.sort" @change="load(1)" class="input-sm">
-                            <option value="latest">Latest</option>
-                            <option value="oldest">Oldest</option>
-                            <option value="name">Name A-Z</option>
-                            <option value="rating">Highest Rated</option>
-                            <option value="products">Most Products</option>
-                            <option value="sales">Most Sales</option>
-                        </select>
+                        <SelectBox
+                            v-model="filters.sort"
+                            :options="sortOptions"
+                            size="sm"
+                            @change="load(1)"
+                        />
                     </div>
                 </div>
                 <div class="flex items-center gap-2 mt-3 pt-3 border-t"
@@ -290,6 +292,7 @@ import { useToast } from 'vue-toastification'
 import PageHeader from '@/components/common/PageHeader.vue'
 import StatusBadge from '@/components/common/StatusBadge.vue'
 import DatePicker from '@/components/common/DatePicker.vue'
+import SelectBox from '@/components/common/SelectBox.vue'
 import { vendorApi } from '@/api/vendor'
 import {
     BuildingStorefrontIcon,
@@ -323,6 +326,43 @@ const filters = reactive({
     joinTo: '',
     sort: 'latest',
 })
+
+const statusOptions = [
+    { value: '', label: 'All Status' },
+    { value: 'active', label: 'Active' },
+    { value: 'pending', label: 'Pending' },
+    { value: 'suspended', label: 'Suspended' },
+    { value: 'banned', label: 'Banned' },
+]
+
+const verifiedOptions = [
+    { value: '', label: 'All' },
+    { value: '1', label: 'Verified' },
+    { value: '0', label: 'Unverified' },
+]
+
+const productsOptions = [
+    { value: '', label: 'Any' },
+    { value: 'low', label: 'Low (< 10)' },
+    { value: 'medium', label: 'Medium (10-50)' },
+    { value: 'high', label: 'High (> 50)' },
+]
+
+const ratingOptions = [
+    { value: '', label: 'Any' },
+    { value: '5', label: '★★★★★ (5)' },
+    { value: '4', label: '★★★★☆ (4+)' },
+    { value: '3', label: '★★★☆☆ (3+)' },
+]
+
+const sortOptions = [
+    { value: 'latest', label: 'Latest' },
+    { value: 'oldest', label: 'Oldest' },
+    { value: 'name', label: 'Name A-Z' },
+    { value: 'rating', label: 'Highest Rated' },
+    { value: 'products', label: 'Most Products' },
+    { value: 'sales', label: 'Most Sales' },
+]
 
 const joinPresets = [
     { label: 'Today', getRange: () => {

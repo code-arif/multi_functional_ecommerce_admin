@@ -23,10 +23,12 @@
       <div class="card p-5 lg:col-span-2">
         <div class="flex items-center justify-between mb-5">
           <h3 class="dash-section-title">Revenue (Last 30 Days)</h3>
-          <select v-model="chartPeriod" @change="loadChart" class="input-sm w-28">
-            <option value="daily">Daily</option>
-            <option value="monthly">Monthly</option>
-          </select>
+          <SelectBox
+            v-model="chartPeriod"
+            :options="chartPeriodOptions"
+            size="sm"
+            @change="loadChart"
+          />
         </div>
         <div class="h-56">
           <canvas ref="revenueChartRef"/>
@@ -124,6 +126,7 @@ import {dashboardApi, reportApi, orderApi} from '@/api'
 import {useAuthStore} from '@/stores/auth'
 import {useThemeStore} from '@/stores/theme'
 import { DollarSign, ChartBar, ShoppingCart, Clock, Users, ListIndentIncrease, FileExclamationPoint, Banknote } from 'lucide-vue-next'
+import SelectBox from '@/components/common/SelectBox.vue'
 
 Chart.register(...registerables)
 
@@ -135,6 +138,10 @@ const recentOrders = ref([]), topProducts = ref([])
 const loadingOrders = ref(true), loadingTop = ref(true)
 const revenueChartRef = ref(null), statusChartRef = ref(null)
 const chartPeriod = ref('daily')
+const chartPeriodOptions = [
+  { value: 'daily', label: 'Daily' },
+  { value: 'monthly', label: 'Monthly' },
+]
 let revenueChart = null, statusChart = null
 
 /* ─── CSS variable helpers ─── */

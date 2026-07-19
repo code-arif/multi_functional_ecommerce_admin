@@ -11,12 +11,13 @@
       search-placeholder="Search products..." empty-icon="📦" empty-text="No products found"
       @search="q => { search = q; load(1) }" @page="load">
       <template #filters>
-        <select v-model="statusFilter" @change="load(1)" class="input py-2 w-36 text-sm">
-          <option value="">All Status</option>
-          <option value="active">Active</option>
-          <option value="inactive">Inactive</option>
-          <option value="draft">Draft</option>
-        </select>
+        <SelectBox
+          v-model="statusFilter"
+          :options="statusOptions"
+          placeholder="All Status"
+          size="md"
+          @change="load(1)"
+        />
       </template>
       <template #actions>
         <button @click="load()" class="btn-ghost p-2" title="Refresh">
@@ -127,11 +128,19 @@ import StatusBadge from '@/components/common/StatusBadge.vue'
 import ConfirmModal from '@/components/common/ConfirmModal.vue'
 import { productApi } from '@/api'
 import { PlusIcon, PencilIcon, TrashIcon, ArrowPathIcon, EyeIcon } from '@heroicons/vue/24/outline'
-import { Package, Tag } from 'lucide-vue-next'
+import { Package } from 'lucide-vue-next'
+import SelectBox from '@/components/common/SelectBox.vue'
 
 const toast = useToast()
 const products = ref([]), pagination = ref(null), loading = ref(true)
 const search = ref(''), statusFilter = ref(''), deleteTarget = ref(null), deleting = ref(false)
+
+const statusOptions = [
+  { value: '', label: 'All Status' },
+  { value: 'active', label: 'Active' },
+  { value: 'inactive', label: 'Inactive' },
+  { value: 'draft', label: 'Draft' },
+]
 
 const columns = [
   { key: 'name', label: 'Product', class: 'w-64' },
