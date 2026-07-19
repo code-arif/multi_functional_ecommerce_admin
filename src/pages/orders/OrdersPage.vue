@@ -6,7 +6,7 @@
                 <button @click="showFilters = !showFilters"
                     class="btn-ghost text-sm gap-1.5"
                     :style="{ color: showFilters ? 'var(--color-primary)' : '' }">
-                    <FunnelIcon class="w-4 h-4" />
+                    <Funnel class="w-4 h-4" />
                     Filters
                 </button>
                 <router-link to="/orders"
@@ -117,14 +117,17 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { startOfYear } from 'date-fns'
 import PageHeader from '@/components/common/PageHeader.vue'
 import DataTable from '@/components/common/DataTable.vue'
 import StatusBadge from '@/components/common/StatusBadge.vue'
+import DatePicker from '@/components/common/DatePicker.vue'
 import { orderApi } from '@/api'
 
 import {
     Eye,
-    ClipboardList
+    ClipboardList,
+    Funnel
 } from 'lucide-vue-next'
 
 const orders = ref([])
@@ -133,6 +136,22 @@ const loading = ref(true)
 
 const search = ref('')
 const statusFilter = ref('')
+const showFilters = ref(false)
+const dateFrom = ref('')
+const dateTo = ref('')
+
+const datePresets = [
+    { label: '7 Days', days: 7 },
+    { label: '30 Days', days: 30 },
+    { label: '90 Days', days: 90 },
+    { label: 'This Year', getRange: () => ({ from: startOfYear(new Date()), to: new Date() }) },
+]
+
+function clearDateFilter() {
+    dateFrom.value = ''
+    dateTo.value = ''
+    load(1)
+}
 
 const statusTabs = [
     { value: '', label: 'All' },
@@ -171,6 +190,8 @@ async function load(page = 1) {
             page,
             search: search.value,
             status: statusFilter.value,
+            date_from: dateFrom.value || undefined,
+            date_to: dateTo.value || undefined,
             per_page: 20
         })
 

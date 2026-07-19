@@ -14,11 +14,12 @@
       />
       <div class="flex items-center gap-2">
         <label class="label mb-0">Period</label>
-        <select v-model="filters.period" class="input-sm w-28">
-          <option value="daily">Daily</option>
-          <option value="monthly">Monthly</option>
-          <option value="yearly">Yearly</option>
-        </select>
+        <SelectBox
+          v-model="filters.period"
+          :options="periodOptions"
+          size="sm"
+          @change="loadAll"
+        />
       </div>
       <button @click="loadAll" class="btn-primary text-sm py-1.5 px-4">Apply</button>
     </div>
@@ -119,6 +120,7 @@ import { startOfYear } from 'date-fns'
 import { Chart, registerables } from 'chart.js'
 import PageHeader from '@/components/common/PageHeader.vue'
 import DatePicker from '@/components/common/DatePicker.vue'
+import SelectBox from '@/components/common/SelectBox.vue'
 import { reportApi } from '@/api'
 import { useThemeStore } from '@/stores/theme'
 import { DollarSign, Package, CreditCard, Users } from 'lucide-vue-next'
@@ -148,6 +150,12 @@ function hexToRGBA(hex, alpha) {
   const b = parseInt(hex.substring(4, 6), 16)
   return isNaN(r) ? `rgba(46, 125, 50, ${alpha})` : `rgba(${r}, ${g}, ${b}, ${alpha})`
 }
+
+const periodOptions = [
+  { value: 'daily', label: 'Daily' },
+  { value: 'monthly', label: 'Monthly' },
+  { value: 'yearly', label: 'Yearly' },
+]
 
 const presets = [
   { label: '7 Days', days: 7 },
