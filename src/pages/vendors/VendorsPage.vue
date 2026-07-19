@@ -51,13 +51,14 @@
                     </div>
                     <div>
                         <label class="label">Join Date</label>
-                        <select v-model="filters.joinPeriod" @change="load(1)" class="input-sm">
-                            <option value="">Any Time</option>
-                            <option value="today">Today</option>
-                            <option value="week">This Week</option>
-                            <option value="month">This Month</option>
-                            <option value="year">This Year</option>
-                        </select>
+                        <DatePicker
+                            v-model:from="filters.joinFrom"
+                            v-model:to="filters.joinTo"
+                            :presets="joinPresets"
+                            range
+                            placeholder="Join date"
+                            display-format="MMM dd, yyyy"
+                        />
                     </div>
                     <div>
                         <label class="label">Sort By</label>
@@ -288,6 +289,7 @@ import { useRoute } from 'vue-router'
 import { useToast } from 'vue-toastification'
 import PageHeader from '@/components/common/PageHeader.vue'
 import StatusBadge from '@/components/common/StatusBadge.vue'
+import DatePicker from '@/components/common/DatePicker.vue'
 import { vendorApi } from '@/api/vendor'
 import {
     BuildingStorefrontIcon,
@@ -317,9 +319,23 @@ const filters = reactive({
     verified: '',
     products: '',
     rating: '',
-    joinPeriod: '',
+    joinFrom: '',
+    joinTo: '',
     sort: 'latest',
 })
+
+const joinPresets = [
+    { label: 'Today', getRange: () => {
+        const today = new Date()
+        return { from: today, to: today }
+    }},
+    { label: '7 Days', days: 7 },
+    { label: '30 Days', days: 30 },
+    { label: 'This Year', getRange: () => {
+        const now = new Date()
+        return { from: new Date(now.getFullYear(), 0, 1), to: now }
+    }},
+]
 
 const stats = reactive({ total: 0, active: 0, pending: 0, suspended: 0 })
 
@@ -328,7 +344,8 @@ function resetFilters() {
     filters.verified = ''
     filters.products = ''
     filters.rating = ''
-    filters.joinPeriod = ''
+    filters.joinFrom = ''
+    filters.joinTo = ''
     filters.sort = 'latest'
     load(1)
 }
@@ -362,7 +379,8 @@ async function load(page = 1) {
             verified: filters.verified || undefined,
             products: filters.products || undefined,
             rating: filters.rating || undefined,
-            join_period: filters.joinPeriod || undefined,
+            date_from: filters.joinFrom || undefined,
+            date_to: filters.joinTo || undefined,
             sort: filters.sort,
         }
         // Clean undefined params

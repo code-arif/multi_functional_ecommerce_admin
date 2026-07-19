@@ -2,8 +2,13 @@
     <div class="w-full max-w-full overflow-hidden">
         <PageHeader title="Orders" :subtitle="`${pagination?.total || 0} total orders`">
 
-            <!-- Top Right Button -->
             <template #actions>
+                <button @click="showFilters = !showFilters"
+                    class="btn-ghost text-sm gap-1.5"
+                    :style="{ color: showFilters ? 'var(--color-primary)' : '' }">
+                    <FunnelIcon class="w-4 h-4" />
+                    Filters
+                </button>
                 <router-link to="/orders"
                     class="inline-flex items-center justify-center px-4 py-2 text-xs font-semibold text-[#2E7D32] border border-[#2E7D32] rounded-lg hover:bg-[#2E7D32] hover:text-white transition-all duration-200">
                     View All
@@ -11,6 +16,27 @@
             </template>
 
         </PageHeader>
+
+        <!-- Date Range Filter Panel -->
+        <transition name="panel-slide">
+            <div v-if="showFilters" class="card p-4 mb-4 flex flex-wrap items-end gap-4">
+                <div>
+                    <label class="label">Order Date</label>
+                    <DatePicker
+                        v-model:from="dateFrom"
+                        v-model:to="dateTo"
+                        :presets="datePresets"
+                        range
+                        placeholder="Order date"
+                        display-format="MMM dd, yyyy"
+                    />
+                </div>
+                <button @click="load(1)" class="btn-primary text-sm py-1.5 px-4">Apply</button>
+                <button @click="clearDateFilter" class="btn-ghost text-xs" v-if="dateFrom || dateTo">
+                    Clear Dates
+                </button>
+            </div>
+        </transition>
 
         <!-- Status filter tabs -->
         <div class="flex gap-2 mb-5 overflow-x-auto pb-1 scrollbar-hide w-full">

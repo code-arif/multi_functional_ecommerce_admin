@@ -2,16 +2,16 @@
   <div>
     <PageHeader title="Reports & Analytics" subtitle="Detailed sales and performance data" />
 
-    <!-- Date range -->
+    <!-- Date Range Filter -->
     <div class="card p-4 mb-6 flex flex-wrap items-center gap-4">
-      <div class="flex items-center gap-2">
-        <label class="label mb-0">From</label>
-        <input v-model="filters.from" type="date" class="input-sm w-36" />
-      </div>
-      <div class="flex items-center gap-2">
-        <label class="label mb-0">To</label>
-        <input v-model="filters.to" type="date" class="input-sm w-36" />
-      </div>
+      <DatePicker
+        v-model:from="filters.from"
+        v-model:to="filters.to"
+        :presets="presets"
+        range
+        placeholder="Date"
+        display-format="MMM dd, yyyy"
+      />
       <div class="flex items-center gap-2">
         <label class="label mb-0">Period</label>
         <select v-model="filters.period" class="input-sm w-28">
@@ -21,11 +21,6 @@
         </select>
       </div>
       <button @click="loadAll" class="btn-primary text-sm py-1.5 px-4">Apply</button>
-      <div class="flex gap-2 ml-auto">
-        <button v-for="preset in presets" :key="preset.label" @click="applyPreset(preset)"
-          class="text-xs border border-gray-200 px-3 py-1.5 rounded-lg hover:border-[#2E7D32] hover:text-[#2E7D32] transition">{{
-            preset.label }}</button>
-      </div>
     </div>
 
     <!-- Summary stat cards -->
@@ -120,8 +115,10 @@
 </template>
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { startOfYear } from 'date-fns'
 import { Chart, registerables } from 'chart.js'
 import PageHeader from '@/components/common/PageHeader.vue'
+import DatePicker from '@/components/common/DatePicker.vue'
 import { reportApi } from '@/api'
 import { useThemeStore } from '@/stores/theme'
 import { DollarSign, Package, CreditCard, Users } from 'lucide-vue-next'
@@ -153,15 +150,11 @@ function hexToRGBA(hex, alpha) {
 }
 
 const presets = [
-  { label: '7 days', days: 7 },
-  { label: '30 days', days: 30 },
-  { label: '90 days', days: 90 },
+  { label: '7 Days', days: 7 },
+  { label: '30 Days', days: 30 },
+  { label: '90 Days', days: 90 },
+  { label: 'This Year', getRange: () => ({ from: startOfYear(new Date()), to: new Date() }) },
 ]
-function applyPreset(p) {
-  filters.value.from = new Date(Date.now() - p.days * 24 * 60 * 60 * 1000).toISOString().slice(0, 10)
-  filters.value.to = new Date().toISOString().slice(0, 10)
-  loadAll()
-}
 
 function buildChart(canvasRef, labels, data, label, color, chartRef) {
   if (chartRef) chartRef.destroy()
