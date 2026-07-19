@@ -375,7 +375,6 @@ function onDayMouseEnter(day) {
   position: relative;
   display: inline-block;
   min-width: 150px;
-  width: 100%;
   font-family: inherit;
   user-select: none;
 }
