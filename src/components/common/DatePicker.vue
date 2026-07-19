@@ -374,7 +374,8 @@ function onDayMouseEnter(day) {
 .dp-root {
   position: relative;
   display: inline-block;
-  min-width: 220px;
+  min-width: 150px;
+  width: 100%;
   font-family: inherit;
   user-select: none;
 }
@@ -387,13 +388,13 @@ function onDayMouseEnter(day) {
 .dp-input {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
+  gap: 4px;
+  padding: 6px 8px;
   border: 1px solid var(--border, #E2E8F0);
   border-radius: 8px;
   background: var(--surface, #fff);
   transition: border-color 0.15s, box-shadow 0.15s, background-color 0.25s ease;
-  min-height: 38px;
+  min-height: 30px;
 }
 
 .dp-input:hover {
@@ -426,7 +427,7 @@ function onDayMouseEnter(day) {
 }
 
 .dp-single-text {
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   color: var(--text-primary, #1E293B);
   flex: 1;
   white-space: nowrap;
@@ -440,16 +441,19 @@ function onDayMouseEnter(day) {
 
 /* Range mode */
 .dp-input--range {
-  gap: 4px;
+  gap: 2px;
 }
 
 .dp-range-part {
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   color: var(--text-primary, #1E293B);
-  padding: 2px 6px;
+  padding: 1px 4px;
   border-radius: 4px;
   transition: background-color 0.15s;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
 }
 
 .dp-range-part--active {

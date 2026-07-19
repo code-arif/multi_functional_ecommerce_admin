@@ -12,48 +12,53 @@
         <!-- Filter Panel -->
         <transition name="panel-slide">
             <div v-if="showFilters" class="card p-4 mb-4">
-                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
-                    <div>
+                <!-- Single row: All filters in one responsive line -->
+                <div class="flex flex-wrap items-end gap-3">
+                    <div class="vendor-filter-item">
                         <label class="label">Status</label>
                         <SelectBox
                             v-model="filters.status"
                             :options="statusOptions"
                             placeholder="All Status"
                             size="sm"
+                            full-width
                             @change="load(1)"
                         />
                     </div>
-                    <div>
+                    <div class="vendor-filter-item">
                         <label class="label">Verified</label>
                         <SelectBox
                             v-model="filters.verified"
                             :options="verifiedOptions"
                             placeholder="All"
                             size="sm"
+                            full-width
                             @change="load(1)"
                         />
                     </div>
-                    <div>
+                    <div class="vendor-filter-item">
                         <label class="label">Products</label>
                         <SelectBox
                             v-model="filters.products"
                             :options="productsOptions"
                             placeholder="Any"
                             size="sm"
+                            full-width
                             @change="load(1)"
                         />
                     </div>
-                    <div>
+                    <div class="vendor-filter-item">
                         <label class="label">Rating</label>
                         <SelectBox
                             v-model="filters.rating"
                             :options="ratingOptions"
                             placeholder="Any"
                             size="sm"
+                            full-width
                             @change="load(1)"
                         />
                     </div>
-                    <div>
+                    <div class="vendor-filter-item vendor-filter-item--wide">
                         <label class="label">Join Date</label>
                         <DatePicker
                             v-model:from="filters.joinFrom"
@@ -64,12 +69,13 @@
                             display-format="MMM dd, yyyy"
                         />
                     </div>
-                    <div>
+                    <div class="vendor-filter-item">
                         <label class="label">Sort By</label>
                         <SelectBox
                             v-model="filters.sort"
                             :options="sortOptions"
                             size="sm"
+                            full-width
                             @change="load(1)"
                         />
                     </div>
@@ -468,6 +474,16 @@ onMounted(() => load())
 </script>
 
 <style scoped>
+.vendor-filter-item {
+    flex: 1 1 130px;
+    min-width: 0;
+}
+
+.vendor-filter-item--wide {
+    flex: 1.8 1 190px;
+    min-width: 0;
+}
+
 .vendor-th {
     padding: 10px 12px;
     font-size: 0.65rem;
