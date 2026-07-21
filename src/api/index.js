@@ -133,6 +133,7 @@ export const invoiceApi = {
   purchaseList:  p => client.get('/admin/invoices/purchases', { params: p }),
   purchaseShow:  id => client.get(`/admin/invoices/purchases/${id}`),
   purchaseStore: d => client.post('/admin/invoices/purchases', d),
+  purchaseUpdate: (id,d) => client.put(`/admin/invoices/purchases/${id}`, d),
 }
 
 // Chat

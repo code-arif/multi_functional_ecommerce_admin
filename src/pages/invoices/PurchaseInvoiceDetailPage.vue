@@ -21,6 +21,7 @@
             <div class="flex items-center justify-between mb-3">
               <h3 class="font-bold text-sm" style="color:var(--text-primary)">Status</h3>
               <StatusBadge :value="invoice.status" />
+              <router-link :to="'/invoices/purchases/' + invoice.id + '/edit'" class="btn-secondary text-xs py-1.5 px-3 inline-flex items-center gap-1.5"><Pencil class="w-3.5 h-3.5" />Edit</router-link>
             </div>
             <div class="space-y-2 text-sm">
               <div class="flex justify-between"><span style="color:var(--text-muted)">Date</span><span style="color:var(--text-primary)">{{ formatDate(invoice.purchase_date) }}</span></div>
@@ -72,6 +73,7 @@ import { useRoute } from 'vue-router'
 import PageHeader from '@/components/common/PageHeader.vue'
 import StatusBadge from '@/components/common/StatusBadge.vue'
 import { BuildingStorefrontIcon, ShoppingBagIcon } from '@heroicons/vue/24/outline'
+import { Pencil } from 'lucide-vue-next'
 const route = useRoute()
 const invoice = ref(null)
 const taxAmount = computed(() => ((invoice.value?.subtotal || 0) * ((invoice.value?.tax_rate || 0) / 100)))

@@ -1,9 +1,12 @@
 <template>
   <div class="max-w-6xl">
-    <PageHeader title="New Purchase Invoice" subtitle="Record a purchase from a vendor">
+    <PageHeader :title="isEdit ? 'Edit Purchase Invoice' : 'New Purchase Invoice'" :subtitle="isEdit ? 'Update purchase #PUR-' + String(route.params.id).padStart(5, '0') : 'Record a purchase from a vendor'">
       <button @click="$router.push('/invoices/purchases')" class="btn-ghost text-sm">← Purchase Invoices</button>
     </PageHeader>
-    <form @submit.prevent="saveInvoice">
+    <div v-if="loading" class="card p-12 text-center" style="color:var(--text-muted)">
+      <svg class="w-8 h-8 animate-spin mx-auto mb-3" :style="{color:'var(--color-primary)'}" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>Loading purchase data...
+    </div>
+    <form v-else @submit.prevent="saveInvoice">
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
         <div class="card p-5">
           <h3 class="font-bold text-sm mb-4" style="color:var(--text-primary)"><BuildingStorefrontIcon class="w-4 h-4 inline mr-1.5" style="color:var(--color-primary)" />Vendor Details</h3>
@@ -75,37 +78,75 @@
       </div>
       <div class="flex items-center gap-3 justify-end">
         <button type="button" @click="$router.push('/invoices/purchases')" class="btn-ghost">Cancel</button>
-        <button type="submit" class="btn-primary"><Check class="w-4 h-4" />Record Purchase</button>
+        <button type="submit" class="btn-primary"><Check class="w-4 h-4" />{{ isEdit ? 'Update Purchase' : 'Record Purchase' }}</button>
       </div>
     </form>
   </div>
 </template>
 <script setup>
-import { ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, computed, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
 import PageHeader from '@/components/common/PageHeader.vue'
 import SelectBox from '@/components/common/SelectBox.vue'
 import { BuildingStorefrontIcon, DocumentTextIcon, CalculatorIcon, ShoppingBagIcon, PlusIcon, TrashIcon, PencilIcon, TruckIcon } from '@heroicons/vue/24/outline'
 import { Check } from 'lucide-vue-next'
+
+const route = useRoute()
 const router = useRouter()
 const toast = useToast()
+const loading = ref(false)
+const isEdit = computed(() => !!route.params.id)
+
 const paymentOptions = [{value:'',label:'Select'},{value:'bank_transfer',label:'Bank Transfer'},{value:'cash',label:'Cash'},{value:'check',label:'Check'},{value:'credit',label:'Credit'}]
 const statusOptions = [{value:'unpaid',label:'Unpaid'},{value:'paid',label:'Paid'},{value:'pending',label:'Pending'}]
+
 const form = ref({
   vendor_name: '', contact_person: '', vendor_email: '', vendor_phone: '', vendor_address: '',
   purchase_date: new Date().toISOString().slice(0,10), payment_method: '', status: 'unpaid',
   notes: '', shipping: 0, tax_rate: 0,
   items: [{name: '', qty: 1, cost: 0}]
 })
+
 const subtotal = computed(() => form.value.items.reduce((s, i) => s + (i.qty || 0) * (i.cost || 0), 0))
 const taxAmount = computed(() => (subtotal.value * (Number(form.value.tax_rate) || 0)) / 100)
 const grandTotal = computed(() => subtotal.value + taxAmount + (Number(form.value.shipping) || 0))
+
 function addItem() { form.value.items.push({name: '', qty: 1, cost: 0}) }
+
+function loadPurchase() {
+  loading.value = true
+  setTimeout(() => {
+    form.value = {
+      vendor_name: 'TechMart Supplies', contact_person: 'Mr. Rahman', vendor_email: 'info@techmart.com',
+      vendor_phone: '+8801712345678', vendor_address: '56 Kawran Bazar, Dhaka 1215',
+      purchase_date: new Date(Date.now()-10*86400000).toISOString().slice(0,10),
+      payment_method: 'bank_transfer', status: 'paid', notes: 'Payment via bank transfer completed.',
+      shipping: 1200, tax_rate: 5,
+      items: [
+        {name: 'Wireless Headphones (Wholesale)', qty: 50, cost: 850},
+        {name: 'USB-C Cables (Box of 100)', qty: 3, cost: 4500},
+        {name: 'Phone Cases (Assorted)', qty: 200, cost: 120},
+        {name: 'Screen Protectors (Bulk)', qty: 500, cost: 45},
+      ]
+    }
+    loading.value = false
+  }, 400)
+}
+
 function saveInvoice() {
   if (!form.value.vendor_name) return toast.error('Vendor name is required')
   if (!form.value.items.some(i => i.name)) return toast.error('At least one item is required')
-  toast.success('Purchase recorded successfully!')
-  setTimeout(() => router.push('/invoices/purchases'), 500)
+  if (isEdit.value) {
+    toast.success('Purchase updated successfully!')
+    setTimeout(() => router.push('/invoices/purchases/' + route.params.id), 500)
+  } else {
+    toast.success('Purchase recorded successfully!')
+    setTimeout(() => router.push('/invoices/purchases'), 500)
+  }
 }
+
+onMounted(() => {
+  if (isEdit.value) loadPurchase()
+})
 </script>
