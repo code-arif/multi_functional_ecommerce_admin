@@ -55,6 +55,15 @@ import EmailsPage from "@/pages/emails/EmailsPage.vue";
 import ReportsPage from "@/pages/reports/ReportsPage.vue";
 import CustomerReportsPage from "@/pages/reports/CustomerReportsPage.vue";
 import ProductReportsPage from "@/pages/reports/ProductReportsPage.vue";
+import VendorReportsPage from "@/pages/reports/VendorReportsPage.vue";
+import ShopReportsPage from "@/pages/reports/ShopReportsPage.vue";
+import AffiliateReportsPage from "@/pages/reports/AffiliateReportsPage.vue";
+import CouponReportsPage from "@/pages/reports/CouponReportsPage.vue";
+import CampaignReportsPage from "@/pages/reports/CampaignReportsPage.vue";
+import ReviewReportsPage from "@/pages/reports/ReviewReportsPage.vue";
+import NotificationReportsPage from "@/pages/reports/NotificationReportsPage.vue";
+import EmailReportsPage from "@/pages/reports/EmailReportsPage.vue";
+import SystemReportsPage from "@/pages/reports/SystemReportsPage.vue";
 
 // Settings
 import SettingsLayout from "@/pages/settings/SettingsLayout.vue";
@@ -229,6 +238,51 @@ const routes = [
                 path: "reports/product",
                 name: "reports.product",
                 component: ProductReportsPage,
+            },
+            {
+                path: "reports/vendor",
+                name: "reports.vendor",
+                component: VendorReportsPage,
+            },
+            {
+                path: "reports/shop",
+                name: "reports.shop",
+                component: ShopReportsPage,
+            },
+            {
+                path: "reports/affiliate",
+                name: "reports.affiliate",
+                component: AffiliateReportsPage,
+            },
+            {
+                path: "reports/coupon",
+                name: "reports.coupon",
+                component: CouponReportsPage,
+            },
+            {
+                path: "reports/campaign",
+                name: "reports.campaign",
+                component: CampaignReportsPage,
+            },
+            {
+                path: "reports/review",
+                name: "reports.review",
+                component: ReviewReportsPage,
+            },
+            {
+                path: "reports/notification",
+                name: "reports.notification",
+                component: NotificationReportsPage,
+            },
+            {
+                path: "reports/email",
+                name: "reports.email",
+                component: EmailReportsPage,
+            },
+            {
+                path: "reports/system",
+                name: "reports.system",
+                component: SystemReportsPage,
             },
 
             // Settings
