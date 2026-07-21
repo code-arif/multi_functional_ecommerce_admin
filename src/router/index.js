@@ -49,6 +49,14 @@ import CouponsPage from "@/pages/coupons/CouponsPage.vue";
 import CampaignsPage from "@/pages/marketing/CampaignsPage.vue";
 import CampaignDetailPage from "@/pages/marketing/CampaignDetailPage.vue";
 
+// Invoices
+import SaleInvoicesPage from "@/pages/invoices/SaleInvoicesPage.vue";
+import SaleInvoiceCreatePage from "@/pages/invoices/SaleInvoiceCreatePage.vue";
+import SaleInvoiceDetailPage from "@/pages/invoices/SaleInvoiceDetailPage.vue";
+import PurchaseInvoicesPage from "@/pages/invoices/PurchaseInvoicesPage.vue";
+import PurchaseInvoiceCreatePage from "@/pages/invoices/PurchaseInvoiceCreatePage.vue";
+import PurchaseInvoiceDetailPage from "@/pages/invoices/PurchaseInvoiceDetailPage.vue";
+
 // Chat
 import ChatPage from "@/pages/chat/ChatPage.vue";
 import NotificationsPage from "@/pages/chat/NotificationsPage.vue";
@@ -293,6 +301,38 @@ const routes = [
                 path: "banners",
                 name: "banners",
                 component: BannersPage,
+            },
+
+            // Invoices
+            {
+                path: "invoices/sales",
+                name: "invoices.sales",
+                component: SaleInvoicesPage,
+            },
+            {
+                path: "invoices/sales/create",
+                name: "invoices.sales.create",
+                component: SaleInvoiceCreatePage,
+            },
+            {
+                path: "invoices/sales/:id",
+                name: "invoices.sales.detail",
+                component: SaleInvoiceDetailPage,
+            },
+            {
+                path: "invoices/purchases",
+                name: "invoices.purchases",
+                component: PurchaseInvoicesPage,
+            },
+            {
+                path: "invoices/purchases/create",
+                name: "invoices.purchases.create",
+                component: PurchaseInvoiceCreatePage,
+            },
+            {
+                path: "invoices/purchases/:id",
+                name: "invoices.purchases.detail",
+                component: PurchaseInvoiceDetailPage,
             },
 
             // Emails

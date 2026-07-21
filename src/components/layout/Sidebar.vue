@@ -170,7 +170,8 @@ import {
     GlobeAltIcon,
     ShieldCheckIcon,
     WrenchScrewdriverIcon,
-    RadioIcon
+    RadioIcon,
+    DocumentTextIcon as InvoiceIcon
 } from '@heroicons/vue/24/outline'
 
 defineProps({
@@ -212,6 +213,13 @@ const navGroups = [
         items: [
             { name: 'All Orders', to: '/orders', icon: ClipboardDocumentListIcon },
             { name: 'Transactions', to: '/transactions', icon: BanknotesIcon },
+        ]
+    },
+    {
+        name: 'Invoices', icon: InvoiceIcon,
+        items: [
+            { name: 'Sale Invoices', to: '/invoices/sales', icon: BanknotesIcon },
+            { name: 'Purchase Invoices', to: '/invoices/purchases', icon: ShoppingBagIcon },
         ]
     },
     {

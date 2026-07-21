@@ -124,6 +124,16 @@ export const reportApi = {
   customerGrowth: p => client.get('/admin/reports/customer-growth', { params: p }),
 }
 
+// Invoices
+export const invoiceApi = {
+  saleList:      p => client.get('/admin/invoices/sales', { params: p }),
+  saleShow:      id => client.get(`/admin/invoices/sales/${id}`),
+  saleStore:     d => client.post('/admin/invoices/sales', d),
+  purchaseList:  p => client.get('/admin/invoices/purchases', { params: p }),
+  purchaseShow:  id => client.get(`/admin/invoices/purchases/${id}`),
+  purchaseStore: d => client.post('/admin/invoices/purchases', d),
+}
+
 // Chat
 export const chatApi = {
   rooms:       p       => client.get('/admin/chat/rooms', { params: p }),
