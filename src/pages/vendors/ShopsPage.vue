@@ -76,7 +76,7 @@
               <td class="list-td"><StatusBadge :value="s.status || 'active'" /></td>
               <td class="list-td"><p class="list-name">{{ formatDate(s.created_at) }}</p><p class="list-sub">{{ formatRelative(s.created_at) }}</p></td>
               <td class="list-td text-right">
-                <button class="list-action-btn" title="View"><EyeIcon class="w-3.5 h-3.5" /></button>
+                <router-link :to="'/shops/' + s.id" class="list-action-btn" title="View details"><EyeIcon class="w-3.5 h-3.5" /></router-link>
               </td>
             </tr>
           </tbody>

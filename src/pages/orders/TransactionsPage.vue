@@ -15,6 +15,9 @@
         <td class="table-cell">{{ item.payment_method || '—' }}</td>
         <td class="table-cell"><StatusBadge :value="item.status || 'completed'" /></td>
         <td class="table-cell text-xs" style="color:var(--text-muted)">{{ formatDate(item.created_at) }}</td>
+        <td class="table-cell text-right">
+          <router-link :to="'/transactions/' + item.id" class="p-1.5 rounded-lg inline-flex items-center transition" :style="{ color: 'var(--navbar-text)' }" title="View" @mouseenter="e => e.target.style.backgroundColor = 'var(--border-light)'" @mouseleave="e => e.target.style.backgroundColor = 'transparent'"><EyeIcon class="w-4 h-4" /></router-link>
+        </td>
       </template>
     </DataTable>
   </div>
@@ -25,12 +28,13 @@ import PageHeader from '@/components/common/PageHeader.vue'
 import DataTable from '@/components/common/DataTable.vue'
 import SelectBox from '@/components/common/SelectBox.vue'
 import StatusBadge from '@/components/common/StatusBadge.vue'
+import { EyeIcon } from '@heroicons/vue/24/outline'
 const transactions = ref([]), pagination = ref(null), loading = ref(true), search = ref(''), statusFilter = ref(''), methodFilter = ref('')
 const statusOptions = [{value:'',label:'All'},{value:'completed',label:'Completed'},{value:'pending',label:'Pending'},{value:'failed',label:'Failed'},{value:'refunded',label:'Refunded'}]
 const methodOptions = [{value:'',label:'All'},{value:'bkash',label:'bKash'},{value:'nagad',label:'Nagad'},{value:'card',label:'Card'},{value:'cod',label:'COD'}]
 const columns = [
   {key:'id',label:'ID',class:'w-20'},{key:'customer',label:'Customer'},{key:'amount',label:'Amount',class:'w-28'},
-  {key:'method',label:'Method',class:'w-24'},{key:'status',label:'Status',class:'w-24'},{key:'date',label:'Date',class:'w-32'}
+  {key:'method',label:'Method',class:'w-24'},{key:'status',label:'Status',class:'w-24'},  {key:'date',label:'Date',class:'w-32'},{key:'actions',label:'',class:'w-16 text-right'}
 ]
 function formatDate(d) { return d ? new Date(d).toLocaleDateString('en-BD',{day:'2-digit',month:'short',year:'numeric'}) : '' }
 async function load(page=1) {

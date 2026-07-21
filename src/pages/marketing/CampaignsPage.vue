@@ -17,6 +17,7 @@
         <td class="table-cell font-semibold" style="color:var(--text-primary)">{{ item.clicks?.toLocaleString() }}</td>
         <td class="table-cell text-xs" style="color:var(--text-muted)">{{ item.start_date }}</td>
         <td class="table-cell text-right">
+          <router-link :to="'/campaigns/' + item.id" class="p-1.5 rounded-lg inline-flex items-center transition mr-1" :style="{ color: 'var(--navbar-text)' }" title="View" @mouseenter="e => e.target.style.backgroundColor = 'var(--border-light)'" @mouseleave="e => e.target.style.backgroundColor = 'transparent'"><EyeIcon class="w-4 h-4" /></router-link>
           <button class="p-1.5 rounded-lg text-blue-500 bg-blue-50 hover:bg-blue-100 transition mr-1"><PencilIcon class="w-4 h-4" /></button>
           <button class="p-1.5 rounded-lg text-red-400 bg-red-50 hover:bg-red-100 transition"><TrashIcon class="w-4 h-4" /></button>
         </td>
@@ -29,7 +30,7 @@ import { ref, onMounted } from 'vue'
 import PageHeader from '@/components/common/PageHeader.vue'
 import DataTable from '@/components/common/DataTable.vue'
 import SelectBox from '@/components/common/SelectBox.vue'
-import { PlusIcon, PencilIcon, TrashIcon } from '@heroicons/vue/24/outline'
+import { PlusIcon, PencilIcon, TrashIcon, EyeIcon } from '@heroicons/vue/24/outline'
 const campaigns = ref([]), loading = ref(true), search = ref(''), statusFilter = ref('')
 const statusOptions = [{value:'',label:'All'},{value:'active',label:'Active'},{value:'scheduled',label:'Scheduled'},{value:'ended',label:'Ended'}]
 const columns = [
