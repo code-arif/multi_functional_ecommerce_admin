@@ -22,6 +22,10 @@
         />
       </div>
       <button @click="loadAll" class="btn-primary text-sm py-1.5 px-4">Apply</button>
+      <button @click="printReport" class="btn-secondary text-sm py-1.5 px-4 ml-auto flex items-center gap-1.5">
+        <Printer class="w-4 h-4" />
+        <span>Print Report</span>
+      </button>
     </div>
 
     <!-- Summary stat cards -->
@@ -123,7 +127,7 @@ import DatePicker from '@/components/common/DatePicker.vue'
 import SelectBox from '@/components/common/SelectBox.vue'
 import { reportApi } from '@/api'
 import { useThemeStore } from '@/stores/theme'
-import { DollarSign, Package, CreditCard, Users } from 'lucide-vue-next'
+import { DollarSign, Package, CreditCard, Users, Printer } from 'lucide-vue-next'
 Chart.register(...registerables)
 
 const themeStore = useThemeStore()
@@ -149,6 +153,10 @@ function hexToRGBA(hex, alpha) {
   const g = parseInt(hex.substring(2, 4), 16)
   const b = parseInt(hex.substring(4, 6), 16)
   return isNaN(r) ? `rgba(46, 125, 50, ${alpha})` : `rgba(${r}, ${g}, ${b}, ${alpha})`
+}
+
+function printReport() {
+  window.print()
 }
 
 const periodOptions = [
