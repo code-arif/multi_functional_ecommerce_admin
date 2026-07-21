@@ -129,6 +129,7 @@ export const invoiceApi = {
   saleList:      p => client.get('/admin/invoices/sales', { params: p }),
   saleShow:      id => client.get(`/admin/invoices/sales/${id}`),
   saleStore:     d => client.post('/admin/invoices/sales', d),
+  saleUpdate:    (id,d) => client.put(`/admin/invoices/sales/${id}`, d),
   purchaseList:  p => client.get('/admin/invoices/purchases', { params: p }),
   purchaseShow:  id => client.get(`/admin/invoices/purchases/${id}`),
   purchaseStore: d => client.post('/admin/invoices/purchases', d),

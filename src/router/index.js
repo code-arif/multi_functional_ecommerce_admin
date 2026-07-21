@@ -315,6 +315,11 @@ const routes = [
                 component: SaleInvoiceCreatePage,
             },
             {
+                path: "invoices/sales/:id/edit",
+                name: "invoices.sales.edit",
+                component: SaleInvoiceCreatePage,
+            },
+            {
                 path: "invoices/sales/:id",
                 name: "invoices.sales.detail",
                 component: SaleInvoiceDetailPage,

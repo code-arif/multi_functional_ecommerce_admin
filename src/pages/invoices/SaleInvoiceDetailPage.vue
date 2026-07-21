@@ -27,6 +27,7 @@
             </div>
             <div class="flex gap-2">
               <button @click="printInvoice" class="btn-secondary text-xs py-1.5 px-3"><Printer class="w-3.5 h-3.5" />Print</button>
+              <router-link :to="'/invoices/sales/' + invoice.id + '/edit'" class="btn-secondary text-xs py-1.5 px-3 inline-flex items-center gap-1.5"><Pencil class="w-3.5 h-3.5" />Edit</router-link>
               <button @click="markPaid" v-if="invoice.status !== 'paid'" class="btn-primary text-xs py-1.5 px-3"><Check class="w-3.5 h-3.5" />Mark Paid</button>
             </div>
           </div>
@@ -91,7 +92,7 @@ import { useRoute } from 'vue-router'
 import { useToast } from 'vue-toastification'
 import PageHeader from '@/components/common/PageHeader.vue'
 import StatusBadge from '@/components/common/StatusBadge.vue'
-import { Printer, Check } from 'lucide-vue-next'
+import { Printer, Check, Pencil } from 'lucide-vue-next'
 const route = useRoute()
 const toast = useToast()
 const invoice = ref(null)

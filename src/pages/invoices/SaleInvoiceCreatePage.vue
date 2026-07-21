@@ -1,9 +1,12 @@
 <template>
   <div class="max-w-6xl">
-    <PageHeader title="New Sale Invoice" subtitle="Create a professional sale invoice">
+    <PageHeader :title="isEdit ? 'Edit Sale Invoice' : 'New Sale Invoice'" :subtitle="isEdit ? 'Update invoice #INV-' + String(route.params.id).padStart(5, '0') : 'Create a professional sale invoice'">
       <button @click="$router.push('/invoices/sales')" class="btn-ghost text-sm">← Sale Invoices</button>
     </PageHeader>
-    <form @submit.prevent="saveInvoice">
+    <div v-if="loading" class="card p-12 text-center" style="color:var(--text-muted)">
+      <svg class="w-8 h-8 animate-spin mx-auto mb-3" :style="{color:'var(--color-primary)'}" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>Loading invoice data...
+    </div>
+    <form v-else @submit.prevent="saveInvoice">
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
         <!-- Customer Info -->
         <div class="card p-5">
@@ -87,37 +90,77 @@
       <!-- Actions -->
       <div class="flex items-center gap-3 justify-end">
         <button type="button" @click="$router.push('/invoices/sales')" class="btn-ghost">Cancel</button>
-        <button type="button" @click="saveInvoice" class="btn-secondary"><Printer class="w-4 h-4" />Save & Print</button>
-        <button type="submit" class="btn-primary"><Check class="w-4 h-4" />Create Invoice</button>
+        <button type="button" @click="saveInvoice" v-if="!isEdit" class="btn-secondary"><Printer class="w-4 h-4" />Save & Print</button>
+        <button type="submit" class="btn-primary"><Check class="w-4 h-4" />{{ isEdit ? 'Update Invoice' : 'Create Invoice' }}</button>
       </div>
     </form>
   </div>
 </template>
 <script setup>
-import { ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, computed, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
 import PageHeader from '@/components/common/PageHeader.vue'
 import SelectBox from '@/components/common/SelectBox.vue'
+import { invoiceApi } from '@/api'
 import { User, FileText, Calculator, ShoppingBag, Plus, Trash2, Pencil, Percent, Printer, Check } from 'lucide-vue-next'
+
+const route = useRoute()
 const router = useRouter()
 const toast = useToast()
+const loading = ref(false)
+const isEdit = computed(() => !!route.params.id)
+
 const statusOptions = [{value:'unpaid',label:'Unpaid'},{value:'paid',label:'Paid'},{value:'pending',label:'Pending'}]
+
 const form = ref({
   customer_name: '', customer_email: '', customer_phone: '', customer_address: '',
   invoice_date: new Date().toISOString().slice(0,10), due_date: new Date(Date.now()+30*86400000).toISOString().slice(0,10),
   order_ref: '', status: 'unpaid', notes: '', discount: 0, tax_rate: 0,
   items: [{description: '', qty: 1, price: 0}]
 })
+
 const subtotal = computed(() => form.value.items.reduce((s, i) => s + (i.qty || 0) * (i.price || 0), 0))
 const discount = computed(() => Number(form.value.discount) || 0)
 const taxAmount = computed(() => ((subtotal.value - discount.value) * (Number(form.value.tax_rate) || 0)) / 100)
 const grandTotal = computed(() => subtotal.value - discount.value + taxAmount)
+
 function addItem() { form.value.items.push({description: '', qty: 1, price: 0}) }
+
+function loadInvoice() {
+  loading.value = true
+  setTimeout(() => {
+    form.value = {
+      customer_name: 'Sarah Johnson', customer_email: 'sarah@example.com', customer_phone: '+8801712345678',
+      customer_address: '42 Gulshan Avenue, Dhaka 1212',
+      invoice_date: new Date(Date.now()-5*86400000).toISOString().slice(0,10),
+      due_date: new Date(Date.now()+25*86400000).toISOString().slice(0,10),
+      order_ref: '#ORD-1024', status: 'unpaid', notes: 'Thank you for your business!',
+      discount: 500, tax_rate: 5,
+      items: [
+        {description: 'Wireless Bluetooth Headphones', qty: 2, price: 4500},
+        {description: 'USB-C Charging Cable (2m)', qty: 5, price: 800},
+        {description: 'Laptop Stand - Adjustable', qty: 1, price: 3500},
+        {description: 'Screen Protector (15.6")', qty: 3, price: 1200},
+      ]
+    }
+    loading.value = false
+  }, 400)
+}
+
 function saveInvoice() {
   if (!form.value.customer_name) return toast.error('Customer name is required')
   if (!form.value.items.some(i => i.description)) return toast.error('At least one item with description is required')
-  toast.success('Invoice created successfully!')
-  setTimeout(() => router.push('/invoices/sales'), 500)
+  if (isEdit.value) {
+    toast.success('Invoice updated successfully!')
+    setTimeout(() => router.push('/invoices/sales/' + route.params.id), 500)
+  } else {
+    toast.success('Invoice created successfully!')
+    setTimeout(() => router.push('/invoices/sales'), 500)
+  }
 }
+
+onMounted(() => {
+  if (isEdit.value) loadInvoice()
+})
 </script>
