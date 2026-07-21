@@ -14,7 +14,7 @@
             <div v-if="showFilters" class="card p-4 mb-4">
                 <!-- Single row: All filters in one responsive line -->
                 <div class="flex flex-wrap items-end gap-3">
-                    <div class="vendor-filter-item">
+                    <div class="list-filter-item">
                         <label class="label">Status</label>
                         <SelectBox
                             v-model="filters.status"
@@ -25,7 +25,7 @@
                             @change="load(1)"
                         />
                     </div>
-                    <div class="vendor-filter-item">
+                    <div class="list-filter-item">
                         <label class="label">Verified</label>
                         <SelectBox
                             v-model="filters.verified"
@@ -36,7 +36,7 @@
                             @change="load(1)"
                         />
                     </div>
-                    <div class="vendor-filter-item">
+                    <div class="list-filter-item">
                         <label class="label">Products</label>
                         <SelectBox
                             v-model="filters.products"
@@ -47,7 +47,7 @@
                             @change="load(1)"
                         />
                     </div>
-                    <div class="vendor-filter-item">
+                    <div class="list-filter-item">
                         <label class="label">Rating</label>
                         <SelectBox
                             v-model="filters.rating"
@@ -58,7 +58,7 @@
                             @change="load(1)"
                         />
                     </div>
-                    <div class="vendor-filter-item vendor-filter-item--wide">
+                    <div class="list-filter-item list-filter-item--wide">
                         <label class="label">Join Date</label>
                         <DatePicker
                             v-model:from="filters.joinFrom"
@@ -69,7 +69,7 @@
                             display-format="MMM dd, yyyy"
                         />
                     </div>
-                    <div class="vendor-filter-item">
+                    <div class="list-filter-item">
                         <label class="label">Sort By</label>
                         <SelectBox
                             v-model="filters.sort"
@@ -140,14 +140,14 @@
                 <table class="w-full min-w-[1000px]">
                     <thead>
                         <tr>
-                            <th class="vendor-th">Shop &amp; Vendor</th>
-                            <th class="vendor-th">Contact</th>
-                            <th class="vendor-th">Products</th>
-                            <th class="vendor-th">Sales</th>
-                            <th class="vendor-th">Rating</th>
-                            <th class="vendor-th">Status</th>
-                            <th class="vendor-th">Joined</th>
-                            <th class="vendor-th text-right">Actions</th>
+                            <th class="list-th">Shop &amp; Vendor</th>
+                            <th class="list-th">Contact</th>
+                            <th class="list-th">Products</th>
+                            <th class="list-th">Sales</th>
+                            <th class="list-th">Rating</th>
+                            <th class="list-th">Status</th>
+                            <th class="list-th">Joined</th>
+                            <th class="list-th text-right">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -172,10 +172,10 @@
                             </td>
                         </tr>
                         <tr v-else v-for="v in vendors" :key="v.id"
-                            class="vendor-row cursor-pointer"
+                            class="list-row cursor-pointer"
                             @click="$router.push(`/vendors/${v.id}`)">
                             <!-- Shop & Vendor -->
-                            <td class="vendor-td">
+                            <td class="list-td">
                                 <div class="flex items-center gap-3">
                                     <div class="w-10 h-10 rounded-lg overflow-hidden shrink-0 border"
                                         :style="{ borderColor: 'var(--border)' }">
@@ -187,20 +187,20 @@
                                         </div>
                                     </div>
                                     <div class="min-w-0">
-                                        <p class="vendor-name">{{ v.shop_name || v.name }}</p>
-                                        <p class="vendor-sub">{{ v.name || v.shop_name }}</p>
+                                        <p class="list-name">{{ v.shop_name || v.name }}</p>
+                                        <p class="list-sub">{{ v.name || v.shop_name }}</p>
                                     </div>
                                 </div>
                             </td>
                             <!-- Contact -->
-                            <td class="vendor-td">
-                                <p class="vendor-name">{{ v.email }}</p>
-                                <p class="vendor-sub">{{ v.phone || '—' }}</p>
+                            <td class="list-td">
+                                <p class="list-name">{{ v.email }}</p>
+                                <p class="list-sub">{{ v.phone || '—' }}</p>
                             </td>
                             <!-- Products -->
-                            <td class="vendor-td">
+                            <td class="list-td">
                                 <div class="flex items-center gap-2">
-                                    <span class="vendor-count">{{ v.products_count || 0 }}</span>
+                                    <span class="list-count">{{ v.products_count || 0 }}</span>
                                     <div class="w-16 h-1.5 rounded-full" :style="{ backgroundColor: 'var(--border-light)' }">
                                         <div class="h-full rounded-full transition-all"
                                             :style="{
@@ -211,43 +211,43 @@
                                 </div>
                             </td>
                             <!-- Sales -->
-                            <td class="vendor-td">
-                                <p class="vendor-count">৳{{ (v.total_sales || 0).toLocaleString() }}</p>
-                                <p class="vendor-sub">{{ v.total_orders || 0 }} orders</p>
+                            <td class="list-td">
+                                <p class="list-count">৳{{ (v.total_sales || 0).toLocaleString() }}</p>
+                                <p class="list-sub">{{ v.total_orders || 0 }} orders</p>
                             </td>
                             <!-- Rating -->
-                            <td class="vendor-td">
+                            <td class="list-td">
                                 <div class="flex items-center gap-1.5">
                                     <StarIcon class="w-3.5 h-3.5" :style="{ color: '#F59E0B' }" />
-                                    <span class="vendor-count">{{ (v.rating || 0).toFixed(1) }}</span>
-                                    <span class="vendor-sub">({{ v.reviews_count || 0 }})</span>
+                                    <span class="list-count">{{ (v.rating || 0).toFixed(1) }}</span>
+                                    <span class="list-sub">({{ v.reviews_count || 0 }})</span>
                                 </div>
                             </td>
                             <!-- Status -->
-                            <td class="vendor-td">
+                            <td class="list-td">
                                 <StatusBadge :value="v.status" />
                             </td>
                             <!-- Joined -->
-                            <td class="vendor-td">
-                                <p class="vendor-name">{{ formatDate(v.created_at) }}</p>
-                                <p class="vendor-sub">{{ formatRelative(v.created_at) }}</p>
+                            <td class="list-td">
+                                <p class="list-name">{{ formatDate(v.created_at) }}</p>
+                                <p class="list-sub">{{ formatRelative(v.created_at) }}</p>
                             </td>
                             <!-- Actions -->
-                            <td class="vendor-td text-right">
+                            <td class="list-td text-right">
                                 <div class="flex items-center justify-end gap-1" @click.stop>
                                     <router-link :to="`/vendors/${v.id}`"
-                                        class="vendor-action-btn"
+                                        class="list-action-btn"
                                         title="View details">
                                         <EyeIcon class="w-3.5 h-3.5" />
                                     </router-link>
                                     <button v-if="v.status === 'pending'" @click="approveVendor(v.id)"
-                                        class="vendor-action-btn" :style="{ color: 'var(--success)' }"
+                                        class="list-action-btn" :style="{ color: 'var(--success)' }"
                                         title="Approve">
                                         <CheckIcon class="w-3.5 h-3.5" />
                                     </button>
                                     <button v-if="v.status === 'pending' || v.status === 'active'"
                                         @click="rejectVendor(v.id)"
-                                        class="vendor-action-btn" :style="{ color: 'var(--danger)' }"
+                                        class="list-action-btn" :style="{ color: 'var(--danger)' }"
                                         title="Reject / Suspend">
                                         <XMarkIcon class="w-3.5 h-3.5" />
                                     </button>
@@ -268,13 +268,13 @@
                 <div class="flex items-center gap-1">
                     <button @click="load(pagination.current_page - 1)"
                         :disabled="pagination.current_page === 1"
-                        class="vendor-pagination-btn" :style="{ color: 'var(--navbar-text)' }">
+                        class="list-pagination-btn" :style="{ color: 'var(--navbar-text)' }">
                         <ChevronLeftIcon class="w-4 h-4" />
                     </button>
                     <button v-for="page in pagination.last_page" :key="page"
                         @click="load(page)"
-                        class="vendor-pagination-num"
-                        :class="page === pagination.current_page ? 'vendor-pagination-active' : ''"
+                        class="list-pagination-num"
+                        :class="page === pagination.current_page ? 'list-pagination-active' : ''"
                         :style="page === pagination.current_page
                             ? { backgroundColor: 'var(--color-primary)', borderColor: 'var(--color-primary)', color: '#fff' }
                             : { color: 'var(--navbar-text)', borderColor: 'var(--border)' }">
@@ -282,7 +282,7 @@
                     </button>
                     <button @click="load(pagination.current_page + 1)"
                         :disabled="pagination.current_page === pagination.last_page"
-                        class="vendor-pagination-btn" :style="{ color: 'var(--navbar-text)' }">
+                        class="list-pagination-btn" :style="{ color: 'var(--navbar-text)' }">
                         <ChevronRightIcon class="w-4 h-4" />
                     </button>
                 </div>
@@ -474,138 +474,5 @@ onMounted(() => load())
 </script>
 
 <style scoped>
-.vendor-filter-item {
-    flex: 1 1 130px;
-    min-width: 0;
-}
-
-.vendor-filter-item--wide {
-    flex: 1.8 1 190px;
-    min-width: 0;
-}
-
-.vendor-th {
-    padding: 10px 12px;
-    font-size: 0.65rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    text-align: left;
-    white-space: nowrap;
-    color: var(--text-muted);
-    background-color: color-mix(in srgb, var(--border-light) 80%, transparent);
-    border-bottom: 1px solid var(--border);
-}
-
-.vendor-td {
-    padding: 12px;
-    font-size: 0.8125rem;
-    vertical-align: middle;
-    border-bottom: 1px solid var(--border-light);
-}
-
-.vendor-row {
-    transition: background-color 0.12s ease;
-}
-.vendor-row:hover {
-    background-color: color-mix(in srgb, var(--border-light) 60%, transparent);
-}
-.vendor-row:last-child .vendor-td {
-    border-bottom: none;
-}
-
-.vendor-name {
-    font-weight: 600;
-    color: var(--text-primary);
-    font-size: 0.8125rem;
-    margin: 0;
-    line-height: 1.3;
-}
-
-.vendor-sub {
-    color: var(--text-muted);
-    font-size: 0.6875rem;
-    margin: 0;
-    line-height: 1.3;
-}
-
-.vendor-count {
-    font-weight: 700;
-    color: var(--text-primary);
-    font-size: 0.8125rem;
-}
-
-.vendor-action-btn {
-    padding: 6px;
-    border-radius: 8px;
-    color: var(--navbar-text);
-    transition: all 0.12s ease;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-}
-.vendor-action-btn:hover {
-    background-color: var(--border-light);
-}
-
-.vendor-pagination-btn {
-    padding: 6px 10px;
-    border-radius: 8px;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    transition: all 0.12s ease;
-    display: inline-flex;
-    align-items: center;
-}
-.vendor-pagination-btn:hover:not(:disabled) {
-    background-color: var(--border-light);
-}
-.vendor-pagination-btn:disabled {
-    opacity: 0.3;
-    cursor: not-allowed;
-}
-
-.vendor-pagination-num {
-    padding: 5px 11px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    border-radius: 8px;
-    border: 1px solid;
-    cursor: pointer;
-    transition: all 0.12s ease;
-    background: transparent;
-}
-.vendor-pagination-num:hover:not(.vendor-pagination-active) {
-    background-color: var(--border-light);
-}
-.vendor-pagination-active {
-    cursor: default;
-}
-
-/* Filter panel transition */
-.panel-slide-enter-active {
-    transition: all 0.18s ease-out;
-}
-.panel-slide-leave-active {
-    transition: all 0.12s ease-in;
-}
-.panel-slide-enter-from {
-    opacity: 0;
-    transform: translateY(-8px) scale(0.97);
-    max-height: 0;
-}
-.panel-slide-enter-to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-    max-height: 300px;
-}
-.panel-slide-leave-to {
-    opacity: 0;
-    transform: translateY(-4px) scale(0.97);
-    max-height: 0;
-}
+/* All shared list styles moved to @layer components in main.css */
 </style>

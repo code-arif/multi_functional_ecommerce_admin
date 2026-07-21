@@ -19,12 +19,15 @@ import ProductDetail from "@/pages/products/ProductDetail.vue";
 import OrdersPage from "@/pages/orders/OrdersPage.vue";
 import OrderDetailPage from "@/pages/orders/OrderDetailPage.vue";
 import TransactionsPage from "@/pages/orders/TransactionsPage.vue";
+import TransactionDetailPage from "@/pages/orders/TransactionDetailPage.vue";
 
 // Users
 import UsersPage from "@/pages/users/UsersPage.vue";
 import UserDetailPage from "@/pages/users/UserDetailPage.vue";
 import AdminsPage from "@/pages/users/AdminsPage.vue";
+import AdminDetailPage from "@/pages/users/AdminDetailPage.vue";
 import RolesPage from "@/pages/users/RolesPage.vue";
+import RoleDetailPage from "@/pages/users/RoleDetailPage.vue";
 import PermissionsPage from "@/pages/users/PermissionsPage.vue";
 
 // Categories
@@ -37,12 +40,14 @@ import BrandsPage from "@/pages/brands/BrandsPage.vue";
 import VendorsPage from "@/pages/vendors/VendorsPage.vue";
 import VendorDetailPage from "@/pages/vendors/VendorDetailPage.vue";
 import ShopsPage from "@/pages/vendors/ShopsPage.vue";
+import ShopDetailPage from "@/pages/vendors/ShopDetailPage.vue";
 
 // Coupons
 import CouponsPage from "@/pages/coupons/CouponsPage.vue";
 
 // Marketing
 import CampaignsPage from "@/pages/marketing/CampaignsPage.vue";
+import CampaignDetailPage from "@/pages/marketing/CampaignDetailPage.vue";
 
 // Chat
 import ChatPage from "@/pages/chat/ChatPage.vue";
@@ -154,6 +159,11 @@ const routes = [
                 name: "transactions",
                 component: TransactionsPage,
             },
+            {
+                path: "transactions/:id",
+                name: "transactions-detail",
+                component: TransactionDetailPage,
+            },
 
             // Users
             {
@@ -172,9 +182,19 @@ const routes = [
                 component: AdminsPage,
             },
             {
+                path: "admins/:id",
+                name: "admins-detail",
+                component: AdminDetailPage,
+            },
+            {
                 path: "roles",
                 name: "roles",
                 component: RolesPage,
+            },
+            {
+                path: "roles/:id",
+                name: "roles-detail",
+                component: RoleDetailPage,
             },
             {
                 path: "permissions",
@@ -222,6 +242,11 @@ const routes = [
                 name: "shops-pending",
                 component: ShopsPage,
             },
+            {
+                path: "shops/:id",
+                name: "shops-detail",
+                component: ShopDetailPage,
+            },
 
             // Coupons
             {
@@ -242,6 +267,11 @@ const routes = [
                 path: "campaigns",
                 name: "campaigns",
                 component: CampaignsPage,
+            },
+            {
+                path: "campaigns/:id",
+                name: "campaigns-detail",
+                component: CampaignDetailPage,
             },
 
             // Affiliate
