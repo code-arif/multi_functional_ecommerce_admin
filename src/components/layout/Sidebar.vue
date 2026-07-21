@@ -211,13 +211,13 @@ const navGroups = [
         name: 'Orders', icon: ClipboardDocumentListIcon,
         items: [
             { name: 'All Orders', to: '/orders', icon: ClipboardDocumentListIcon },
-            { name: 'Transactions', to: '/transactions', icon: BanknotesIcon, pending: true },
+            { name: 'Transactions', to: '/transactions', icon: BanknotesIcon },
         ]
     },
     {
         name: 'Marketing', icon: MegaphoneIcon,
         items: [
-            { name: 'Campaigns', to: '/campaigns', icon: MegaphoneIcon, pending: true },
+            { name: 'Campaigns', to: '/campaigns', icon: MegaphoneIcon },
             { name: 'Reviews', to: '/reviews', icon: StarIcon }
         ]
     },
@@ -225,9 +225,9 @@ const navGroups = [
         name: 'Users', icon: UsersIcon,
         items: [
             { name: 'Customers', to: '/users', icon: UsersIcon },
-            { name: 'Admins', to: '/admins', icon: UserGroupIcon, pending: true },
-            { name: 'Roles', to: '/roles', icon: IdentificationIcon, pending: true },
-            { name: 'Permissions', to: '/permissions', icon: LockOpenIcon, pending: true },
+            { name: 'Admins', to: '/admins', icon: UserGroupIcon },
+            { name: 'Roles', to: '/roles', icon: IdentificationIcon },
+            { name: 'Permissions', to: '/permissions', icon: LockOpenIcon },
         ]
     },
     {

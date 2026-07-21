@@ -18,10 +18,14 @@ import ProductDetail from "@/pages/products/ProductDetail.vue";
 // Orders
 import OrdersPage from "@/pages/orders/OrdersPage.vue";
 import OrderDetailPage from "@/pages/orders/OrderDetailPage.vue";
+import TransactionsPage from "@/pages/orders/TransactionsPage.vue";
 
 // Users
 import UsersPage from "@/pages/users/UsersPage.vue";
 import UserDetailPage from "@/pages/users/UserDetailPage.vue";
+import AdminsPage from "@/pages/users/AdminsPage.vue";
+import RolesPage from "@/pages/users/RolesPage.vue";
+import PermissionsPage from "@/pages/users/PermissionsPage.vue";
 
 // Categories
 import CategoriesPage from "@/pages/categories/CategoriesPage.vue";
@@ -35,6 +39,9 @@ import VendorDetailPage from "@/pages/vendors/VendorDetailPage.vue";
 
 // Coupons
 import CouponsPage from "@/pages/coupons/CouponsPage.vue";
+
+// Marketing
+import CampaignsPage from "@/pages/marketing/CampaignsPage.vue";
 
 // Reviews
 import ReviewsPage from "@/pages/reviews/ReviewsPage.vue";
@@ -137,6 +144,11 @@ const routes = [
                 name: "orders-detail",
                 component: OrderDetailPage,
             },
+            {
+                path: "transactions",
+                name: "transactions",
+                component: TransactionsPage,
+            },
 
             // Users
             {
@@ -148,6 +160,21 @@ const routes = [
                 path: "users/:id",
                 name: "users-detail",
                 component: UserDetailPage,
+            },
+            {
+                path: "admins",
+                name: "admins",
+                component: AdminsPage,
+            },
+            {
+                path: "roles",
+                name: "roles",
+                component: RolesPage,
+            },
+            {
+                path: "permissions",
+                name: "permissions",
+                component: PermissionsPage,
             },
 
             // Categories
@@ -193,6 +220,13 @@ const routes = [
                 path: "reviews",
                 name: "reviews",
                 component: ReviewsPage,
+            },
+
+            // Marketing
+            {
+                path: "campaigns",
+                name: "campaigns",
+                component: CampaignsPage,
             },
 
             // Affiliate
