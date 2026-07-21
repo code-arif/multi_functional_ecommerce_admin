@@ -242,7 +242,7 @@ const navGroups = [
         items: [
             { name: 'Sales Reports', to: '/reports', icon: ChartBarIcon },
             { name: 'Customer Reports', to: '/reports/customer', icon: UsersIcon },
-            { name: 'Product Reports', to: '/reports/product', icon: ShoppingBagIcon, pending: true },
+            { name: 'Product Reports', to: '/reports/product', icon: ShoppingBagIcon },
             { name: 'Vendor Reports', to: '/reports/vendor', icon: BuildingStorefrontIcon, pending: true },
             { name: 'Shop Reports', to: '/reports/shop', icon: HomeModernIcon, pending: true },
             { name: 'Affiliate Reports', to: '/reports/affiliate', icon: LinkIcon, pending: true },

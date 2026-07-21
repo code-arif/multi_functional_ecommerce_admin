@@ -54,6 +54,7 @@ import EmailsPage from "@/pages/emails/EmailsPage.vue";
 // Reports
 import ReportsPage from "@/pages/reports/ReportsPage.vue";
 import CustomerReportsPage from "@/pages/reports/CustomerReportsPage.vue";
+import ProductReportsPage from "@/pages/reports/ProductReportsPage.vue";
 
 // Settings
 import SettingsLayout from "@/pages/settings/SettingsLayout.vue";
@@ -223,6 +224,11 @@ const routes = [
                 path: "reports/customer",
                 name: "reports.customer",
                 component: CustomerReportsPage,
+            },
+            {
+                path: "reports/product",
+                name: "reports.product",
+                component: ProductReportsPage,
             },
 
             // Settings
