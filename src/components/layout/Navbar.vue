@@ -232,10 +232,10 @@ onUnmounted(() => document.removeEventListener('click', handleClickOutside))
 /* ---------- Page Title ---------- */
 const pageRoutes = [
     { path: '/', title: 'Dashboard' },
-    { path: '/vendors/pending', title: 'Pending Approval Vendors' },
     { path: '/vendors', title: 'All Vendors' },
-    { path: '/shops/pending', title: 'Pending Approval Shops' },
+    { path: '/vendors/pending', title: 'Pending Approval Vendors' },
     { path: '/shops', title: 'All Shops' },
+    { path: '/shops/pending', title: 'Pending Approval Shops' },
     { path: '/products', title: 'Products' },
     { path: '/categories', title: 'Categories' },
     { path: '/brands', title: 'Brands' },
@@ -251,6 +251,7 @@ const pageRoutes = [
     { path: '/permissions', title: 'Permissions' },
     { path: '/cms', title: 'CMS Pages' },
     { path: '/banners', title: 'Banners' },
+    { path: '/reports', title: 'Sales Reports' },
     { path: '/reports/customer', title: 'Customer Reports' },
     { path: '/reports/product', title: 'Product Reports' },
     { path: '/reports/vendor', title: 'Vendor Reports' },
@@ -262,7 +263,6 @@ const pageRoutes = [
     { path: '/reports/notification', title: 'Notification Reports' },
     { path: '/reports/email', title: 'Email Reports' },
     { path: '/reports/system', title: 'System Reports' },
-    { path: '/reports', title: 'Sales Reports' },
     { path: '/messages', title: 'Chat' },
     { path: '/notifications', title: 'Notifications' },
     { path: '/emails', title: 'Emails' },
