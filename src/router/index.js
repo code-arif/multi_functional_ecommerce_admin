@@ -36,12 +36,17 @@ import BrandsPage from "@/pages/brands/BrandsPage.vue";
 // Vendors
 import VendorsPage from "@/pages/vendors/VendorsPage.vue";
 import VendorDetailPage from "@/pages/vendors/VendorDetailPage.vue";
+import ShopsPage from "@/pages/vendors/ShopsPage.vue";
 
 // Coupons
 import CouponsPage from "@/pages/coupons/CouponsPage.vue";
 
 // Marketing
 import CampaignsPage from "@/pages/marketing/CampaignsPage.vue";
+
+// Chat
+import ChatPage from "@/pages/chat/ChatPage.vue";
+import NotificationsPage from "@/pages/chat/NotificationsPage.vue";
 
 // Reviews
 import ReviewsPage from "@/pages/reviews/ReviewsPage.vue";
@@ -191,7 +196,7 @@ const routes = [
                 component: BrandsPage,
             },
 
-            // Vendors
+            // Vendors / Shops
             {
                 path: "vendors",
                 name: "vendors",
@@ -206,6 +211,16 @@ const routes = [
                 path: "vendors/:id",
                 name: "vendors-detail",
                 component: VendorDetailPage,
+            },
+            {
+                path: "shops",
+                name: "shops",
+                component: ShopsPage,
+            },
+            {
+                path: "shops/pending",
+                name: "shops-pending",
+                component: ShopsPage,
             },
 
             // Coupons
@@ -255,6 +270,18 @@ const routes = [
                 path: "emails",
                 name: "emails",
                 component: EmailsPage,
+            },
+
+            // Chat
+            {
+                path: "messages",
+                name: "messages",
+                component: ChatPage,
+            },
+            {
+                path: "notifications",
+                name: "notifications",
+                component: NotificationsPage,
             },
 
             // Reports

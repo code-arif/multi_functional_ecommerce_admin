@@ -191,10 +191,10 @@ const navGroups = [
     {
         name: 'Marketplace', icon: BuildingStorefrontIcon,
         items: [
-            { name: 'All Vendors', to: '/vendors', icon: BuildingStorefrontIcon, pending: true },
-            { name: 'Pending Approval Vendors', to: '/vendors/pending', icon: ClipboardDocumentListIcon, pending: true },
-            { name: 'All Shops', to: '/shops', icon: HomeModernIcon, pending: true },
-            { name: 'Pending Approval Shops', to: '/shops/pending', icon: ClipboardDocumentListIcon, pending: true }
+            { name: 'All Vendors', to: '/vendors', icon: BuildingStorefrontIcon },
+            { name: 'Pending Approval Vendors', to: '/vendors/pending', icon: ClipboardDocumentListIcon },
+            { name: 'All Shops', to: '/shops', icon: HomeModernIcon },
+            { name: 'Pending Approval Shops', to: '/shops/pending', icon: ClipboardDocumentListIcon }
         ]
     },
     {
@@ -257,8 +257,8 @@ const navGroups = [
     {
         name: 'Messages', icon: ChatBubbleLeftRightIcon,
         items: [
-            { name: 'Chat', to: '/messages', icon: ChatBubbleLeftRightIcon, pending: true },
-            { name: 'Notifications', to: '/notifications', icon: BellIcon, pending: true },
+            { name: 'Chat', to: '/messages', icon: ChatBubbleLeftRightIcon },
+            { name: 'Notifications', to: '/notifications', icon: BellIcon },
             { name: 'Emails', to: '/emails', icon: EnvelopeIcon },
         ]
     },
