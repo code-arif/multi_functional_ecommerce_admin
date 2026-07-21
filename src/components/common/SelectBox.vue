@@ -22,9 +22,25 @@
 
     <!-- ─── Dropdown Options ─── -->
     <transition name="sb-drop">
-      <div v-if="isOpen" class="sb-dropdown" role="listbox" :aria-label="label || 'Select option'">
+      <div v-if="isOpen" class="sb-dropdown" role="listbox" :aria-label="label || 'Select option'" @click.stop>
+        <!-- Search input (when searchable) -->
+        <div v-if="searchable" class="sb-search">
+          <Search class="sb-search-icon" />
+          <input
+            ref="searchInputRef"
+            v-model="searchQuery"
+            type="text"
+            placeholder="Type to search..."
+            class="sb-search-input"
+            @keydown.stop
+          />
+          <button v-if="searchQuery" @click="searchQuery = ''" class="sb-search-clear">
+            &times;
+          </button>
+        </div>
+
         <button
-          v-for="(opt, idx) in options"
+          v-for="(opt, idx) in filteredOptions"
           :key="opt.value"
           type="button"
           role="option"
@@ -43,15 +59,17 @@
           <Check v-if="modelValue === opt.value" class="sb-option-check" />
         </button>
 
-        <div v-if="options.length === 0" class="sb-empty">No options</div>
+        <div v-if="filteredOptions.length === 0" class="sb-empty">
+          {{ searchQuery ? 'No matching options' : 'No options' }}
+        </div>
       </div>
     </transition>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { ChevronDownIcon, Check } from 'lucide-vue-next'
+import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
+import { ChevronDownIcon, Check, Search } from 'lucide-vue-next'
 
 const props = defineProps({
   modelValue: { type: [String, Number], default: '' },
@@ -61,27 +79,44 @@ const props = defineProps({
   size: { type: String, default: 'md' },
   fullWidth: { type: Boolean, default: false },
   disabled: { type: Boolean, default: false },
+  searchable: { type: Boolean, default: false },
 })
 
-const emit = defineEmits(['update:modelValue', 'change'])
+const emit = defineEmits(['update:modelValue', 'change', 'search'])
 
 const rootRef = ref(null)
+const searchInputRef = ref(null)
 const isOpen = ref(false)
 const focusedIndex = ref(-1)
+const searchQuery = ref('')
 
 const sizeClass = computed(() => `sb--${props.size}`)
+
 const selectedLabel = computed(() => {
   const match = props.options.find(o => o.value === props.modelValue)
   return match ? match.label : ''
+})
+
+const filteredOptions = computed(() => {
+  if (!props.searchable || !searchQuery.value) return props.options
+  const q = searchQuery.value.toLowerCase().trim()
+  return props.options.filter(o =>
+    String(o.label).toLowerCase().includes(q)
+  )
 })
 
 function toggleOpen() {
   if (props.disabled) return
   isOpen.value = !isOpen.value
   if (isOpen.value) {
-    // Focus the currently selected option
-    const idx = props.options.findIndex(o => o.value === props.modelValue)
-    focusedIndex.value = idx >= 0 ? idx : 0
+    // Focus search input if searchable, else focus selected option
+    if (props.searchable) {
+      searchQuery.value = ''
+      nextTick(() => searchInputRef.value?.focus())
+    } else {
+      const idx = props.options.findIndex(o => o.value === props.modelValue)
+      focusedIndex.value = idx >= 0 ? idx : 0
+    }
   }
 }
 
@@ -89,8 +124,16 @@ function selectOption(opt) {
   if (opt.disabled) return
   emit('update:modelValue', opt.value)
   emit('change', opt.value)
+  searchQuery.value = ''
   isOpen.value = false
 }
+
+/* ─── Emit search event when query changes ─── */
+watch(searchQuery, (val) => {
+  if (props.searchable) {
+    emit('search', val)
+  }
+})
 
 /* ─── Click Outside ─── */
 function handleClickOutside(e) {
@@ -114,7 +157,7 @@ function handleKeydown(e) {
   switch (e.key) {
     case 'ArrowDown':
       e.preventDefault()
-      focusedIndex.value = Math.min(focusedIndex.value + 1, props.options.length - 1)
+      focusedIndex.value = Math.min(focusedIndex.value + 1, filteredOptions.value.length - 1)
       break
     case 'ArrowUp':
       e.preventDefault()
@@ -123,7 +166,7 @@ function handleKeydown(e) {
     case 'Enter':
     case ' ':
       e.preventDefault()
-      const opt = props.options[focusedIndex.value]
+      const opt = filteredOptions.value[focusedIndex.value]
       if (opt && !opt.disabled) selectOption(opt)
       break
     case 'Escape':
@@ -365,6 +408,71 @@ onUnmounted(() => {
 .sb--lg .sb-option {
   padding: 9px 12px;
   font-size: 0.875rem;
+}
+
+/* ─── Search Input ─── */
+.sb-search {
+  position: relative;
+  margin: 0 0 4px 0;
+}
+
+.sb-search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 14px;
+  height: 14px;
+  color: var(--text-muted, #94A3B8);
+  pointer-events: none;
+}
+
+.sb-search-input {
+  width: 100%;
+  padding: 7px 28px 7px 32px;
+  border: 1px solid var(--border, #E2E8F0);
+  border-radius: 6px;
+  background: var(--border-light, #F1F5F9);
+  color: var(--text-primary, #1E293B);
+  font-family: inherit;
+  font-size: 0.75rem;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.15s, background-color 0.25s ease;
+}
+
+.sb-search-input::placeholder {
+  color: var(--text-muted, #94A3B8);
+}
+
+.sb-search-input:focus {
+  border-color: var(--color-primary, #2E7D32);
+  background: var(--surface, #fff);
+}
+
+.sb-search-clear {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text-muted, #94A3B8);
+  font-size: 1rem;
+  cursor: pointer;
+  line-height: 1;
+  transition: color 0.15s, background-color 0.15s;
+}
+
+.sb-search-clear:hover {
+  color: var(--text-primary, #1E293B);
+  background: var(--border, #E2E8F0);
 }
 
 /* ─── Transition ─── */

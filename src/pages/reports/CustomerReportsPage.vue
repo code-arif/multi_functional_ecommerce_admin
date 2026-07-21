@@ -13,6 +13,18 @@
         display-format="MMM dd, yyyy"
       />
       <div class="flex items-center gap-2">
+        <label class="label mb-0">Customer</label>
+        <SelectBox
+          v-model="filters.customer_id"
+          :options="customerOptions"
+          size="sm"
+          searchable
+          placeholder="All Customers"
+          @change="loadAll"
+          @search="onCustomerSearch"
+        />
+      </div>
+      <div class="flex items-center gap-2">
         <label class="label mb-0">Group By</label>
         <SelectBox
           v-model="filters.groupBy"
@@ -22,6 +34,10 @@
         />
       </div>
       <button @click="loadAll" class="btn-primary text-sm py-1.5 px-4">Apply</button>
+      <button @click="printReport" class="btn-secondary text-sm py-1.5 px-4 ml-auto flex items-center gap-1.5">
+        <Printer class="w-4 h-4" />
+        <span>Print Report</span>
+      </button>
     </div>
 
     <!-- Summary Stat Cards -->
@@ -119,9 +135,9 @@ import { Chart, registerables } from 'chart.js'
 import PageHeader from '@/components/common/PageHeader.vue'
 import DatePicker from '@/components/common/DatePicker.vue'
 import SelectBox from '@/components/common/SelectBox.vue'
-import { reportApi } from '@/api'
+import { reportApi, userApi } from '@/api'
 import { useThemeStore } from '@/stores/theme'
-import { Users, UserPlus, ShoppingBag, TrendingUp } from 'lucide-vue-next'
+import { Users, UserPlus, ShoppingBag, TrendingUp, Printer } from 'lucide-vue-next'
 
 Chart.register(...registerables)
 
@@ -131,13 +147,23 @@ const filters = ref({
   from: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10),
   to: new Date().toISOString().slice(0, 10),
   groupBy: 'monthly',
+  customer_id: '',
 })
 
+const customers = ref([])
 const growthData = ref([])
 const growthChartRef = ref(null)
 const totalChartRef = ref(null)
 let growthChart = null
 let totalChart = null
+
+const customerOptions = computed(() => [
+  { value: '', label: 'All Customers' },
+  ...customers.value.map(c => ({
+    value: c.id,
+    label: c.name || c.email || `Customer #${c.id}`,
+  })),
+])
 
 const groupOptions = [
   { value: 'daily', label: 'Daily' },
@@ -200,11 +226,41 @@ function buildChart(canvasRef, labels, datasets, chartRef) {
   })
 }
 
+async function loadCustomers() {
+  try {
+    const res = await userApi.list({ per_page: 100 })
+    customers.value = res.data.data || []
+  } catch {
+    customers.value = []
+  }
+}
+
+let searchTimeout = null
+async function onCustomerSearch(query) {
+  if (searchTimeout) clearTimeout(searchTimeout)
+  searchTimeout = setTimeout(async () => {
+    try {
+      const params = { per_page: 100 }
+      if (query.trim()) params.search = query.trim()
+      const res = await userApi.list(params)
+      customers.value = res.data.data || []
+    } catch {
+      // silently handle
+    }
+  }, 300)
+}
+
+function printReport() {
+  window.print()
+}
+
 async function loadAll() {
   const primary = getCSSVar('--color-primary') || '#2E7D32'
   const info = getCSSVar('--info') || '#3B82F6'
 
-  const res = await reportApi.customerGrowth({ ...filters.value })
+  const params = { ...filters.value }
+  if (!params.customer_id) delete params.customer_id
+  const res = await reportApi.customerGrowth(params)
   growthData.value = res.data.data || []
 
   const labels = growthData.value.map(d => d.month || d.date)
@@ -244,7 +300,10 @@ async function loadAll() {
 
 watch(() => themeStore.colorTheme, () => loadAll())
 
-onMounted(loadAll)
+onMounted(() => {
+  loadCustomers()
+  loadAll()
+})
 onUnmounted(() => {
   if (growthChart) growthChart.destroy()
   if (totalChart) totalChart.destroy()
