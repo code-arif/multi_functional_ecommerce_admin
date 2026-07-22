@@ -42,7 +42,7 @@
                 </td>
             </template>
         </DataTable>
-        <Pagination :pagination="pagination" @page="load" />
+        <Pagination v-model:perPage="perPage" :pagination="pagination" @page="load" />
         <ConfirmModal :show="!!deleteTarget" title="Delete Review" message="Delete this review permanently?"
             :loading="deleting" @confirm="doDelete" @cancel="deleteTarget = null" />
     </div>
@@ -59,11 +59,11 @@ import ConfirmModal from '@/components/common/ConfirmModal.vue'
 import { reviewApi } from '@/api'
 import { TrashIcon } from '@heroicons/vue/24/outline'
 const toast = useToast()
-const reviews = ref([]), pagination = ref(null), loading = ref(true), statusFilter = ref('pending')
+const reviews = ref([]), pagination = ref(null), loading = ref(true), statusFilter = ref('pending'), perPage = ref(15)
 const deleteTarget = ref(null), deleting = ref(false)
 const tabs = [{ value: 'pending', label: 'Pending' }, { value: 'approved', label: 'Approved' }, { value: 'rejected', label: 'Rejected' }, { value: '', label: 'All' }]
 const columns = [{ key: 'rating', label: 'Rating', class: 'w-32' }, { key: 'review', label: 'Review' }, { key: 'product', label: 'Product', class: 'w-36' }, { key: 'user', label: 'Customer', class: 'w-32' }, { key: 'status', label: 'Status', class: 'w-24' }, { key: 'actions', label: '', class: 'w-52 text-right' }]
-async function load(page = 1) { loading.value = true; try { const r = await reviewApi.list({ page, status: statusFilter.value }); reviews.value = r.data.data || []; pagination.value = r.data.pagination } finally { loading.value = false } }
+async function load(page = 1) { loading.value = true; try { const r = await reviewApi.list({ page, status: statusFilter.value, per_page: perPage.value }); reviews.value = r.data.data || []; pagination.value = r.data.pagination } finally { loading.value = false } }
 async function approve(id) { await reviewApi.approve(id); toast.success('Review approved.'); load() }
 async function reject(id) { await reviewApi.reject(id); toast.info('Review rejected.'); load() }
 function confirmDelete(item) { deleteTarget.value = item }

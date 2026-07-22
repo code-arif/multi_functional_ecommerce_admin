@@ -44,7 +44,7 @@
                 </td>
             </template>
         </DataTable>
-        <Pagination :pagination="pagination" @page="load" />
+        <Pagination v-model:perPage="perPage" :pagination="pagination" @page="load" />
     </div>
 </template>
 <script setup>
@@ -58,6 +58,7 @@ import SelectBox from '@/components/common/SelectBox.vue'
 import { userApi } from '@/api'
 const toast = useToast()
 const users = ref([]), pagination = ref(null), loading = ref(true), search = ref(''), statusFilter = ref('')
+const perPage = ref(15)
 
 const statusOptions = [
     { value: '', label: 'All' },
@@ -82,7 +83,7 @@ const columns = [
 function formatDate(d) { return d ? new Date(d).toLocaleDateString('en-BD', { day: '2-digit', month: 'short', year: 'numeric' }) : '' }
 async function load(page = 1) {
     loading.value = true
-    try { const r = await userApi.list({ page, search: search.value, status: statusFilter.value }); users.value = r.data.data || []; pagination.value = r.data.pagination } finally { loading.value = false }
+    try { const r = await userApi.list({ page, search: search.value, status: statusFilter.value, per_page: perPage.value }); users.value = r.data.data || []; pagination.value = r.data.pagination } finally { loading.value = false }
 }
 async function changeStatus(id, status) {
     await userApi.updateStatus(id, status); toast.success('Status updated.'); load()

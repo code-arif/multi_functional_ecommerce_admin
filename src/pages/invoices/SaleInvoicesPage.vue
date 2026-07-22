@@ -21,7 +21,7 @@
         </td>
       </template>
     </DataTable>
-    <Pagination :pagination="pagination" @page="load" />
+    <Pagination v-model:perPage="perPage" :pagination="pagination" @page="load" />
   </div>
 </template>
 <script setup>
@@ -32,7 +32,7 @@ import Pagination from '@/components/common/Pagination.vue'
 import SelectBox from '@/components/common/SelectBox.vue'
 import StatusBadge from '@/components/common/StatusBadge.vue'
 import { PlusIcon, EyeIcon } from '@heroicons/vue/24/outline'
-const invoices = ref([]), pagination = ref(null), loading = ref(true), search = ref(''), statusFilter = ref('')
+const invoices = ref([]), pagination = ref(null), loading = ref(true), search = ref(''), statusFilter = ref(''), perPage = ref(10)
 const statusOptions = [{value:'',label:'All'},{value:'paid',label:'Paid'},{value:'unpaid',label:'Unpaid'},{value:'overdue',label:'Overdue'},{value:'cancelled',label:'Cancelled'},{value:'refunded',label:'Refunded'}]
 const columns = [
   {key:'invoice_no',label:'Invoice #',class:'w-28'},{key:'customer',label:'Customer'},{key:'date',label:'Date',class:'w-24'},
@@ -48,7 +48,7 @@ async function load(page=1) {
       total:Math.random()*50000+1500,status:['paid','paid','unpaid','overdue','paid','unpaid','paid','refunded'][i],
       due_date:['','',new Date(Date.now()+7*86400000).toISOString(),new Date(Date.now()-5*86400000).toISOString(),'','',new Date(Date.now()+14*86400000).toISOString(),''][i]
     }))
-    pagination.value = {current_page:page,last_page:4,total:29,per_page:8}
+    pagination.value = {current_page:page,last_page:Math.ceil(29/perPage.value),total:29,per_page:perPage.value}
     loading.value = false
   }, 400)
 }

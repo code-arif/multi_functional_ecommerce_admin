@@ -18,7 +18,7 @@
         </td>
       </template>
     </DataTable>
-    <Pagination :pagination="pagination" @page="load" />
+    <Pagination v-model:perPage="perPage" :pagination="pagination" @page="load" />
   </div>
 </template>
 <script setup>
@@ -34,6 +34,8 @@ const columns = [
   {key:'name',label:'Permission'},{key:'slug',label:'Slug',class:'w-40'},{key:'group',label:'Group',class:'w-24'},
   {key:'description',label:'Description'},{key:'actions',label:'',class:'w-24 text-right'}
 ]
+
+const perPage = ref(10)
 
 const pagination = ref({
   total: 0,
@@ -53,8 +55,9 @@ async function load(page = 1) {
       group:g,description:`Can ${a} ${g.toLowerCase()}`
     })))
     permissions.value = all
+    pagination.value.per_page = perPage.value
     pagination.value.total = all.length
-    pagination.value.last_page = Math.ceil(all.length / pagination.value.per_page)
+    pagination.value.last_page = Math.ceil(all.length / perPage.value)
     loading.value = false
   }, 300)
 }

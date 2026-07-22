@@ -20,7 +20,7 @@
         </td>
       </template>
     </DataTable>
-    <Pagination :pagination="pagination" @page="load" />
+    <Pagination v-model:perPage="perPage" :pagination="pagination" @page="load" />
   </div>
 </template>
 <script setup>
@@ -31,7 +31,7 @@ import Pagination from '@/components/common/Pagination.vue'
 import SelectBox from '@/components/common/SelectBox.vue'
 import StatusBadge from '@/components/common/StatusBadge.vue'
 import { EyeIcon } from '@heroicons/vue/24/outline'
-const transactions = ref([]), pagination = ref(null), loading = ref(true), search = ref(''), statusFilter = ref(''), methodFilter = ref('')
+const transactions = ref([]), pagination = ref(null), loading = ref(true), search = ref(''), statusFilter = ref(''), methodFilter = ref(''), perPage = ref(10)
 const statusOptions = [{value:'',label:'All'},{value:'completed',label:'Completed'},{value:'pending',label:'Pending'},{value:'failed',label:'Failed'},{value:'refunded',label:'Refunded'}]
 const methodOptions = [{value:'',label:'All'},{value:'bkash',label:'bKash'},{value:'nagad',label:'Nagad'},{value:'card',label:'Card'},{value:'cod',label:'COD'}]
 const columns = [
@@ -48,7 +48,7 @@ async function load(page=1) {
       status:['completed','completed','pending','completed','completed','refunded','completed','failed'][i],
       created_at:new Date(Date.now()-i*86400000).toISOString()
     }))
-    pagination.value = {current_page:page,last_page:3,total:22,per_page:8}
+    pagination.value = {current_page:page,last_page:Math.ceil(22/perPage.value),total:22,per_page:perPage.value}
     loading.value = false
   }, 400)
 }

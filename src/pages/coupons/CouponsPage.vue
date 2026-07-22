@@ -17,7 +17,7 @@
         </td>
       </template>
     </DataTable>
-    <Pagination :pagination="pagination" @page="load" />
+    <Pagination v-model:perPage="perPage" :pagination="pagination" @page="load" />
     <Teleport to="body">
       <div v-if="showForm" class="fixed inset-0 z-50 flex items-center justify-center p-4">
         <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" @click="showForm=false" />
@@ -77,11 +77,11 @@ import ConfirmModal from '@/components/common/ConfirmModal.vue'
 import { couponApi } from '@/api'
 import { PlusIcon, PencilIcon, TrashIcon } from '@heroicons/vue/24/outline'
 const toast=useToast()
-const coupons=ref([]), pagination=ref(null), loading=ref(true), showForm=ref(false), saving=ref(false), search=ref('')
+const coupons=ref([]), pagination=ref(null), loading=ref(true), showForm=ref(false), saving=ref(false), search=ref(''), perPage=ref(15)
 const editing=ref(null), deleteTarget=ref(null), deleting=ref(false)
 const form=reactive({ code:'', type:'percentage', value:0, minimum_order_amount:0, usage_limit:null, usage_limit_per_user:1, starts_at:'', expires_at:'', is_active:true })
 const columns=[{key:'code',label:'Code'},{key:'discount',label:'Discount',class:'w-28'},{key:'min',label:'Min Order',class:'w-28'},{key:'usage',label:'Usage',class:'w-24'},{key:'expires',label:'Expires',class:'w-28'},{key:'status',label:'Status',class:'w-20'},{key:'actions',label:'',class:'w-20 text-right'}]
-async function load(page=1){loading.value=true;try{const r=await couponApi.list({page,search:search.value});coupons.value=r.data.data||[];pagination.value=r.data.pagination}finally{loading.value=false}}
+async function load(page=1){loading.value=true;try{const r=await couponApi.list({page,search:search.value,per_page:perPage.value});coupons.value=r.data.data||[];pagination.value=r.data.pagination}finally{loading.value=false}}
 function openForm(item=null){editing.value=item;if(item)Object.assign(form,{code:item.code,type:item.type,value:item.value,minimum_order_amount:item.minimum_order_amount,usage_limit:item.usage_limit,usage_limit_per_user:item.usage_limit_per_user,starts_at:item.starts_at?.slice(0,16)||'',expires_at:item.expires_at?.slice(0,16)||'',is_active:item.is_active});else Object.assign(form,{code:'',type:'percentage',value:0,minimum_order_amount:0,usage_limit:null,usage_limit_per_user:1,starts_at:'',expires_at:'',is_active:true});showForm.value=true}
 async function save(){saving.value=true;try{const d={...form,code:form.code.toUpperCase()};if(editing.value)await couponApi.update(editing.value.id,d);else await couponApi.store(d);toast.success('Saved.');showForm.value=false;load()}finally{saving.value=false}}
 function confirmDelete(item){deleteTarget.value=item}

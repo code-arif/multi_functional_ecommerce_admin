@@ -21,7 +21,7 @@
         </td>
       </template>
     </DataTable>
-    <Pagination :pagination="pagination" @page="load" />
+    <Pagination v-model:perPage="perPage" :pagination="pagination" @page="load" />
   </div>
 </template>
 <script setup>
@@ -32,7 +32,7 @@ import Pagination from '@/components/common/Pagination.vue'
 import SelectBox from '@/components/common/SelectBox.vue'
 import StatusBadge from '@/components/common/StatusBadge.vue'
 import { PlusIcon, EyeIcon } from '@heroicons/vue/24/outline'
-const invoices = ref([]), pagination = ref(null), loading = ref(true), search = ref(''), statusFilter = ref('')
+const invoices = ref([]), pagination = ref(null), loading = ref(true), search = ref(''), statusFilter = ref(''), perPage = ref(10)
 const statusOptions = [{value:'',label:'All'},{value:'paid',label:'Paid'},{value:'unpaid',label:'Unpaid'},{value:'pending',label:'Pending'},{value:'cancelled',label:'Cancelled'}]
 const columns = [
   {key:'invoice_no',label:'Purchase #',class:'w-28'},{key:'vendor',label:'Vendor'},{key:'date',label:'Date',class:'w-24'},
@@ -48,7 +48,7 @@ async function load(page=1) {
       total:Math.random()*120000+10000,status:['paid','unpaid','pending','paid','cancelled','paid'][i],
       payment_method:['Bank Transfer','','','Cash','','Check'][i]
     }))
-    pagination.value = {current_page:page,last_page:3,total:15,per_page:6}
+    pagination.value = {current_page:page,last_page:Math.ceil(15/perPage.value),total:15,per_page:perPage.value}
     loading.value = false
   }, 400)
 }

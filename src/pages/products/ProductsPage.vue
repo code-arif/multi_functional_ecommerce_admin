@@ -112,7 +112,7 @@
 
       </template>
     </DataTable>
-    <Pagination :pagination="pagination" @page="load" />
+    <Pagination v-model:perPage="perPage" :pagination="pagination" @page="load" />
 
     <ConfirmModal :show="!!deleteTarget" title="Delete Product"
       :message="`Delete '${deleteTarget?.name}'? This cannot be undone.`" :loading="deleting" @confirm="doDelete"
@@ -136,6 +136,7 @@ import SelectBox from '@/components/common/SelectBox.vue'
 const toast = useToast()
 const products = ref([]), pagination = ref(null), loading = ref(true)
 const search = ref(''), statusFilter = ref(''), deleteTarget = ref(null), deleting = ref(false)
+const perPage = ref(20)
 
 const statusOptions = [
   { value: '', label: 'All Status' },
@@ -158,7 +159,7 @@ const columns = [
 async function load(page = 1) {
   loading.value = true
   try {
-    const res = await productApi.list({ page, search: search.value, status: statusFilter.value, per_page: 20 })
+    const res = await productApi.list({ page, search: search.value, status: statusFilter.value, per_page: perPage.value })
     products.value = res.data.data || []
     pagination.value = res.data.pagination || null
   } catch {

@@ -41,7 +41,7 @@
 
       </template>
     </DataTable>
-    <Pagination :pagination="pagination" @page="load" />
+    <Pagination v-model:perPage="perPage" :pagination="pagination" @page="load" />
 
     <Teleport to="body">
       <div v-if="showForm" class="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -179,7 +179,7 @@ import '@vueup/vue-quill/dist/vue-quill.snow.css'
 
 const toast = useToast()
 const products = ref([]), pagination = ref(null), loading = ref(true), showForm = ref(false), saving = ref(false),
-  search = ref('')
+  search = ref(''), perPage = ref(15)
 const editing = ref(null), deleteTarget = ref(null), deleting = ref(false), thumbFile = ref(null)
 const form = reactive({
   title: '',
@@ -225,7 +225,7 @@ const columns = [{ key: 'title', label: 'Product' }, { key: 'platform', label: '
 async function load(page = 1) {
   loading.value = true;
   try {
-    const r = await affiliateApi.list({ page, search: search.value });
+    const r = await affiliateApi.list({ page, search: search.value, per_page: perPage.value });
     products.value = r.data.data || [];
     pagination.value = r.data.pagination
   } finally {

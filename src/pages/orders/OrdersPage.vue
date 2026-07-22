@@ -110,7 +110,7 @@
                 </template>
 
             </DataTable>
-            <Pagination :pagination="pagination" @page="load" />
+            <Pagination v-model:perPage="perPage" :pagination="pagination" @page="load" />
         </div>
     </div>
 </template>
@@ -140,6 +140,7 @@ const statusFilter = ref('')
 const showFilters = ref(false)
 const dateFrom = ref('')
 const dateTo = ref('')
+const perPage = ref(20)
 
 const datePresets = [
     { label: '7 Days', days: 7 },
@@ -193,7 +194,7 @@ async function load(page = 1) {
             status: statusFilter.value,
             date_from: dateFrom.value || undefined,
             date_to: dateTo.value || undefined,
-            per_page: 20
+            per_page: perPage.value
         })
 
         orders.value = res.data.data || []
