@@ -41,49 +41,27 @@
             </div>
             <div class="field">
                 <label class="label">Currency Position</label>
-                <select v-model="form.currency_position" class="select">
-                    <option value="before">Before (৳100)</option>
-                    <option value="after">After (100৳)</option>
-                </select>
+                <SelectBox v-model="form.currency_position" :options="currencyPositionOptions" full-width />
             </div>
             <div class="field">
                 <label class="label">Thousand Separator</label>
-                <select v-model="form.thousand_separator" class="select">
-                    <option value=",">, (1,000)</option>
-                    <option value=".">. (1.000)</option>
-                    <option value=" ">Space (1 000)</option>
-                </select>
+                <SelectBox v-model="form.thousand_separator" :options="thousandSeparatorOptions" full-width />
             </div>
             <div class="field">
                 <label class="label">Decimal Separator</label>
-                <select v-model="form.decimal_separator" class="select">
-                    <option value=".">. (10.00)</option>
-                    <option value=",">, (10,00)</option>
-                </select>
+                <SelectBox v-model="form.decimal_separator" :options="decimalSeparatorOptions" full-width />
             </div>
             <div class="field">
                 <label class="label">Decimal Places</label>
-                <select v-model="form.decimal_places" class="select">
-                    <option value="0">0</option>
-                    <option value="2">2</option>
-                </select>
+                <SelectBox v-model="form.decimal_places" :options="decimalPlacesOptions" full-width />
             </div>
             <div class="field">
                 <label class="label">Timezone</label>
-                <select v-model="form.timezone" class="select">
-                    <option value="Asia/Dhaka">Asia/Dhaka (GMT+6)</option>
-                    <option value="UTC">UTC</option>
-                    <option value="America/New_York">America/New_York</option>
-                    <option value="Europe/London">Europe/London</option>
-                </select>
+                <SelectBox v-model="form.timezone" :options="timezoneOptions" full-width />
             </div>
             <div class="field">
                 <label class="label">Date Format</label>
-                <select v-model="form.date_format" class="select">
-                    <option value="d/m/Y">DD/MM/YYYY</option>
-                    <option value="m/d/Y">MM/DD/YYYY</option>
-                    <option value="Y-m-d">YYYY-MM-DD</option>
-                </select>
+                <SelectBox v-model="form.date_format" :options="dateFormatOptions" full-width />
             </div>
         </div>
     </SettingsCard>
@@ -92,6 +70,7 @@
 <script setup>
 import { Store } from 'lucide-vue-next'
 import SettingsCard from "@/components/common/SettingsCard.vue";
+import SelectBox from "@/components/common/SelectBox.vue";
 import { useSettings } from "@/composables/useSettings.js";
 
 const keys = [
@@ -102,4 +81,38 @@ const keys = [
     'timezone', 'date_format',
 ]
 const { form, saving, save } = useSettings(keys, 'General')
+
+const currencyPositionOptions = [
+    { value: 'before', label: 'Before (৳100)' },
+    { value: 'after', label: 'After (100৳)' },
+]
+
+const thousandSeparatorOptions = [
+    { value: ',', label: ', (1,000)' },
+    { value: '.', label: '. (1.000)' },
+    { value: ' ', label: 'Space (1 000)' },
+]
+
+const decimalSeparatorOptions = [
+    { value: '.', label: '. (10.00)' },
+    { value: ',', label: ', (10,00)' },
+]
+
+const decimalPlacesOptions = [
+    { value: '0', label: '0' },
+    { value: '2', label: '2' },
+]
+
+const timezoneOptions = [
+    { value: 'Asia/Dhaka', label: 'Asia/Dhaka (GMT+6)' },
+    { value: 'UTC', label: 'UTC' },
+    { value: 'America/New_York', label: 'America/New_York' },
+    { value: 'Europe/London', label: 'Europe/London' },
+]
+
+const dateFormatOptions = [
+    { value: 'd/m/Y', label: 'DD/MM/YYYY' },
+    { value: 'm/d/Y', label: 'MM/DD/YYYY' },
+    { value: 'Y-m-d', label: 'YYYY-MM-DD' },
+]
 </script>
