@@ -37,12 +37,7 @@
             </div>
             <div class="field">
                 <label class="label">Shipping Method</label>
-                <select v-model="form.shipping_method" class="select">
-                    <option value="flat">Flat Rate</option>
-                    <option value="free">Free Shipping</option>
-                    <option value="zone">Zone Based</option>
-                    <option value="weight">Weight Based</option>
-                </select>
+                <SelectBox v-model="form.shipping_method" :options="shippingMethodOptions" full-width />
             </div>
 
             <div class="field col-span-2">
@@ -83,6 +78,7 @@
 <script setup>
 import { Truck } from 'lucide-vue-next'
 import SettingsCard from "@/components/common/SettingsCard.vue";
+import SelectBox from "@/components/common/SelectBox.vue";
 import { useSettings } from "@/composables/useSettings.js";
 
 const keys = [
@@ -92,4 +88,11 @@ const keys = [
     'cod_enabled', 'cod_charge_enabled', 'cod_extra_charge',
 ]
 const { form, saving, save } = useSettings(keys, 'Shipping')
+
+const shippingMethodOptions = [
+    { value: 'flat', label: 'Flat Rate' },
+    { value: 'free', label: 'Free Shipping' },
+    { value: 'zone', label: 'Zone Based' },
+    { value: 'weight', label: 'Weight Based' },
+]
 </script>
