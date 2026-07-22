@@ -3,7 +3,7 @@
     <PageHeader title="Transactions" subtitle="Financial transaction history" />
     <DataTable :items="transactions" :columns="columns" :loading="loading" searchable
       search-placeholder="Search by ID, customer..." empty-icon="💳" empty-text="No transactions found"
-      @search="q => { search = q; load(1) }" @page="load">
+      @search="q => { search = q; load(1) }">
       <template #filters>
         <SelectBox v-model="statusFilter" :options="statusOptions" placeholder="All Status" size="sm" @change="load(1)" />
         <SelectBox v-model="methodFilter" :options="methodOptions" placeholder="All Methods" size="sm" @change="load(1)" />
@@ -20,12 +20,14 @@
         </td>
       </template>
     </DataTable>
+    <Pagination :pagination="pagination" @page="load" />
   </div>
 </template>
 <script setup>
 import { ref, onMounted } from 'vue'
 import PageHeader from '@/components/common/PageHeader.vue'
 import DataTable from '@/components/common/DataTable.vue'
+import Pagination from '@/components/common/Pagination.vue'
 import SelectBox from '@/components/common/SelectBox.vue'
 import StatusBadge from '@/components/common/StatusBadge.vue'
 import { EyeIcon } from '@heroicons/vue/24/outline'

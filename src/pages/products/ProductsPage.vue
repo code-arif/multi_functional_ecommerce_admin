@@ -7,9 +7,9 @@
       </router-link>
     </PageHeader>
 
-    <DataTable :items="products" :columns="columns" :loading="loading" :pagination="pagination" searchable
+    <DataTable :items="products" :columns="columns" :loading="loading" searchable
       search-placeholder="Search products..." empty-icon="📦" empty-text="No products found"
-      @search="q => { search = q; load(1) }" @page="load">
+      @search="q => { search = q; load(1) }">
       <template #filters>
         <SelectBox
           v-model="statusFilter"
@@ -112,6 +112,7 @@
 
       </template>
     </DataTable>
+    <Pagination :pagination="pagination" @page="load" />
 
     <ConfirmModal :show="!!deleteTarget" title="Delete Product"
       :message="`Delete '${deleteTarget?.name}'? This cannot be undone.`" :loading="deleting" @confirm="doDelete"
@@ -124,6 +125,7 @@ import { ref, onMounted } from 'vue'
 import { useToast } from 'vue-toastification'
 import PageHeader from '@/components/common/PageHeader.vue'
 import DataTable from '@/components/common/DataTable.vue'
+import Pagination from '@/components/common/Pagination.vue'
 import StatusBadge from '@/components/common/StatusBadge.vue'
 import ConfirmModal from '@/components/common/ConfirmModal.vue'
 import { productApi } from '@/api'

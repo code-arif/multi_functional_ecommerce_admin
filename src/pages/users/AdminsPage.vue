@@ -5,7 +5,7 @@
     </PageHeader>
     <DataTable :items="admins" :columns="columns" :loading="loading" searchable
       search-placeholder="Search by name, email..." empty-icon="👤" empty-text="No admins found"
-      @search="q => { search = q; load(1) }" @page="load">
+      @search="q => { search = q; load(1) }">
       <template #filters>
         <SelectBox v-model="roleFilter" :options="roleOptions" placeholder="All Roles" size="sm" @change="load(1)" />
       </template>

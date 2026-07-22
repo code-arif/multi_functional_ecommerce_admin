@@ -3,7 +3,7 @@
     <PageHeader title="Coupons" subtitle="Manage discount coupons">
       <button @click="openForm()" class="btn-primary"><PlusIcon class="w-4 h-4" /> Create Coupon</button>
     </PageHeader>
-    <DataTable :items="coupons" :columns="columns" :loading="loading" :pagination="pagination" searchable @search="q=>{search=q;load(1)}" @page="load" empty-icon="🎟️">
+    <DataTable :items="coupons" :columns="columns" :loading="loading" searchable @search="q=>{search=q;load(1)}" empty-icon="🎟️">
       <template #default="{ item }">
         <td class="table-cell"><p class="font-mono font-bold text-gray-900 text-sm">{{ item.code }}</p></td>
         <td class="table-cell"><span class="badge" :class="item.type==='percentage'?'badge-blue':'badge-green'">{{ item.type==='percentage'?`${item.value}%`:`৳${item.value}` }}</span></td>
@@ -17,6 +17,7 @@
         </td>
       </template>
     </DataTable>
+    <Pagination :pagination="pagination" @page="load" />
     <Teleport to="body">
       <div v-if="showForm" class="fixed inset-0 z-50 flex items-center justify-center p-4">
         <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" @click="showForm=false" />
@@ -71,6 +72,7 @@ import { ref, reactive, onMounted } from 'vue'
 import { useToast } from 'vue-toastification'
 import PageHeader from '@/components/common/PageHeader.vue'
 import DataTable from '@/components/common/DataTable.vue'
+import Pagination from '@/components/common/Pagination.vue'
 import ConfirmModal from '@/components/common/ConfirmModal.vue'
 import { couponApi } from '@/api'
 import { PlusIcon, PencilIcon, TrashIcon } from '@heroicons/vue/24/outline'

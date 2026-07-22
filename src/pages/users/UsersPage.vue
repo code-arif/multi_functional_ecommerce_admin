@@ -1,9 +1,9 @@
 <template>
     <div>
         <PageHeader title="Customers" :subtitle="`${pagination?.total || 0} registered customers`" />
-        <DataTable :items="users" :columns="columns" :loading="loading" :pagination="pagination" searchable
+        <DataTable :items="users" :columns="columns" :loading="loading" searchable
             search-placeholder="Search by name, email..." empty-icon="👥" empty-text="No customers found"
-            @search="q => { search = q; load(1) }" @page="load">
+            @search="q => { search = q; load(1) }">
             <template #filters>
                 <SelectBox
                     v-model="statusFilter"
@@ -44,6 +44,7 @@
                 </td>
             </template>
         </DataTable>
+        <Pagination :pagination="pagination" @page="load" />
     </div>
 </template>
 <script setup>
@@ -51,6 +52,7 @@ import { ref, onMounted } from 'vue'
 import { useToast } from 'vue-toastification'
 import PageHeader from '@/components/common/PageHeader.vue'
 import DataTable from '@/components/common/DataTable.vue'
+import Pagination from '@/components/common/Pagination.vue'
 import StatusBadge from '@/components/common/StatusBadge.vue'
 import SelectBox from '@/components/common/SelectBox.vue'
 import { userApi } from '@/api'

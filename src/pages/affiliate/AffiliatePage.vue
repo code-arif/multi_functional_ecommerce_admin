@@ -6,8 +6,8 @@
         Add Affiliate Product
       </button>
     </PageHeader>
-    <DataTable :items="products" :columns="columns" :loading="loading" :pagination="pagination" searchable
-      @search="q => { search = q; load(1) }" @page="load" empty-icon="🔗">
+    <DataTable :items="products" :columns="columns" :loading="loading" searchable
+      @search="q => { search = q; load(1) }" empty-icon="🔗">
       <template #default="{ item }">
         <td class="table-cell">
           <div class="flex items-center gap-3">
@@ -41,7 +41,7 @@
 
       </template>
     </DataTable>
-
+    <Pagination :pagination="pagination" @page="load" />
 
     <Teleport to="body">
       <div v-if="showForm" class="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -170,6 +170,7 @@ import { ref, reactive, onMounted } from 'vue'
 import { useToast } from 'vue-toastification'
 import PageHeader from '@/components/common/PageHeader.vue'
 import DataTable from '@/components/common/DataTable.vue'
+import Pagination from '@/components/common/Pagination.vue'
 import ConfirmModal from '@/components/common/ConfirmModal.vue'
 import { affiliateApi } from '@/api'
 import { PlusIcon, PencilIcon, TrashIcon, PhotoIcon } from '@heroicons/vue/24/outline'

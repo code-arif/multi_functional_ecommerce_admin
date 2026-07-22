@@ -1,7 +1,16 @@
 <template>
   <div class="pag-root" v-if="pagination && pagination.last_page > 1">
-    <div class="pag-info">
-      Showing <strong>{{ from }}</strong>–<strong>{{ to }}</strong> of <strong>{{ pagination.total }}</strong>
+    <div class="pag-left">
+      <div class="pag-per-page">
+        <span class="pag-per-page__label">Show</span>
+        <select v-model="localPerPage" class="pag-per-page__select" @change="onPerPageChange">
+          <option v-for="opt in perPageOptions" :key="opt" :value="opt">{{ opt }}</option>
+        </select>
+        <span class="pag-per-page__label">per page</span>
+      </div>
+      <div class="pag-info">
+        Showing <strong>{{ from }}</strong>–<strong>{{ to }}</strong> of <strong>{{ pagination.total }}</strong>
+      </div>
     </div>
 
     <div class="pag-nav">
@@ -47,8 +56,11 @@ import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/24/outline'
 
 const props = defineProps({
   pagination: { type: Object, required: true },
+  perPageOptions: { type: Array, default: () => [10, 25, 50, 100] },
 })
-const emit = defineEmits(['page'])
+const emit = defineEmits(['page', 'update:perPage'])
+
+const localPerPage = defineModel('perPage', { default: 10 })
 
 const from = computed(() => (props.pagination.current_page - 1) * props.pagination.per_page + 1)
 const to = computed(() => Math.min(props.pagination.current_page * props.pagination.per_page, props.pagination.total))
@@ -78,6 +90,11 @@ function go(page) {
   if (page < 1 || page > props.pagination.last_page || page === props.pagination.current_page) return
   emit('page', page)
 }
+
+function onPerPageChange() {
+  emit('update:perPage', Number(localPerPage.value))
+  emit('page', 1)
+}
 </script>
 
 <style scoped>
@@ -92,6 +109,13 @@ function go(page) {
   flex-wrap: wrap;
 }
 
+.pag-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
 .pag-info {
   font-size: 0.75rem;
   color: var(--text-muted);
@@ -101,6 +125,46 @@ function go(page) {
 .pag-info strong {
   color: var(--text-primary);
   font-weight: 600;
+}
+
+/* ─── Per-page selector ─── */
+.pag-per-page {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pag-per-page__label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.pag-per-page__select {
+  padding: 3px 22px 3px 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text-primary);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 6px center;
+  transition: border-color 0.15s;
+  font-family: inherit;
+}
+
+.pag-per-page__select:hover {
+  border-color: var(--color-primary-light);
+}
+
+.pag-per-page__select:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary-light) 20%, transparent);
 }
 
 .pag-nav {

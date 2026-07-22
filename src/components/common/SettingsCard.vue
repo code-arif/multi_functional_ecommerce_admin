@@ -47,6 +47,7 @@ defineEmits(['save'])
     gap: 14px;
     padding: 20px 24px 18px;
     border-bottom: 1px solid var(--border-light);
+    border-radius: 12px 12px 0 0;
 }
 
 .s-card__icon {
@@ -81,6 +82,7 @@ defineEmits(['save'])
     background: var(--border-light);
     display: flex;
     justify-content: flex-end;
+    border-radius: 0 0 12px 12px;
 }
 
 /* ─── Shared form globals (used across all panels) ─── */

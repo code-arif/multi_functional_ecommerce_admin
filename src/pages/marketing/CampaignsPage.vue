@@ -5,7 +5,7 @@
     </PageHeader>
     <DataTable :items="campaigns" :columns="columns" :loading="loading" searchable
       search-placeholder="Search campaigns..." empty-icon="📢" empty-text="No campaigns yet"
-      @search="q => { search = q; load(1) }" @page="load">
+      @search="q => { search = q; load(1) }">
       <template #filters>
         <SelectBox v-model="statusFilter" :options="statusOptions" placeholder="All Status" size="sm" @change="load(1)" />
       </template>

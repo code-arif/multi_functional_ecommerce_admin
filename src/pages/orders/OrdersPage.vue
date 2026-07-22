@@ -60,11 +60,10 @@
 
         <!-- Table -->
         <div class="w-full overflow-x-auto">
-            <DataTable :items="orders" :columns="columns" :loading="loading" :pagination="pagination" searchable
+            <DataTable :items="orders" :columns="columns" :loading="loading" searchable
                 search-placeholder="Order number, name, phone..."
                 empty-text="No orders found"
-                @search="q => { search = q; load(1) }"
-                @page="load">
+                @search="q => { search = q; load(1) }">
 
                 <template #empty-icon>
                     <ClipboardList class="w-10 h-10 text-gray-300 mx-auto" />
@@ -111,6 +110,7 @@
                 </template>
 
             </DataTable>
+            <Pagination :pagination="pagination" @page="load" />
         </div>
     </div>
 </template>
@@ -120,6 +120,7 @@ import { ref, onMounted } from 'vue'
 import { startOfYear } from 'date-fns'
 import PageHeader from '@/components/common/PageHeader.vue'
 import DataTable from '@/components/common/DataTable.vue'
+import Pagination from '@/components/common/Pagination.vue'
 import StatusBadge from '@/components/common/StatusBadge.vue'
 import DatePicker from '@/components/common/DatePicker.vue'
 import { orderApi } from '@/api'

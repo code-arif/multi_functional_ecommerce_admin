@@ -8,7 +8,7 @@
                 {{ tab.label }}
             </button>
         </div>
-        <DataTable :items="reviews" :columns="columns" :loading="loading" :pagination="pagination" @page="load"
+        <DataTable :items="reviews" :columns="columns" :loading="loading"
             empty-icon="⭐">
             <template #default="{ item }">
                 <td class="table-cell">
@@ -42,6 +42,7 @@
                 </td>
             </template>
         </DataTable>
+        <Pagination :pagination="pagination" @page="load" />
         <ConfirmModal :show="!!deleteTarget" title="Delete Review" message="Delete this review permanently?"
             :loading="deleting" @confirm="doDelete" @cancel="deleteTarget = null" />
     </div>
@@ -52,6 +53,7 @@ import { ref, onMounted } from 'vue'
 import { useToast } from 'vue-toastification'
 import PageHeader from '@/components/common/PageHeader.vue'
 import DataTable from '@/components/common/DataTable.vue'
+import Pagination from '@/components/common/Pagination.vue'
 import StatusBadge from '@/components/common/StatusBadge.vue'
 import ConfirmModal from '@/components/common/ConfirmModal.vue'
 import { reviewApi } from '@/api'
