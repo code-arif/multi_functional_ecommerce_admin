@@ -4,23 +4,11 @@
         <div class="field-group">
             <div class="field">
                 <label class="label">Mail Driver / Mailer</label>
-                <select v-model="form.mail_mailer" class="select">
-                    <option value="smtp">SMTP</option>
-                    <option value="sendmail">Sendmail</option>
-                    <option value="mailgun">Mailgun</option>
-                    <option value="ses">Amazon SES</option>
-                    <option value="postmark">Postmark</option>
-                    <option value="log">Log (Dev)</option>
-                    <option value="array">Array (Testing)</option>
-                </select>
+                <SelectBox v-model="form.mail_mailer" :options="mailerOptions" full-width />
             </div>
             <div class="field">
                 <label class="label">Encryption</label>
-                <select v-model="form.mail_encryption" class="select">
-                    <option value="tls">TLS</option>
-                    <option value="ssl">SSL</option>
-                    <option value="">None</option>
-                </select>
+                <SelectBox v-model="form.mail_encryption" :options="encryptionOptions" full-width />
             </div>
 
             <template v-if="form.mail_mailer === 'smtp'">
@@ -40,6 +28,7 @@
                 <div class="field">
                     <label class="label">SMTP Password</label>
                     <div class="input-group">
+                        <Lock class="input-group__prefix" style="width:15px;height:15px" />
                         <input v-model="form.mail_password" :type="showPassword ? 'text' : 'password'" class="input"
                             placeholder="••••••••••••" autocomplete="new-password" style="padding-right:40px" />
                         <button type="button" class="input-group__suffix-btn" @click="showPassword = !showPassword">
@@ -74,15 +63,32 @@
 </template>
 
 <script setup>
-import { Mail, Eye, EyeOff, Send } from 'lucide-vue-next'
+import { Mail, Lock, Eye, EyeOff, Send } from 'lucide-vue-next'
 import { ref } from 'vue'
 import { useToast } from 'vue-toastification'
 import SettingsCard from "@/components/common/SettingsCard.vue";
+import SelectBox from "@/components/common/SelectBox.vue";
 import { useSettings } from "@/composables/useSettings.js";
 
 const toast = useToast()
 const showPassword = ref(false)
 const testing = ref(false)
+
+const mailerOptions = [
+    { value: 'smtp', label: 'SMTP' },
+    { value: 'sendmail', label: 'Sendmail' },
+    { value: 'mailgun', label: 'Mailgun' },
+    { value: 'ses', label: 'Amazon SES' },
+    { value: 'postmark', label: 'Postmark' },
+    { value: 'log', label: 'Log (Dev)' },
+    { value: 'array', label: 'Array (Testing)' },
+]
+
+const encryptionOptions = [
+    { value: 'tls', label: 'TLS' },
+    { value: 'ssl', label: 'SSL' },
+    { value: '', label: 'None' },
+]
 
 const keys = [
     'mail_mailer', 'mail_host', 'mail_port', 'mail_username',
