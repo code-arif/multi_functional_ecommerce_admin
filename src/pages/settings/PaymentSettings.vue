@@ -109,7 +109,8 @@ const { form, saving, save } = useSettings(allKeys, 'Payment')
     justify-content: space-between;
     padding: 14px 16px;
     background: var(--border-light);
-    transition: background-color 0.25s ease;
+    border-radius: 10px;
+    transition: background-color 0.25s ease, border-radius 0.2s ease;
 }
 
 .gateway-info {
@@ -143,6 +144,38 @@ const { form, saving, save } = useSettings(allKeys, 'Payment')
     gap: 14px;
     padding: 16px;
     border-top: 1px solid var(--border);
+    border-radius: 0 0 10px 10px;
+}
+
+/* ─── Enabled state ─── */
+.gateway-block--enabled {
+    border-color: var(--color-primary-light);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-primary-light) 25%, transparent);
+}
+
+.gateway-block--enabled .gateway-header {
+    background: var(--color-primary-pale);
+    border-radius: 10px 10px 0 0;
+}
+
+.gateway-icon--enabled {
+    color: var(--color-primary) !important;
+}
+
+/* ─── Fields transition ─── */
+.gateway-slide-enter-active {
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.gateway-slide-leave-active {
+    transition: opacity 0.15s ease, transform 0.15s ease;
+}
+.gateway-slide-enter-from {
+    opacity: 0;
+    transform: translateY(-8px);
+}
+.gateway-slide-leave-to {
+    opacity: 0;
+    transform: translateY(-4px);
 }
 
 @media (max-width: 640px) {
