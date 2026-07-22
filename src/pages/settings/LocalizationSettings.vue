@@ -4,36 +4,19 @@
         <div class="field-group">
             <div class="field">
                 <label class="label">Default Language</label>
-                <select v-model="form.default_language" class="select">
-                    <option value="en">English</option>
-                    <option value="bn">বাংলা (Bangla)</option>
-                    <option value="ar">Arabic</option>
-                </select>
+                <SelectBox v-model="form.default_language" :options="languageOptions" full-width />
             </div>
             <div class="field">
                 <label class="label">Admin Panel Language</label>
-                <select v-model="form.admin_language" class="select">
-                    <option value="en">English</option>
-                    <option value="bn">বাংলা (Bangla)</option>
-                </select>
+                <SelectBox v-model="form.admin_language" :options="adminLanguageOptions" full-width />
             </div>
             <div class="field">
                 <label class="label">Weight Unit</label>
-                <select v-model="form.weight_unit" class="select">
-                    <option value="kg">Kilogram (kg)</option>
-                    <option value="g">Gram (g)</option>
-                    <option value="lb">Pound (lb)</option>
-                    <option value="oz">Ounce (oz)</option>
-                </select>
+                <SelectBox v-model="form.weight_unit" :options="weightUnitOptions" full-width />
             </div>
             <div class="field">
                 <label class="label">Dimension Unit</label>
-                <select v-model="form.dimension_unit" class="select">
-                    <option value="cm">Centimeter (cm)</option>
-                    <option value="mm">Millimeter (mm)</option>
-                    <option value="in">Inch (in)</option>
-                    <option value="ft">Feet (ft)</option>
-                </select>
+                <SelectBox v-model="form.dimension_unit" :options="dimensionUnitOptions" full-width />
             </div>
             <div class="field col-span-2">
                 <div class="toggle-row">
@@ -54,8 +37,34 @@
 <script setup>
 import { Globe } from 'lucide-vue-next'
 import SettingsCard from "@/components/common/SettingsCard.vue";
+import SelectBox from "@/components/common/SelectBox.vue";
 import { useSettings } from "@/composables/useSettings.js";
 
 const keys = ['default_language', 'admin_language', 'weight_unit', 'dimension_unit', 'rtl_mode']
 const { form, saving, save } = useSettings(keys, 'Localization')
+
+const languageOptions = [
+    { value: 'en', label: 'English' },
+    { value: 'bn', label: 'বাংলা (Bangla)' },
+    { value: 'ar', label: 'Arabic' },
+]
+
+const adminLanguageOptions = [
+    { value: 'en', label: 'English' },
+    { value: 'bn', label: 'বাংলা (Bangla)' },
+]
+
+const weightUnitOptions = [
+    { value: 'kg', label: 'Kilogram (kg)' },
+    { value: 'g', label: 'Gram (g)' },
+    { value: 'lb', label: 'Pound (lb)' },
+    { value: 'oz', label: 'Ounce (oz)' },
+]
+
+const dimensionUnitOptions = [
+    { value: 'cm', label: 'Centimeter (cm)' },
+    { value: 'mm', label: 'Millimeter (mm)' },
+    { value: 'in', label: 'Inch (in)' },
+    { value: 'ft', label: 'Feet (ft)' },
+]
 </script>
