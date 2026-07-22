@@ -38,7 +38,6 @@ defineEmits(['save'])
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 12px;
-    overflow: hidden;
     transition: background-color 0.25s ease, border-color 0.25s ease;
 }
 

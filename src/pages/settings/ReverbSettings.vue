@@ -26,6 +26,7 @@
             <div class="field">
                 <label class="label">App Secret</label>
                 <div class="input-group">
+                    <Lock class="input-group__prefix" style="width:15px;height:15px" />
                     <input v-model="form.reverb_app_secret" :type="showSecret ? 'text' : 'password'" class="input"
                         placeholder="••••••••••••" style="padding-right:40px" />
                     <button type="button" class="input-group__suffix-btn" @click="showSecret = !showSecret">
@@ -44,10 +45,7 @@
             </div>
             <div class="field">
                 <label class="label">Scheme</label>
-                <select v-model="form.reverb_scheme" class="select">
-                    <option value="http">http</option>
-                    <option value="https">https</option>
-                </select>
+                <SelectBox v-model="form.reverb_scheme" :options="schemeOptions" full-width />
             </div>
             <div class="field">
                 <label class="label">Pusher Host (Client)</label>
@@ -63,12 +61,18 @@
 </template>
 
 <script setup>
-import { Radio, Eye, EyeOff } from 'lucide-vue-next'
+import { Radio, Lock, Eye, EyeOff } from 'lucide-vue-next'
 import { ref } from 'vue'
 import SettingsCard from "@/components/common/SettingsCard.vue";
+import SelectBox from "@/components/common/SelectBox.vue";
 import { useSettings } from "@/composables/useSettings.js";
 
 const showSecret = ref(false)
+
+const schemeOptions = [
+    { value: 'http', label: 'http' },
+    { value: 'https', label: 'https' },
+]
 
 const keys = [
     'reverb_enabled', 'reverb_app_id', 'reverb_app_key', 'reverb_app_secret',

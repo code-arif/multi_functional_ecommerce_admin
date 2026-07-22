@@ -20,6 +20,7 @@
                 <div v-for="field in gw.fields" :key="field.key" class="field">
                     <label class="label">{{ field.label }}</label>
                     <div v-if="field.secret" class="input-group">
+                        <Lock class="input-group__prefix" style="width:15px;height:15px" />
                         <input v-model="form[field.key]" :type="visibleSecrets[field.key] ? 'text' : 'password'"
                             class="input" :placeholder="field.placeholder" style="padding-right:40px" />
                         <button type="button" class="input-group__suffix-btn" @click="toggleSecret(field.key)">
@@ -27,10 +28,7 @@
                             <EyeOff v-else style="width:16px;height:16px" />
                         </button>
                     </div>
-                    <select v-else-if="field.type === 'select'" v-model="form[field.key]" class="select">
-                        <option v-for="opt in field.options" :key="opt.value" :value="opt.value">{{ opt.label }}
-                        </option>
-                    </select>
+                    <SelectBox v-else-if="field.type === 'select'" v-model="form[field.key]" :options="field.options" full-width />
                     <input v-else v-model="form[field.key]" class="input" :placeholder="field.placeholder" />
                 </div>
             </div>
@@ -39,9 +37,10 @@
 </template>
 
 <script setup>
-import { CreditCard, Eye, EyeOff, Zap, Banknote, Wallet } from 'lucide-vue-next'
+import { CreditCard, Lock, Eye, EyeOff, Zap, Banknote, Wallet } from 'lucide-vue-next'
 import { reactive } from 'vue'
 import SettingsCard from "@/components/common/SettingsCard.vue";
+import SelectBox from "@/components/common/SelectBox.vue";
 import { useSettings } from "@/composables/useSettings.js";
 
 const visibleSecrets = reactive({})
@@ -96,7 +95,6 @@ const { form, saving, save } = useSettings(allKeys, 'Payment')
 .gateway-block {
     border: 1px solid var(--border);
     border-radius: 10px;
-    overflow: hidden;
     margin-bottom: 12px;
     transition: border-color 0.25s ease;
 }
