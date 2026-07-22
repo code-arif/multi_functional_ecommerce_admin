@@ -5,7 +5,7 @@
       search-placeholder="Search permissions..." empty-icon="🔑" empty-text="No permissions found"
       @search="q => { search = q; load(1) }" @page="load">
       <template #filters>
-        <SelectBox v-model="groupFilter" :options="groupOptions" placeholder="All Groups" size="sm" @change="load(1)" />
+        <SelectBox v-model="groupFilter" :options="groupOptions" placeholder="All Groups" @change="load(1)" />
       </template>
       <template #default="{ item }">
         <td class="table-cell font-semibold" style="color:var(--text-primary)">{{ item.name }}</td>
