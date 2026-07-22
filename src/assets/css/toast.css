@@ -1,0 +1,138 @@
+/* ==========================================================================
+   TOAST NOTIFICATIONS — Custom vue-toastification overrides
+   Slim, modern design with full-body colored borders and variant backgrounds
+   ========================================================================== */
+
+/* ─── Base Toast ─── */
+.Vue-Toastification__toast {
+    padding: 10px 14px 10px 14px !important;
+    min-height: 0 !important;
+    border-radius: 10px !important;
+    font-family: inherit !important;
+    border: 1px solid var(--border) !important;
+    background: var(--surface) !important;
+    box-shadow: var(--shadow-dropdown) !important;
+    margin-bottom: 8px !important;
+    transition: all 0.2s ease !important;
+}
+
+.Vue-Toastification__toast:hover {
+    box-shadow: 0 12px 48px rgba(0,0,0,0.15) !important;
+    transform: translateX(-2px);
+}
+
+/* ─── Body Text ─── */
+.Vue-Toastification__toast-body {
+    font-size: 0.8125rem !important;
+    line-height: 1.4 !important;
+    color: var(--text-primary) !important;
+    padding: 2px 0 !important;
+}
+
+/* ─── Close Button ─── */
+.Vue-Toastification__close-button {
+    color: var(--text-muted) !important;
+    opacity: 0.7 !important;
+    font-size: 16px !important;
+    line-height: 1 !important;
+    transition: opacity 0.15s;
+    align-self: flex-start !important;
+    margin-left: 8px !important;
+}
+
+.Vue-Toastification__close-button:hover {
+    opacity: 1 !important;
+    color: var(--text-primary) !important;
+}
+
+/* ─── Progress Bar ─── */
+.Vue-Toastification__progress-bar {
+    height: 2px !important;
+    opacity: 0.35 !important;
+}
+
+/* ─── Icon Alignment ─── */
+.Vue-Toastification__icon {
+    margin-right: 10px !important;
+    width: 18px !important;
+    height: 18px !important;
+}
+
+/* ════════════════════════════════════════════
+   VARIANT STYLES
+   Each variant gets a slim colored border
+   and success gets a soft tinted background
+   ════════════════════════════════════════════ */
+
+/* ─── Success ─── */
+.Vue-Toastification__toast--success {
+    border-color: color-mix(in srgb, var(--success) 35%, transparent) !important;
+    background: color-mix(in srgb, var(--success) 6%, var(--surface)) !important;
+}
+.Vue-Toastification__toast--success .Vue-Toastification__icon {
+    color: var(--success) !important;
+}
+.Vue-Toastification__toast--success .Vue-Toastification__progress-bar {
+    background: var(--success) !important;
+}
+
+/* ─── Error ─── */
+.Vue-Toastification__toast--error {
+    border-color: color-mix(in srgb, var(--danger) 35%, transparent) !important;
+}
+.Vue-Toastification__toast--error .Vue-Toastification__icon {
+    color: var(--danger) !important;
+}
+.Vue-Toastification__toast--error .Vue-Toastification__progress-bar {
+    background: var(--danger) !important;
+}
+
+/* ─── Info ─── */
+.Vue-Toastification__toast--info {
+    border-color: color-mix(in srgb, var(--info) 35%, transparent) !important;
+}
+.Vue-Toastification__toast--info .Vue-Toastification__icon {
+    color: var(--info) !important;
+}
+.Vue-Toastification__toast--info .Vue-Toastification__progress-bar {
+    background: var(--info) !important;
+}
+
+/* ─── Warning ─── */
+.Vue-Toastification__toast--warning {
+    border-color: color-mix(in srgb, var(--warning) 35%, transparent) !important;
+}
+.Vue-Toastification__toast--warning .Vue-Toastification__icon {
+    color: var(--warning) !important;
+}
+.Vue-Toastification__toast--warning .Vue-Toastification__progress-bar {
+    background: var(--warning) !important;
+}
+
+/* ════════════════════════════════════════════
+   ANIMATIONS
+   ════════════════════════════════════════════ */
+
+.Vue-Toastification__toast--enter-default {
+    animation: toastSwipeIn 0.25s ease-out both !important;
+}
+
+.Vue-Toastification__toast--leave-default {
+    animation: toastFadeOut 0.15s ease-in both !important;
+}
+
+@keyframes toastSwipeIn {
+    from {
+        opacity: 0;
+        transform: translateX(40px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+}
+
+@keyframes toastFadeOut {
+    from { opacity: 1; }
+    to   { opacity: 0; transform: translateX(20px); }
+}

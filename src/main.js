@@ -4,6 +4,7 @@ import Toast, { POSITION } from 'vue-toastification'
 import App from './App.vue'
 import router from './router'
 import 'vue-toastification/dist/index.css'
+import './assets/css/toast.css'
 import './assets/css/main.css'
 
 const app   = createApp(App)
