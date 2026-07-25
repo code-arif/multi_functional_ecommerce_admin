@@ -43,6 +43,11 @@ const routes = [
                 component: () => import("@/pages/products/ProductFormPage.vue"),
             },
             {
+                path: "products/import",
+                name: "products-import",
+                component: () => import("@/pages/products/ProductImportPage.vue"),
+            },
+            {
                 path: '/products/:id',
                 name: 'product-detail',
                 component: () => import("@/pages/products/ProductDetail.vue"),
@@ -137,6 +142,11 @@ const routes = [
                 path: "vendors/:id",
                 name: "vendors-detail",
                 component: () => import("@/pages/vendors/VendorDetailPage.vue"),
+            },
+            {
+                path: "vendor-payouts",
+                name: "vendor-payouts",
+                component: () => import("@/pages/vendors/VendorPayoutsPage.vue"),
             },
             {
                 path: "shops",

@@ -36,6 +36,7 @@ export const productApi = {
   update:      (id,d) => client.post(`/admin/products/${id}?_method=PUT`, d, { headers: { 'Content-Type': 'multipart/form-data' } }),
   destroy:     id => client.delete(`/admin/products/${id}`),
   uploadImage: f => client.post('/admin/products/upload-image', f, { headers: { 'Content-Type': 'multipart/form-data' } }),
+  import: d => client.post('/admin/products/import', d),
 }
 
 // Categories

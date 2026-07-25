@@ -1,10 +1,16 @@
 <template>
   <div>
     <PageHeader title="Products" :subtitle="`${pagination?.total || 0} total products`">
-      <router-link to="/products/create" class="btn-primary">
-        <PlusIcon class="w-4 h-4" />
-        Add Product
-      </router-link>
+      <div class="flex items-center gap-2">
+        <router-link to="/products/import" class="btn-ghost text-xs gap-1.5 px-3">
+          <ArrowUpTrayIcon class="w-4 h-4" />
+          Import
+        </router-link>
+        <router-link to="/products/create" class="btn-primary">
+          <PlusIcon class="w-4 h-4" />
+          Add Product
+        </router-link>
+      </div>
     </PageHeader>
 
     <DataTable :items="products" :columns="columns" :loading="loading" searchable
@@ -133,7 +139,7 @@ import Pagination from '@/components/common/Pagination.vue'
 import StatusBadge from '@/components/common/StatusBadge.vue'
 import ConfirmModal from '@/components/common/ConfirmModal.vue'
 import { productApi } from '@/api'
-import { PlusIcon, PencilIcon, TrashIcon, ArrowPathIcon, EyeIcon } from '@heroicons/vue/24/outline'
+import { PlusIcon, PencilIcon, TrashIcon, ArrowPathIcon, EyeIcon, ArrowUpTrayIcon } from '@heroicons/vue/24/outline'
 import { Package } from 'lucide-vue-next'
 import SelectBox from '@/components/common/SelectBox.vue'
 import { useCsvExport } from '@/composables/useCsvExport'
