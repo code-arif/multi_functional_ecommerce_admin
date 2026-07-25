@@ -496,9 +496,9 @@ body {
     /* ---- Card ---- */
     .card {
         background-color: var(--surface);
-        border: 1px solid var(--border);
-        border-radius: 0.75rem;
-        box-shadow: var(--shadow-card);
+        /* border: 1px solid var(--border); */
+        border-radius: 0.5rem;
+        /* box-shadow: var(--shadow-card); */
         transition: background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
     }
 
