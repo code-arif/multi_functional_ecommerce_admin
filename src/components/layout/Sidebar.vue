@@ -274,6 +274,7 @@ const navGroups = [
     {
         name: 'System', icon: Cog6ToothIcon,
         items: [
+            { name: 'Activity Log', to: '/activity-log', icon: ClipboardDocumentListIcon },
             { name: 'General', to: '/settings/general', icon: Cog6ToothIcon },
             { name: 'Shipping', to: '/settings/shipping', icon: TruckIcon },
             { name: 'SEO', to: '/settings/seo', icon: MagnifyingGlassIcon },

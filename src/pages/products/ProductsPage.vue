@@ -20,6 +20,10 @@
         />
       </template>
       <template #actions>
+        <button @click="exportProducts" class="btn-ghost text-xs gap-1.5 px-3" title="Export CSV">
+          <Download class="w-4 h-4" />
+          Export
+        </button>
         <button @click="load()" class="btn-ghost p-2" title="Refresh">
           <ArrowPathIcon class="w-4 h-4" />
         </button>
@@ -132,8 +136,11 @@ import { productApi } from '@/api'
 import { PlusIcon, PencilIcon, TrashIcon, ArrowPathIcon, EyeIcon } from '@heroicons/vue/24/outline'
 import { Package } from 'lucide-vue-next'
 import SelectBox from '@/components/common/SelectBox.vue'
+import { useCsvExport } from '@/composables/useCsvExport'
+import { Download } from 'lucide-vue-next'
 
 const toast = useToast()
+const { exportToCsv } = useCsvExport()
 const products = ref([]), pagination = ref(null), loading = ref(true)
 const search = ref(''), statusFilter = ref(''), deleteTarget = ref(null), deleting = ref(false)
 const perPage = ref(20)
@@ -167,6 +174,20 @@ async function load(page = 1) {
   } finally {
     loading.value = false
   }
+}
+
+function exportProducts() {
+  const cols = [
+    { key: 'name', label: 'Product Name' },
+    { key: 'sku', label: 'SKU' },
+    { key: 'type', label: 'Type' },
+    { key: 'current_price', label: 'Price (৳)', transform: v => `৳${Number(v).toLocaleString()}` },
+    { key: 'stock_quantity', label: 'Stock' },
+    { key: 'status', label: 'Status' },
+    { key: 'category', label: 'Category', transform: (_, item) => item.category?.name || '' },
+    { key: 'brand', label: 'Brand', transform: (_, item) => item.brand?.name || '' },
+  ]
+  exportToCsv(products.value, cols, `products-export-${products.value.length}-items`)
 }
 
 function confirmDelete(item) {

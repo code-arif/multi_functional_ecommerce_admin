@@ -1,114 +1,11 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
 
-// Layout
+// Layout (keep eager — needed immediately)
 import AdminLayout from "@/components/layout/AdminLayout.vue";
 
-// Auth
+// Auth (keep eager — needed immediately for login page)
 import LoginPage from "@/pages/LoginPage.vue";
-
-// Dashboard
-import DashboardPage from "@/pages/DashboardPage.vue";
-
-// Products
-import ProductsPage from "@/pages/products/ProductsPage.vue";
-import ProductFormPage from "@/pages/products/ProductFormPage.vue";
-import ProductDetail from "@/pages/products/ProductDetail.vue";
-
-// Orders
-import OrdersPage from "@/pages/orders/OrdersPage.vue";
-import OrderDetailPage from "@/pages/orders/OrderDetailPage.vue";
-import TransactionsPage from "@/pages/orders/TransactionsPage.vue";
-import TransactionDetailPage from "@/pages/orders/TransactionDetailPage.vue";
-
-// Users
-import UsersPage from "@/pages/users/UsersPage.vue";
-import UserDetailPage from "@/pages/users/UserDetailPage.vue";
-import AdminsPage from "@/pages/users/AdminsPage.vue";
-import AdminDetailPage from "@/pages/users/AdminDetailPage.vue";
-import RolesPage from "@/pages/users/RolesPage.vue";
-import RoleDetailPage from "@/pages/users/RoleDetailPage.vue";
-import PermissionsPage from "@/pages/users/PermissionsPage.vue";
-
-// Categories
-import CategoriesPage from "@/pages/categories/CategoriesPage.vue";
-
-// Brands
-import BrandsPage from "@/pages/brands/BrandsPage.vue";
-
-// Vendors
-import VendorsPage from "@/pages/vendors/VendorsPage.vue";
-import VendorDetailPage from "@/pages/vendors/VendorDetailPage.vue";
-import ShopsPage from "@/pages/vendors/ShopsPage.vue";
-import ShopDetailPage from "@/pages/vendors/ShopDetailPage.vue";
-
-// Coupons
-import CouponsPage from "@/pages/coupons/CouponsPage.vue";
-
-// Marketing
-import CampaignsPage from "@/pages/marketing/CampaignsPage.vue";
-import CampaignDetailPage from "@/pages/marketing/CampaignDetailPage.vue";
-
-// Invoices
-import SaleInvoicesPage from "@/pages/invoices/SaleInvoicesPage.vue";
-import SaleInvoiceCreatePage from "@/pages/invoices/SaleInvoiceCreatePage.vue";
-import SaleInvoiceDetailPage from "@/pages/invoices/SaleInvoiceDetailPage.vue";
-import PurchaseInvoicesPage from "@/pages/invoices/PurchaseInvoicesPage.vue";
-import PurchaseInvoiceCreatePage from "@/pages/invoices/PurchaseInvoiceCreatePage.vue";
-import PurchaseInvoiceDetailPage from "@/pages/invoices/PurchaseInvoiceDetailPage.vue";
-
-// Chat
-import ChatPage from "@/pages/chat/ChatPage.vue";
-import NotificationsPage from "@/pages/chat/NotificationsPage.vue";
-import ChatDashboardPage from "@/pages/chat/ChatDashboardPage.vue";
-
-// Reviews
-import ReviewsPage from "@/pages/reviews/ReviewsPage.vue";
-
-// Affiliate
-import AffiliatePage from "@/pages/affiliate/AffiliatePage.vue";
-
-// CMS
-import CmsPage from "@/pages/cms/CmsPage.vue";
-
-// Banners
-import BannersPage from "@/pages/banners/BannersPage.vue";
-
-// Emails
-import EmailsPage from "@/pages/emails/EmailsPage.vue";
-
-// Reports
-import ReportsPage from "@/pages/reports/ReportsPage.vue";
-import CustomerReportsPage from "@/pages/reports/CustomerReportsPage.vue";
-import ProductReportsPage from "@/pages/reports/ProductReportsPage.vue";
-import VendorReportsPage from "@/pages/reports/VendorReportsPage.vue";
-import ShopReportsPage from "@/pages/reports/ShopReportsPage.vue";
-import AffiliateReportsPage from "@/pages/reports/AffiliateReportsPage.vue";
-import CouponReportsPage from "@/pages/reports/CouponReportsPage.vue";
-import CampaignReportsPage from "@/pages/reports/CampaignReportsPage.vue";
-import ReviewReportsPage from "@/pages/reports/ReviewReportsPage.vue";
-import NotificationReportsPage from "@/pages/reports/NotificationReportsPage.vue";
-import EmailReportsPage from "@/pages/reports/EmailReportsPage.vue";
-import SystemReportsPage from "@/pages/reports/SystemReportsPage.vue";
-
-// Settings
-import SettingsLayout from "@/pages/settings/SettingsLayout.vue";
-import GeneralSettings from "@/pages/settings/GeneralSettings.vue";
-import ShippingSettings from "@/pages/settings/ShippingSettings.vue";
-import SeoSettings from "@/pages/settings/SeoSettings.vue";
-import SocialSettings from "@/pages/settings/SocialSettings.vue";
-import BrandingSettings from "@/pages/settings/BrandingSettings.vue";
-import MailSettings from "@/pages/settings/MailSettings.vue";
-import ReverbSettings from "@/pages/settings/ReverbSettings.vue";
-import PaymentSettings from "@/pages/settings/PaymentSettings.vue";
-import TaxSettings from "@/pages/settings/TaxSettings.vue";
-import NotificationSettings from "@/pages/settings/NotificationSettings.vue";
-import CustomerSettings from "@/pages/settings/CustomerSettings.vue";
-import LegalSettings from "@/pages/settings/LegalSettings.vue";
-import LocalizationSettings from "@/pages/settings/LocalizationSettings.vue";
-import SecuritySettings from "@/pages/settings/SecuritySettings.vue";
-import MaintenanceSettings from "@/pages/settings/MaintenanceSettings.vue";
-import ThemeSettings from "@/pages/settings/ThemeSettings.vue";
 
 const routes = [
     {
@@ -126,29 +23,29 @@ const routes = [
             {
                 path: "",
                 name: "dashboard",
-                component: DashboardPage,
+                component: () => import("@/pages/DashboardPage.vue"),
             },
 
             // Products
             {
                 path: "products",
                 name: "products",
-                component: ProductsPage,
+                component: () => import("@/pages/products/ProductsPage.vue"),
             },
             {
                 path: "products/create",
                 name: "products-create",
-                component: ProductFormPage,
+                component: () => import("@/pages/products/ProductFormPage.vue"),
             },
             {
                 path: "products/:id/edit",
                 name: "products-edit",
-                component: ProductFormPage,
+                component: () => import("@/pages/products/ProductFormPage.vue"),
             },
             {
                 path: '/products/:id',
                 name: 'product-detail',
-                component: ProductDetail,
+                component: () => import("@/pages/products/ProductDetail.vue"),
                 meta: { requiresAuth: true }
             },
 
@@ -156,367 +53,374 @@ const routes = [
             {
                 path: "orders",
                 name: "orders",
-                component: OrdersPage,
+                component: () => import("@/pages/orders/OrdersPage.vue"),
             },
             {
                 path: "orders/:id",
                 name: "orders-detail",
-                component: OrderDetailPage,
+                component: () => import("@/pages/orders/OrderDetailPage.vue"),
             },
             {
                 path: "transactions",
                 name: "transactions",
-                component: TransactionsPage,
+                component: () => import("@/pages/orders/TransactionsPage.vue"),
             },
             {
                 path: "transactions/:id",
                 name: "transactions-detail",
-                component: TransactionDetailPage,
+                component: () => import("@/pages/orders/TransactionDetailPage.vue"),
             },
 
             // Users
             {
                 path: "users",
                 name: "users",
-                component: UsersPage,
+                component: () => import("@/pages/users/UsersPage.vue"),
             },
             {
                 path: "users/:id",
                 name: "users-detail",
-                component: UserDetailPage,
+                component: () => import("@/pages/users/UserDetailPage.vue"),
             },
             {
                 path: "admins",
                 name: "admins",
-                component: AdminsPage,
+                component: () => import("@/pages/users/AdminsPage.vue"),
             },
             {
                 path: "admins/:id",
                 name: "admins-detail",
-                component: AdminDetailPage,
+                component: () => import("@/pages/users/AdminDetailPage.vue"),
             },
             {
                 path: "roles",
                 name: "roles",
-                component: RolesPage,
+                component: () => import("@/pages/users/RolesPage.vue"),
             },
             {
                 path: "roles/:id",
                 name: "roles-detail",
-                component: RoleDetailPage,
+                component: () => import("@/pages/users/RoleDetailPage.vue"),
             },
             {
                 path: "permissions",
                 name: "permissions",
-                component: PermissionsPage,
+                component: () => import("@/pages/users/PermissionsPage.vue"),
             },
 
             // Categories
             {
                 path: "categories",
                 name: "categories",
-                component: CategoriesPage,
+                component: () => import("@/pages/categories/CategoriesPage.vue"),
             },
 
             // Brands
             {
                 path: "brands",
                 name: "brands",
-                component: BrandsPage,
+                component: () => import("@/pages/brands/BrandsPage.vue"),
             },
 
             // Vendors / Shops
             {
                 path: "vendors",
                 name: "vendors",
-                component: VendorsPage,
+                component: () => import("@/pages/vendors/VendorsPage.vue"),
             },
             {
                 path: "vendors/pending",
                 name: "vendors-pending",
-                component: VendorsPage,
+                component: () => import("@/pages/vendors/VendorsPage.vue"),
             },
             {
                 path: "vendors/:id",
                 name: "vendors-detail",
-                component: VendorDetailPage,
+                component: () => import("@/pages/vendors/VendorDetailPage.vue"),
             },
             {
                 path: "shops",
                 name: "shops",
-                component: ShopsPage,
+                component: () => import("@/pages/vendors/ShopsPage.vue"),
             },
             {
                 path: "shops/pending",
                 name: "shops-pending",
-                component: ShopsPage,
+                component: () => import("@/pages/vendors/ShopsPage.vue"),
             },
             {
                 path: "shops/:id",
                 name: "shops-detail",
-                component: ShopDetailPage,
+                component: () => import("@/pages/vendors/ShopDetailPage.vue"),
             },
 
             // Coupons
             {
                 path: "coupons",
                 name: "coupons",
-                component: CouponsPage,
+                component: () => import("@/pages/coupons/CouponsPage.vue"),
             },
 
             // Reviews
             {
                 path: "reviews",
                 name: "reviews",
-                component: ReviewsPage,
+                component: () => import("@/pages/reviews/ReviewsPage.vue"),
             },
 
             // Marketing
             {
                 path: "campaigns",
                 name: "campaigns",
-                component: CampaignsPage,
+                component: () => import("@/pages/marketing/CampaignsPage.vue"),
             },
             {
                 path: "campaigns/:id",
                 name: "campaigns-detail",
-                component: CampaignDetailPage,
+                component: () => import("@/pages/marketing/CampaignDetailPage.vue"),
             },
 
             // Affiliate
             {
                 path: "affiliate",
                 name: "affiliate",
-                component: AffiliatePage,
+                component: () => import("@/pages/affiliate/AffiliatePage.vue"),
             },
 
             // CMS
             {
                 path: "cms",
                 name: "cms",
-                component: CmsPage,
+                component: () => import("@/pages/cms/CmsPage.vue"),
             },
 
             // Banners
             {
                 path: "banners",
                 name: "banners",
-                component: BannersPage,
+                component: () => import("@/pages/banners/BannersPage.vue"),
             },
 
             // Invoices
             {
                 path: "invoices/sales",
                 name: "invoices.sales",
-                component: SaleInvoicesPage,
+                component: () => import("@/pages/invoices/SaleInvoicesPage.vue"),
             },
             {
                 path: "invoices/sales/create",
                 name: "invoices.sales.create",
-                component: SaleInvoiceCreatePage,
+                component: () => import("@/pages/invoices/SaleInvoiceCreatePage.vue"),
             },
             {
                 path: "invoices/sales/:id/edit",
                 name: "invoices.sales.edit",
-                component: SaleInvoiceCreatePage,
+                component: () => import("@/pages/invoices/SaleInvoiceCreatePage.vue"),
             },
             {
                 path: "invoices/sales/:id",
                 name: "invoices.sales.detail",
-                component: SaleInvoiceDetailPage,
+                component: () => import("@/pages/invoices/SaleInvoiceDetailPage.vue"),
             },
             {
                 path: "invoices/purchases",
                 name: "invoices.purchases",
-                component: PurchaseInvoicesPage,
+                component: () => import("@/pages/invoices/PurchaseInvoicesPage.vue"),
             },
             {
                 path: "invoices/purchases/create",
                 name: "invoices.purchases.create",
-                component: PurchaseInvoiceCreatePage,
+                component: () => import("@/pages/invoices/PurchaseInvoiceCreatePage.vue"),
             },
             {
                 path: "invoices/purchases/:id/edit",
                 name: "invoices.purchases.edit",
-                component: PurchaseInvoiceCreatePage,
+                component: () => import("@/pages/invoices/PurchaseInvoiceCreatePage.vue"),
             },
             {
                 path: "invoices/purchases/:id",
                 name: "invoices.purchases.detail",
-                component: PurchaseInvoiceDetailPage,
+                component: () => import("@/pages/invoices/PurchaseInvoiceDetailPage.vue"),
             },
 
             // Emails
             {
                 path: "emails",
                 name: "emails",
-                component: EmailsPage,
+                component: () => import("@/pages/emails/EmailsPage.vue"),
             },
 
             // Chat
             {
                 path: "chat-dashboard",
                 name: "chat-dashboard",
-                component: ChatDashboardPage,
+                component: () => import("@/pages/chat/ChatDashboardPage.vue"),
             },
             {
                 path: "messages",
                 name: "messages",
-                component: ChatPage,
+                component: () => import("@/pages/chat/ChatPage.vue"),
             },
             {
                 path: "notifications",
                 name: "notifications",
-                component: NotificationsPage,
+                component: () => import("@/pages/chat/NotificationsPage.vue"),
+            },
+
+            // Activity Log
+            {
+                path: "activity-log",
+                name: "activity-log",
+                component: () => import("@/pages/system/ActivityLogPage.vue"),
             },
 
             // Reports
             {
                 path: "reports",
                 name: "reports",
-                component: ReportsPage,
+                component: () => import("@/pages/reports/ReportsPage.vue"),
             },
             {
                 path: "reports/customer",
                 name: "reports.customer",
-                component: CustomerReportsPage,
+                component: () => import("@/pages/reports/CustomerReportsPage.vue"),
             },
             {
                 path: "reports/product",
                 name: "reports.product",
-                component: ProductReportsPage,
+                component: () => import("@/pages/reports/ProductReportsPage.vue"),
             },
             {
                 path: "reports/vendor",
                 name: "reports.vendor",
-                component: VendorReportsPage,
+                component: () => import("@/pages/reports/VendorReportsPage.vue"),
             },
             {
                 path: "reports/shop",
                 name: "reports.shop",
-                component: ShopReportsPage,
+                component: () => import("@/pages/reports/ShopReportsPage.vue"),
             },
             {
                 path: "reports/affiliate",
                 name: "reports.affiliate",
-                component: AffiliateReportsPage,
+                component: () => import("@/pages/reports/AffiliateReportsPage.vue"),
             },
             {
                 path: "reports/coupon",
                 name: "reports.coupon",
-                component: CouponReportsPage,
+                component: () => import("@/pages/reports/CouponReportsPage.vue"),
             },
             {
                 path: "reports/campaign",
                 name: "reports.campaign",
-                component: CampaignReportsPage,
+                component: () => import("@/pages/reports/CampaignReportsPage.vue"),
             },
             {
                 path: "reports/review",
                 name: "reports.review",
-                component: ReviewReportsPage,
+                component: () => import("@/pages/reports/ReviewReportsPage.vue"),
             },
             {
                 path: "reports/notification",
                 name: "reports.notification",
-                component: NotificationReportsPage,
+                component: () => import("@/pages/reports/NotificationReportsPage.vue"),
             },
             {
                 path: "reports/email",
                 name: "reports.email",
-                component: EmailReportsPage,
+                component: () => import("@/pages/reports/EmailReportsPage.vue"),
             },
             {
                 path: "reports/system",
                 name: "reports.system",
-                component: SystemReportsPage,
+                component: () => import("@/pages/reports/SystemReportsPage.vue"),
             },
 
             // Settings
             {
                 path: "settings",
-                component: SettingsLayout,
+                component: () => import("@/pages/settings/SettingsLayout.vue"),
                 redirect: { name: "settings.general" },
                 children: [
                     {
                         path: "general",
                         name: "settings.general",
-                        component: GeneralSettings,
+                        component: () => import("@/pages/settings/GeneralSettings.vue"),
                     },
                     {
                         path: "shipping",
                         name: "settings.shipping",
-                        component: ShippingSettings,
+                        component: () => import("@/pages/settings/ShippingSettings.vue"),
                     },
                     {
                         path: "seo",
                         name: "settings.seo",
-                        component: SeoSettings,
+                        component: () => import("@/pages/settings/SeoSettings.vue"),
                     },
                     {
                         path: "social",
                         name: "settings.social",
-                        component: SocialSettings,
+                        component: () => import("@/pages/settings/SocialSettings.vue"),
                     },
                     {
                         path: "branding",
                         name: "settings.branding",
-                        component: BrandingSettings,
+                        component: () => import("@/pages/settings/BrandingSettings.vue"),
                     },
                     {
                         path: "mail",
                         name: "settings.mail",
-                        component: MailSettings,
+                        component: () => import("@/pages/settings/MailSettings.vue"),
                     },
                     {
                         path: "reverb",
                         name: "settings.reverb",
-                        component: ReverbSettings,
+                        component: () => import("@/pages/settings/ReverbSettings.vue"),
                     },
                     {
                         path: "payment",
                         name: "settings.payment",
-                        component: PaymentSettings,
+                        component: () => import("@/pages/settings/PaymentSettings.vue"),
                     },
                     {
                         path: "tax",
                         name: "settings.tax",
-                        component: TaxSettings
+                        component: () => import("@/pages/settings/TaxSettings.vue"),
                     },
                     {
                         path: "notifications",
                         name: "settings.notifications",
-                        component: NotificationSettings,
+                        component: () => import("@/pages/settings/NotificationSettings.vue"),
                     },
                     {
                         path: "customers",
                         name: "settings.customers",
-                        component: CustomerSettings,
+                        component: () => import("@/pages/settings/CustomerSettings.vue"),
                     },
                     {
                         path: "legal",
                         name: "settings.legal",
-                        component: LegalSettings
+                        component: () => import("@/pages/settings/LegalSettings.vue"),
                     },
                     {
                         path: "localization",
                         name: "settings.localization",
-                        component: LocalizationSettings,
+                        component: () => import("@/pages/settings/LocalizationSettings.vue"),
                     },
                     {
                         path: "security",
                         name: "settings.security",
-                        component: SecuritySettings,
+                        component: () => import("@/pages/settings/SecuritySettings.vue"),
                     },
                     {
                         path: "maintenance",
                         name: "settings.maintenance",
-                        component: MaintenanceSettings,
+                        component: () => import("@/pages/settings/MaintenanceSettings.vue"),
                     },
                     {
                         path: "theme",
                         name: "settings.theme",
-                        component: ThemeSettings,
+                        component: () => import("@/pages/settings/ThemeSettings.vue"),
                     },
                 ],
             },
