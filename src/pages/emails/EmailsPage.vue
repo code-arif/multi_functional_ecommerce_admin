@@ -1,4 +1,5 @@
 <template>
+    <div>
     <div class="flex h-[calc(100vh-2rem)] md:h-[calc(100vh-8rem)] bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
         
         <!-- ─── Folders Sidebar ─── -->
@@ -159,7 +160,6 @@
         </div>
     </div>
 
-
     <!-- ─── Compose Modal ─── -->
     <Teleport to="body">
         <transition name="modal-fade">
@@ -197,6 +197,7 @@
             </div>
         </transition>
     </Teleport>
+    </div>
 </template>
 
 <script setup>
