@@ -3,40 +3,51 @@
     <PageHeader title="Notifications" subtitle="System and user notifications">
       <button class="btn-ghost text-sm gap-1.5" @click="markAllRead"><CheckIcon class="w-4 h-4" />Mark All Read</button>
     </PageHeader>
-    <div class="space-y-2">
-      <div v-for="(group, gIdx) in groupedNotifications" :key="gIdx" class="mb-6">
-        <p class="text-xs font-semibold uppercase tracking-wide mb-3 px-1" :style="{ color: 'var(--text-muted)' }">{{ group.date }}</p>
-        <div v-for="(notif, i) in group.items" :key="i" class="card p-4 flex items-start gap-4 transition hover:shadow-md cursor-pointer" :class="notif.read ? 'opacity-70' : ''" :style="{ borderLeft: notif.read ? '' : '3px solid var(--color-primary)' }" @click="notif.read = true">
-          <div class="w-10 h-10 rounded-xl shrink-0 flex items-center justify-center" :style="{ backgroundColor: notifIconBg(notif.type), color: notifIconColor(notif.type) }">
-            <component :is="notifIcon(notif.type)" class="w-5 h-5" />
-          </div>
-          <div class="flex-1 min-w-0">
-            <div class="flex items-start justify-between gap-3">
-              <div>
-                <p class="text-sm font-semibold" :style="{ color: 'var(--text-primary)' }">{{ notif.title }}</p>
-                <p class="text-sm mt-0.5" :style="{ color: 'var(--text-secondary)' }">{{ notif.message }}</p>
-              </div>
-              <span class="text-[10px] shrink-0" :style="{ color: 'var(--text-muted)' }">{{ notif.time }}</span>
+    <transition name="skeleton-fade" mode="out-in">
+      <!-- Skeleton -->
+      <div v-if="loading" key="skeleton">
+        <NotificationsSkeleton />
+      </div>
+
+      <!-- Real Content -->
+      <div v-else key="content" class="space-y-2">
+        <div v-for="(group, gIdx) in groupedNotifications" :key="gIdx" class="mb-6">
+          <p class="text-xs font-semibold uppercase tracking-wide mb-3 px-1" :style="{ color: 'var(--text-muted)' }">{{ group.date }}</p>
+          <div v-for="(notif, i) in group.items" :key="i" class="card p-4 flex items-start gap-4 transition hover:shadow-md cursor-pointer" :class="notif.read ? 'opacity-70' : ''" :style="{ borderLeft: notif.read ? '' : '3px solid var(--color-primary)' }" @click="notif.read = true">
+            <div class="w-10 h-10 rounded-xl shrink-0 flex items-center justify-center" :style="{ backgroundColor: notifIconBg(notif.type), color: notifIconColor(notif.type) }">
+              <component :is="notifIcon(notif.type)" class="w-5 h-5" />
             </div>
-            <div class="flex items-center gap-3 mt-2">
-              <span class="text-[10px] font-medium px-2 py-0.5 rounded-full" :style="{ backgroundColor: notifTypeBg(notif.type), color: notifTypeColor(notif.type) }">{{ notif.type }}</span>
-              <span v-if="!notif.read" class="w-2 h-2 rounded-full" :style="{ backgroundColor: 'var(--color-primary)' }"></span>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-start justify-between gap-3">
+                <div>
+                  <p class="text-sm font-semibold" :style="{ color: 'var(--text-primary)' }">{{ notif.title }}</p>
+                  <p class="text-sm mt-0.5" :style="{ color: 'var(--text-secondary)' }">{{ notif.message }}</p>
+                </div>
+                <span class="text-[10px] shrink-0" :style="{ color: 'var(--text-muted)' }">{{ notif.time }}</span>
+              </div>
+              <div class="flex items-center gap-3 mt-2">
+                <span class="text-[10px] font-medium px-2 py-0.5 rounded-full" :style="{ backgroundColor: notifTypeBg(notif.type), color: notifTypeColor(notif.type) }">{{ notif.type }}</span>
+                <span v-if="!notif.read" class="w-2 h-2 rounded-full" :style="{ backgroundColor: 'var(--color-primary)' }"></span>
+              </div>
             </div>
           </div>
         </div>
+        <div v-if="!notifications.length" class="text-center py-16" :style="{ color: 'var(--text-muted)' }">
+          <BellIcon class="w-12 h-12 mx-auto mb-3" />
+          <p class="font-semibold text-lg" :style="{ color: 'var(--text-primary)' }">No notifications</p>
+          <p class="text-sm mt-1">You're all caught up!</p>
+        </div>
       </div>
-      <div v-if="!notifications.length" class="text-center py-16" :style="{ color: 'var(--text-muted)' }">
-        <BellIcon class="w-12 h-12 mx-auto mb-3" />
-        <p class="font-semibold text-lg" :style="{ color: 'var(--text-primary)' }">No notifications</p>
-        <p class="text-sm mt-1">You're all caught up!</p>
-      </div>
-    </div>
+    </transition>
   </div>
 </template>
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import PageHeader from '@/components/common/PageHeader.vue'
+import NotificationsSkeleton from '@/components/skeletons/NotificationsSkeleton.vue'
 import { BellIcon, CheckIcon, ShoppingBagIcon, StarIcon, TicketIcon, UserIcon, ExclamationTriangleIcon, MegaphoneIcon } from '@heroicons/vue/24/outline'
+
+const loading = ref(true)
 
 const notifications = ref([
   {id:1,type:'order',title:'New Order Received',message:'Order #1024 has been placed by Sarah Johnson - ৳2,450',time:'5m ago',read:false,date:'Today'},
@@ -88,4 +99,21 @@ function notifTypeColor(type) {
   const colors = { order: '#2E7D32', review: '#7C3AED', coupon: '#D97706', user: '#2563EB', alert: '#DC2626', promo: '#0D9488' }
   return colors[type] || '#64748B'
 }
+
+onMounted(() => {
+  setTimeout(() => {
+    loading.value = false
+  }, 1200)
+})
 </script>
+
+<style scoped>
+.skeleton-fade-enter-active,
+.skeleton-fade-leave-active {
+  transition: opacity 0.25s ease;
+}
+.skeleton-fade-enter-from,
+.skeleton-fade-leave-to {
+  opacity: 0;
+}
+</style>
