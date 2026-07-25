@@ -1,163 +1,174 @@
 <template>
     <div>
     <div class="flex h-[calc(100vh-2rem)] md:h-[calc(100vh-8rem)] bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
-        
-        <!-- ─── Folders Sidebar ─── -->
-        <aside class="absolute md:relative z-20 w-64 h-full border-r border-slate-200 bg-slate-50 flex flex-col transition-transform duration-300"
-            :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'">
-            <div class="p-3">
-                <button @click="showCompose = true"
-                    class="w-full flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white rounded-xl py-2.5 text-sm font-semibold transition shadow-sm">
-                    <PencilSquareIcon class="w-4 h-4" />
-                    Compose
-                </button>
-            </div>
+        <transition name="skeleton-fade" mode="out-in">
+          <!-- ─── Loading Skeleton ─── -->
+          <div v-if="loading" key="skeleton" class="flex w-full h-full">
+            <EmailSidebarSkeleton />
+            <EmailListSkeleton :items="7" />
+            <EmailDetailSkeleton />
+          </div>
 
-            <nav class="flex-1 px-2 space-y-0.5 overflow-y-auto">
-                <button v-for="folder in folders" :key="folder.key" @click="activeFolder = folder.key; selectedEmail = null; sidebarOpen = false"
-                    class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition"
-                    :class="activeFolder === folder.key
-                        ? 'bg-green-100 text-green-700 font-semibold'
-                        : 'text-slate-600 hover:bg-slate-100'">
-                    <component :is="folder.icon" class="w-4 h-4 shrink-0" />
-                    <span class="flex-1 text-left truncate">{{ folder.label }}</span>
-                    <span v-if="folder.count"
-                        class="text-[11px] font-medium bg-slate-200 text-slate-600 px-1.5 py-0.5 rounded-full"
-                        :class="activeFolder === folder.key ? 'bg-green-200 text-green-700' : ''">
-                        {{ folder.count }}
-                    </span>
-                </button>
-            </nav>
-        </aside>
-
-        <!-- Overlay for mobile sidebar -->
-        <div v-if="sidebarOpen" class="fixed inset-0 z-10 bg-black/20 md:hidden" @click="sidebarOpen = false"></div>
-
-        <!-- ─── Email List ─── -->
-        <div class="flex-1 flex flex-col min-w-0" v-show="!isMobile || !selectedEmail">
-            <!-- Toolbar -->
-            <div class="flex items-center gap-1 px-2 py-2 border-b border-slate-200 shrink-0">
-                <button @click="sidebarOpen = true" class="md:hidden p-2 rounded-lg hover:bg-slate-100">
-                    <svg class="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-                </button>
-                <button @click="toggleSelectAll" class="p-1 rounded hover:bg-slate-100 transition text-slate-400">
-                    <CheckCircleIcon v-if="allSelected" class="w-4 h-4 text-green-600" />
-                    <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="3" stroke-width="2" /></svg>
-                </button>
-                <button @click="refreshEmails" class="p-1.5 rounded-lg hover:bg-slate-100 transition text-slate-400" title="Refresh">
-                    <ArrowPathIcon class="w-4 h-4" :class="{ 'animate-spin': refreshing }" />
-                </button>
-                <div class="flex-1" />
-                <input v-model="searchQuery" type="text" placeholder="Search..."
-                    class="w-32 sm:w-56 bg-slate-100 border-0 rounded-lg px-3 py-1.5 text-sm text-slate-700 focus:outline-none" />
-            </div>
-
-            <!-- Email List -->
-            <div class="flex-1 overflow-y-auto divide-y divide-slate-100">
-                <div v-for="email in filteredEmails" :key="email.id"
-                    class="group flex items-center gap-2 px-3 py-3 cursor-pointer transition hover:bg-slate-50"
-                    :class="[selectedEmail?.id === email.id ? 'bg-green-50/50' : '']"
-                    @click="selectedEmail = email">
-                    
-                    <button @click.stop="toggleSelect(email.id)" class="shrink-0 p-1 rounded">
-                        <CheckCircleIcon v-if="selectedIds.includes(email.id)" class="w-4 h-4 text-green-600" />
-                        <svg v-else class="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="3" stroke-width="2" /></svg>
+          <!-- ─── Real Content ─── -->
+          <div v-else key="content" class="flex w-full h-full">
+            <!-- ─── Folders Sidebar ─── -->
+            <aside class="absolute md:relative z-20 w-64 h-full border-r border-slate-200 bg-slate-50 flex flex-col transition-transform duration-300"
+                :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'">
+                <div class="p-3">
+                    <button @click="showCompose = true"
+                        class="w-full flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white rounded-xl py-2.5 text-sm font-semibold transition shadow-sm">
+                        <PencilSquareIcon class="w-4 h-4" />
+                        Compose
                     </button>
-                    
-                    <div class="flex-1 min-w-0 flex items-center gap-2">
-                        <p class="w-24 sm:w-32 shrink-0 text-sm truncate font-medium text-slate-800">{{ email.from.name }}</p>
-                        <p class="text-sm truncate text-slate-600 flex-1">{{ email.subject }}</p>
-                    </div>
-                    
-                    <p class="w-12 shrink-0 text-right text-xs text-slate-400">{{ formatListDate(email.createdAt) }}</p>
                 </div>
-            </div>
-        </div>
 
-        <!-- ─── Email Detail Panel ─── -->
-        <div v-if="selectedEmail" class="absolute inset-0 z-30 md:static md:w-[400px] lg:w-[500px] shrink-0 border-l border-slate-200 flex flex-col bg-white">
-            <!-- Detail Header -->
-            <div class="flex items-center justify-between px-4 py-3 border-b border-slate-200 shrink-0">
-                <button @click="selectedEmail = null" class="p-2 rounded-lg hover:bg-slate-100 transition text-slate-500">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-                </button>
-                <div class="flex items-center gap-1">
-                    <button @click="selectedEmail.starred = !selectedEmail.starred"
-                        class="p-1.5 rounded-lg hover:bg-slate-100 transition"
-                        :class="selectedEmail.starred ? 'text-amber-400' : 'text-slate-400'">
-                        <StarIcon class="w-4 h-4" />
+                <nav class="flex-1 px-2 space-y-0.5 overflow-y-auto">
+                    <button v-for="folder in folders" :key="folder.key" @click="activeFolder = folder.key; selectedEmail = null; sidebarOpen = false"
+                        class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition"
+                        :class="activeFolder === folder.key
+                            ? 'bg-green-100 text-green-700 font-semibold'
+                            : 'text-slate-600 hover:bg-slate-100'">
+                        <component :is="folder.icon" class="w-4 h-4 shrink-0" />
+                        <span class="flex-1 text-left truncate">{{ folder.label }}</span>
+                        <span v-if="folder.count"
+                            class="text-[11px] font-medium bg-slate-200 text-slate-600 px-1.5 py-0.5 rounded-full"
+                            :class="activeFolder === folder.key ? 'bg-green-200 text-green-700' : ''">
+                            {{ folder.count }}
+                        </span>
                     </button>
-                    <button @click="deleteEmail(selectedEmail.id)"
-                        class="p-1.5 rounded-lg hover:bg-red-50 transition text-slate-400 hover:text-red-500">
-                        <TrashIcon class="w-4 h-4" />
+                </nav>
+            </aside>
+
+            <!-- Overlay for mobile sidebar -->
+            <div v-if="sidebarOpen" class="fixed inset-0 z-10 bg-black/20 md:hidden" @click="sidebarOpen = false"></div>
+
+            <!-- ─── Email List ─── -->
+            <div class="flex-1 flex flex-col min-w-0" v-show="!isMobile || !selectedEmail">
+                <!-- Toolbar -->
+                <div class="flex items-center gap-1 px-2 py-2 border-b border-slate-200 shrink-0">
+                    <button @click="sidebarOpen = true" class="md:hidden p-2 rounded-lg hover:bg-slate-100">
+                        <svg class="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                     </button>
+                    <button @click="toggleSelectAll" class="p-1 rounded hover:bg-slate-100 transition text-slate-400">
+                        <CheckCircleIcon v-if="allSelected" class="w-4 h-4 text-green-600" />
+                        <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="3" stroke-width="2" /></svg>
+                    </button>
+                    <button @click="refreshEmails" class="p-1.5 rounded-lg hover:bg-slate-100 transition text-slate-400" title="Refresh">
+                        <ArrowPathIcon class="w-4 h-4" :class="{ 'animate-spin': refreshing }" />
+                    </button>
+                    <div class="flex-1" />
+                    <input v-model="searchQuery" type="text" placeholder="Search..."
+                        class="w-32 sm:w-56 bg-slate-100 border-0 rounded-lg px-3 py-1.5 text-sm text-slate-700 focus:outline-none" />
+                </div>
+
+                <!-- Email List -->
+                <div class="flex-1 overflow-y-auto divide-y divide-slate-100">
+                    <div v-for="email in filteredEmails" :key="email.id"
+                        class="group flex items-center gap-2 px-3 py-3 cursor-pointer transition hover:bg-slate-50"
+                        :class="[selectedEmail?.id === email.id ? 'bg-green-50/50' : '']"
+                        @click="selectedEmail = email">
+                        
+                        <button @click.stop="toggleSelect(email.id)" class="shrink-0 p-1 rounded">
+                            <CheckCircleIcon v-if="selectedIds.includes(email.id)" class="w-4 h-4 text-green-600" />
+                            <svg v-else class="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="3" stroke-width="2" /></svg>
+                        </button>
+                        
+                        <div class="flex-1 min-w-0 flex items-center gap-2">
+                            <p class="w-24 sm:w-32 shrink-0 text-sm truncate font-medium text-slate-800">{{ email.from.name }}</p>
+                            <p class="text-sm truncate text-slate-600 flex-1">{{ email.subject }}</p>
+                        </div>
+                        
+                        <p class="w-12 shrink-0 text-right text-xs text-slate-400">{{ formatListDate(email.createdAt) }}</p>
+                    </div>
                 </div>
             </div>
 
-            <!-- Detail Body -->
-            <div class="flex-1 overflow-y-auto p-5 space-y-4">
-                <!-- Subject -->
-                <h2 class="text-lg font-bold text-slate-800 leading-tight">{{ selectedEmail.subject }}</h2>
-
-                <!-- From / To -->
-                <div class="flex items-start gap-3">
-                    <div class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold shrink-0"
-                        :class="getAvatarBg(selectedEmail.from.name)">
-                        {{ selectedEmail.from.name.charAt(0).toUpperCase() }}
-                    </div>
-                    <div class="min-w-0">
-                        <p class="text-sm font-semibold text-slate-800">{{ selectedEmail.from.name }}</p>
-                        <p class="text-xs text-slate-500">{{ selectedEmail.from.email }}</p>
-                        <p class="text-xs text-slate-400 mt-1">to {{ selectedEmail.to }}</p>
-                    </div>
-                    <p class="ml-auto text-xs text-slate-400 shrink-0">{{ formatDetailDate(selectedEmail.createdAt) }}</p>
-                </div>
-
-                <!-- Attachments -->
-                <div v-if="selectedEmail.attachments?.length" class="flex flex-wrap gap-2">
-                    <div v-for="att in selectedEmail.attachments" :key="att.name"
-                        class="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs">
-                        <PaperClipIcon class="w-3.5 h-3.5 text-slate-400" />
-                        <span class="text-slate-700 truncate max-w-[120px]">{{ att.name }}</span>
-                        <span class="text-slate-400">{{ att.size }}</span>
+            <!-- ─── Email Detail Panel ─── -->
+            <div v-if="selectedEmail" class="absolute inset-0 z-30 md:static md:w-[400px] lg:w-[500px] shrink-0 border-l border-slate-200 flex flex-col bg-white">
+                <!-- Detail Header -->
+                <div class="flex items-center justify-between px-4 py-3 border-b border-slate-200 shrink-0">
+                    <button @click="selectedEmail = null" class="p-2 rounded-lg hover:bg-slate-100 transition text-slate-500">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                    </button>
+                    <div class="flex items-center gap-1">
+                        <button @click="selectedEmail.starred = !selectedEmail.starred"
+                            class="p-1.5 rounded-lg hover:bg-slate-100 transition"
+                            :class="selectedEmail.starred ? 'text-amber-400' : 'text-slate-400'">
+                            <StarIcon class="w-4 h-4" />
+                        </button>
+                        <button @click="deleteEmail(selectedEmail.id)"
+                            class="p-1.5 rounded-lg hover:bg-red-50 transition text-slate-400 hover:text-red-500">
+                            <TrashIcon class="w-4 h-4" />
+                        </button>
                     </div>
                 </div>
 
-                <!-- Body -->
-                <div class="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">
-                    {{ selectedEmail.body }}
-                </div>
-            </div>
+                <!-- Detail Body -->
+                <div class="flex-1 overflow-y-auto p-5 space-y-4">
+                    <!-- Subject -->
+                    <h2 class="text-lg font-bold text-slate-800 leading-tight">{{ selectedEmail.subject }}</h2>
 
-            <!-- Reply -->
-            <div class="border-t border-slate-200 p-4 shrink-0">
-                <div class="flex items-center gap-2 mb-2">
-                    <button @click="replyMode = 'reply'"
-                        class="text-xs font-medium px-3 py-1.5 rounded-lg transition"
-                        :class="replyMode === 'reply' ? 'bg-green-100 text-green-700' : 'text-slate-500 hover:bg-slate-100'">
-                        Reply
-                    </button>
-                    <button @click="replyMode = 'replyAll'"
-                        class="text-xs font-medium px-3 py-1.5 rounded-lg transition"
-                        :class="replyMode === 'replyAll' ? 'bg-green-100 text-green-700' : 'text-slate-500 hover:bg-slate-100'">
-                        Reply All
-                    </button>
-                    <button @click="replyMode = 'forward'"
-                        class="text-xs font-medium px-3 py-1.5 rounded-lg transition"
-                        :class="replyMode === 'forward' ? 'bg-green-100 text-green-700' : 'text-slate-500 hover:bg-slate-100'">
-                        Forward
-                    </button>
+                    <!-- From / To -->
+                    <div class="flex items-start gap-3">
+                        <div class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold shrink-0"
+                            :class="getAvatarBg(selectedEmail.from.name)">
+                            {{ selectedEmail.from.name.charAt(0).toUpperCase() }}
+                        </div>
+                        <div class="min-w-0">
+                            <p class="text-sm font-semibold text-slate-800">{{ selectedEmail.from.name }}</p>
+                            <p class="text-xs text-slate-500">{{ selectedEmail.from.email }}</p>
+                            <p class="text-xs text-slate-400 mt-1">to {{ selectedEmail.to }}</p>
+                        </div>
+                        <p class="ml-auto text-xs text-slate-400 shrink-0">{{ formatDetailDate(selectedEmail.createdAt) }}</p>
+                    </div>
+
+                    <!-- Attachments -->
+                    <div v-if="selectedEmail.attachments?.length" class="flex flex-wrap gap-2">
+                        <div v-for="att in selectedEmail.attachments" :key="att.name"
+                            class="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs">
+                            <PaperClipIcon class="w-3.5 h-3.5 text-slate-400" />
+                            <span class="text-slate-700 truncate max-w-[120px]">{{ att.name }}</span>
+                            <span class="text-slate-400">{{ att.size }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Body -->
+                    <div class="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">
+                        {{ selectedEmail.body }}
+                    </div>
                 </div>
-                <div class="relative">
-                    <textarea v-model="replyText" rows="3" placeholder="Write your reply..."
-                        class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500/40 resize-none transition" />
-                    <button @click="sendReply"
-                        class="absolute bottom-2 right-2 bg-green-600 hover:bg-green-700 text-white text-xs font-semibold px-4 py-1.5 rounded-lg transition shadow-sm">
-                        Send
-                    </button>
+
+                <!-- Reply -->
+                <div class="border-t border-slate-200 p-4 shrink-0">
+                    <div class="flex items-center gap-2 mb-2">
+                        <button @click="replyMode = 'reply'"
+                            class="text-xs font-medium px-3 py-1.5 rounded-lg transition"
+                            :class="replyMode === 'reply' ? 'bg-green-100 text-green-700' : 'text-slate-500 hover:bg-slate-100'">
+                            Reply
+                        </button>
+                        <button @click="replyMode = 'replyAll'"
+                            class="text-xs font-medium px-3 py-1.5 rounded-lg transition"
+                            :class="replyMode === 'replyAll' ? 'bg-green-100 text-green-700' : 'text-slate-500 hover:bg-slate-100'">
+                            Reply All
+                        </button>
+                        <button @click="replyMode = 'forward'"
+                            class="text-xs font-medium px-3 py-1.5 rounded-lg transition"
+                            :class="replyMode === 'forward' ? 'bg-green-100 text-green-700' : 'text-slate-500 hover:bg-slate-100'">
+                            Forward
+                        </button>
+                    </div>
+                    <div class="relative">
+                        <textarea v-model="replyText" rows="3" placeholder="Write your reply..."
+                            class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500/40 resize-none transition" />
+                        <button @click="sendReply"
+                            class="absolute bottom-2 right-2 bg-green-600 hover:bg-green-700 text-white text-xs font-semibold px-4 py-1.5 rounded-lg transition shadow-sm">
+                            Send
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
+          </div>
+        </transition>
     </div>
 
     <!-- ─── Compose Modal ─── -->
@@ -201,9 +212,11 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, watch } from 'vue'
+import { ref, reactive, computed, watch, onMounted } from 'vue'
+import EmailSidebarSkeleton from '@/components/skeletons/EmailSidebarSkeleton.vue'
+import EmailListSkeleton from '@/components/skeletons/EmailListSkeleton.vue'
+import EmailDetailSkeleton from '@/components/skeletons/EmailDetailSkeleton.vue'
 import {
-    EnvelopeIcon,
     PencilSquareIcon,
     TrashIcon,
     StarIcon,
@@ -477,6 +490,16 @@ function formatDetailDate(date) {
 }
 .modal-fade-enter-from,
 .modal-fade-leave-to {
+    opacity: 0;
+}
+
+/* Skeleton → content transition */
+.skeleton-fade-enter-active,
+.skeleton-fade-leave-active {
+    transition: opacity 0.25s ease;
+}
+.skeleton-fade-enter-from,
+.skeleton-fade-leave-to {
     opacity: 0;
 }
 
