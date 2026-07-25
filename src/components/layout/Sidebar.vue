@@ -265,6 +265,7 @@ const navGroups = [
     {
         name: 'Messages', icon: ChatBubbleLeftRightIcon,
         items: [
+            { name: 'Chat Dashboard', to: '/chat-dashboard', icon: ChartBarIcon },
             { name: 'Chat', to: '/messages', icon: ChatBubbleLeftRightIcon },
             { name: 'Notifications', to: '/notifications', icon: BellIcon },
             { name: 'Emails', to: '/emails', icon: EnvelopeIcon },

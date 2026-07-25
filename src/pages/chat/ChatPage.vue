@@ -13,6 +13,24 @@
              LEFT — Conversation List
              ════════════════════════════════════════════ -->
         <div class="w-80 lg:w-88 shrink-0 border-r border-slate-200 flex flex-col bg-white">
+          <!-- Type Filter Tabs -->
+          <div class="px-3 pt-2 pb-1 border-b border-slate-200">
+            <div class="flex items-center gap-1 overflow-x-auto">
+              <button
+                v-for="tab in typeFilterOptions"
+                :key="tab.value"
+                @click="chatTypeFilter = tab.value"
+                class="text-[11px] font-semibold px-2.5 py-1.5 rounded-lg whitespace-nowrap transition"
+                :class="chatTypeFilter === tab.value
+                  ? 'bg-green-600 text-white shadow-sm'
+                  : 'text-slate-500 hover:bg-slate-100'"
+              >
+                <component :is="tab.icon" class="w-3.5 h-3.5 inline mr-1 -mt-0.5" />
+                {{ tab.label }}
+              </button>
+            </div>
+          </div>
+
           <!-- Search -->
           <div class="p-3 border-b border-slate-200">
             <div class="relative">
@@ -20,7 +38,7 @@
               <input
                 v-model="searchQuery"
                 type="text"
-                placeholder="Search or start a new chat"
+                placeholder="Search conversations..."
                 class="w-full rounded-lg pl-9 pr-3 py-2 text-sm bg-slate-100 border-0 text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500/30 transition"
               />
             </div>
@@ -28,16 +46,23 @@
 
           <!-- Conversations -->
           <div class="flex-1 overflow-y-auto" @click="closeAllMenus">
-            <div
-              v-for="conv in filteredConversations"
-              :key="conv.id"
-              class="group relative flex items-start gap-3 p-3 transition border-b border-slate-100 last:border-b-0 cursor-pointer"
-              :class="[
-                activeConv?.id === conv.id ? 'bg-green-50' : 'hover:bg-slate-50',
-                conv.disabled || conv.blocked ? 'opacity-60' : ''
-              ]"
-              @click="selectConversation(conv)"
-            >
+            <template v-for="group in groupedConversations" :key="group.type">
+              <!-- Section divider (only show in "All" view) -->
+              <div v-if="chatTypeFilter === 'all'" class="px-3 py-2 bg-slate-50 border-b border-slate-100 flex items-center gap-1.5 sticky top-0 z-10">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">{{ group.label }}</span>
+                <span class="text-[10px] text-slate-300 font-medium">{{ group.items.length }}</span>
+              </div>
+
+              <div
+                v-for="conv in group.items"
+                :key="conv.id"
+                class="group relative flex items-start gap-3 p-3 transition border-b border-slate-100 last:border-b-0 cursor-pointer"
+                :class="[
+                  activeConv?.id === conv.id ? 'bg-green-50' : 'hover:bg-slate-50',
+                  conv.disabled || conv.blocked ? 'opacity-60' : ''
+                ]"
+                @click="selectConversation(conv)"
+              >
               <!-- Avatar with online dot + pinned indicator -->
               <div class="relative shrink-0">
                 <div
@@ -65,13 +90,18 @@
                     :class="conv.unread ? 'font-bold text-slate-900' : 'font-semibold text-slate-800'"
                   >
                     {{ conv.name }}
+                    <span v-if="conv.type === 'vendor'" class="text-[10px] text-orange-600 bg-orange-50 px-1.5 py-0.5 rounded font-medium ml-1">Vendor</span>
+                    <span v-if="conv.type === 'vendor_customer'" class="text-[10px] text-red-600 bg-red-50 px-1.5 py-0.5 rounded font-medium ml-1">Monitor</span>
                     <span v-if="conv.muted" class="text-slate-400 ml-1">🔇</span>
                     <span v-if="conv.disabled" class="text-red-500 ml-1">🚫</span>
                     <span v-if="conv.blocked" class="text-red-500 ml-1">⛔</span>
                   </p>
                   <span class="text-[10px] shrink-0 text-slate-400">{{ conv.time }}</span>
                 </div>
-                <p class="text-xs truncate mt-0.5 text-slate-500">{{ conv.last_message }}</p>
+                <p class="text-xs truncate mt-0.5 text-slate-500">
+                  <span v-if="conv.type === 'vendor_customer'" class="text-red-400 mr-1">👁️</span>
+                  {{ conv.last_message }}
+                </p>
                 <div class="flex items-center gap-2 mt-1.5">
                   <span
                     v-if="conv.unread"
@@ -136,15 +166,18 @@
                 </transition>
               </div>
             </div>
+            </template>
 
-            <!-- Empty search -->
+            <!-- Empty state -->
             <div
-              v-if="!filteredConversations.length"
+              v-if="!groupedConversations.length"
               class="flex flex-col items-center justify-center py-12 text-slate-400"
             >
               <MagnifyingGlassIcon class="w-10 h-10 mb-2" />
-              <p class="text-sm font-medium text-slate-500">No conversations found</p>
-              <p class="text-xs mt-1">Try a different search term</p>
+              <p class="text-sm font-medium text-slate-500">
+                {{ chatTypeFilter === 'all' ? 'No conversations found' : `No ${typeFilterOptions.find(t => t.value === chatTypeFilter)?.label || ''} conversations` }}
+              </p>
+              <p class="text-xs mt-1">Try a different search term or filter</p>
             </div>
           </div>
         </div>
@@ -307,6 +340,18 @@
               </div>
             </transition>
 
+            <!-- Monitoring banner (vendor_customer) -->
+            <div
+              v-if="isReadOnlyChat"
+              class="px-4 py-2 bg-amber-50 border-b border-amber-200 shrink-0 flex items-center gap-2"
+            >
+              <svg class="w-4 h-4 text-amber-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+              <p class="text-xs text-amber-800">
+                <strong>Monitoring conversation</strong> between <strong>{{ activeConv.participants?.join(' & ') || activeConv.name }}</strong>.
+                You can view messages and add <strong>internal notes</strong> visible only to admins.
+              </p>
+            </div>
+
             <!-- Disabled chat banner -->
             <div
               v-if="isChatDisabled"
@@ -356,13 +401,22 @@
                 >
                   <div
                     class="relative max-w-[75%] md:max-w-[65%] px-3.5 py-2 text-sm shadow-sm"
-                    :class="msg.is_admin
-                      ? 'rounded-lg rounded-br-sm'
-                      : 'rounded-lg rounded-bl-sm'"
-                    :style="msg.is_admin
-                      ? { backgroundColor: '#d9fdd3', color: '#111b21' }
-                      : { backgroundColor: '#ffffff', color: '#111b21' }"
+                    :class="msg.is_note
+                      ? 'rounded-lg'
+                      : msg.is_admin
+                        ? 'rounded-lg rounded-br-sm'
+                        : 'rounded-lg rounded-bl-sm'"
+                    :style="msg.is_note
+                      ? { backgroundColor: '#fef3c7', color: '#92400e', border: '1px dashed #fbbf24' }
+                      : msg.is_admin
+                        ? { backgroundColor: '#d9fdd3', color: '#111b21' }
+                        : { backgroundColor: '#ffffff', color: '#111b21' }"
                   >
+                    <!-- Note label -->
+                    <div v-if="msg.is_note" class="flex items-center gap-1 mb-1 -mt-0.5">
+                      <svg class="w-3 h-3 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                      <span class="text-[10px] font-bold uppercase tracking-wider text-amber-600">Admin Note</span>
+                    </div>
                     <!-- Image attachments -->
                     <div v-if="msg.attachments?.length" class="space-y-1.5 -mx-0.5">
                       <div
@@ -413,8 +467,8 @@
                       <span class="text-[10px]" :style="{ color: msg.is_admin ? 'rgba(0,0,0,0.45)' : 'rgba(0,0,0,0.45)' }">
                         {{ msg.time }}
                       </span>
-                      <!-- Read status (admin messages only) -->
-                      <span v-if="msg.is_admin" class="flex items-center">
+                      <!-- Read status (admin messages only, not for notes) -->
+                      <span v-if="msg.is_admin && !msg.is_note" class="flex items-center">
                         <CheckIcon v-if="msg.status === 'sent'" class="w-3 h-3 text-slate-400" />
                         <template v-if="msg.status === 'delivered'">
                           <CheckIcon class="w-3 h-3 -mr-1.5 text-slate-400" />
@@ -504,8 +558,52 @@
 
             <!-- Input area (disabled when chat is disabled/blocked) -->
             <div
+              v-if="isChatDisabled"
+              class="px-3 py-2.5 bg-white border-t border-slate-200 shrink-0 opacity-50 pointer-events-none"
+            >
+              <div class="flex items-center gap-1">
+                <div class="flex-1 relative">
+                  <input disabled type="text" placeholder="Chat disabled..." class="w-full rounded-full border-0 bg-slate-100 px-4 py-2.5 text-sm text-slate-400 placeholder-slate-400" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Note input for monitored conversations -->
+            <div
+              v-else-if="isReadOnlyChat"
+              class="px-3 py-2 bg-amber-50 border-t border-amber-200 shrink-0"
+            >
+              <div class="flex items-center gap-2">
+                <div class="w-6 h-6 rounded-full bg-amber-200 flex items-center justify-center shrink-0">
+                  <svg class="w-3.5 h-3.5 text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                </div>
+                <div class="flex-1 relative">
+                  <input
+                    v-model="newNote"
+                    ref="noteInput"
+                    type="text"
+                    placeholder="Add an internal note..."
+                    class="w-full rounded-lg border border-amber-300 bg-white px-3 py-2 text-sm text-slate-700 placeholder-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-400/40 focus:border-amber-400 transition"
+                    @keydown.enter="sendNote"
+                  />
+                </div>
+                <button
+                  @click="sendNote"
+                  class="px-3 py-2 rounded-lg text-xs font-semibold transition shrink-0"
+                  :class="newNote.trim()
+                    ? 'bg-amber-600 text-white hover:bg-amber-700 shadow-sm'
+                    : 'bg-amber-200 text-amber-400 cursor-not-allowed'"
+                  :disabled="!newNote.trim()"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Normal input area -->
+            <div
+              v-else
               class="px-3 py-2.5 bg-white border-t border-slate-200 shrink-0"
-              :class="isChatDisabled ? 'opacity-50 pointer-events-none' : ''"
             >
               <div class="flex items-center gap-1">
                 <!-- Hidden file input -->
@@ -648,9 +746,12 @@ import {
    ═══════════════════════════════════════════ */
 const loading = ref(true)
 const searchQuery = ref('')
+const chatTypeFilter = ref('all') // 'all', 'customer', 'vendor', 'vendor_customer'
 const activeConv = ref(null)
 const newMessage = ref('')
+const newNote = ref('')
 const messageInput = ref(null)
+const noteInput = ref(null)
 const fileInput = ref(null)
 const attachments = ref([])
 const typing = ref(false)
@@ -665,6 +766,17 @@ const messagesContainer = ref(null)
 const scrollAnchor = ref(null)
 
 const colors = ['#2E7D32','#2563EB','#7C3AED','#DC2626','#D97706','#0D9488']
+
+// ─── Conversation type config ───
+const typeFilterOptions = [
+  { value: 'all', label: 'All', icon: 'span' },
+  { value: 'customer', label: 'Customers', icon: 'span' },
+  { value: 'vendor', label: 'Vendors', icon: 'span' },
+  { value: 'vendor_customer', label: 'Monitor', icon: 'span' },
+]
+
+const vendorColors = ['#E65100','#6A1B9A','#01579B','#33691E']
+const monitorColors = ['#C62828','#4E342E','#1A237E','#004D40']
 
 /* ═══════════════════════════════════════════
    SAMPLE DATA
@@ -779,20 +891,102 @@ const sortedConversations = computed(() => {
   return sorted
 })
 
-// Filter conversations by search
+// Filter conversations by type + search
 const filteredConversations = computed(() => {
+  let list = sortedConversations.value
+
+  // Filter by type
+  if (chatTypeFilter.value !== 'all') {
+    list = list.filter(c => c.type === chatTypeFilter.value)
+  }
+
+  // Search
   const q = searchQuery.value.toLowerCase().trim()
-  if (!q) return sortedConversations.value
-  return sortedConversations.value.filter(c =>
-    c.name.toLowerCase().includes(q) ||
-    c.last_message.toLowerCase().includes(q) ||
-    c.email.toLowerCase().includes(q)
-  )
+  if (q) {
+    list = list.filter(c =>
+      c.name.toLowerCase().includes(q) ||
+      c.last_message.toLowerCase().includes(q) ||
+      c.email.toLowerCase().includes(q)
+    )
+  }
+
+  return list
 })
+
+// ─── Type section labels and grouped conversations ───
+const typeSectionLabels = {
+  customer: 'Customers',
+  vendor: 'Vendors',
+  vendor_customer: 'Monitor',
+}
+
+const groupedConversations = computed(() => {
+  const list = filteredConversations.value
+  const groups = []
+  let currentType = null
+  let currentGroup = null
+
+  for (const conv of list) {
+    if (conv.type !== currentType) {
+      currentType = conv.type
+      currentGroup = {
+        type: currentType,
+        label: typeSectionLabels[currentType] || currentType,
+        items: [],
+      }
+      groups.push(currentGroup)
+    }
+    currentGroup.items.push(conv)
+  }
+  return groups
+})
+
+const isReadOnlyChat = computed(() =>
+  activeConv.value?.type === 'vendor_customer'
+)
 
 const isChatDisabled = computed(() =>
   activeConv.value?.disabled || activeConv.value?.blocked
 )
+
+/* ═══════════════════════════════════════════
+   LOCALSTORAGE PERSISTENCE
+   ═══════════════════════════════════════════ */
+const STORAGE_KEY = 'chat_conv_states'
+
+function saveConvStates() {
+  const states = {}
+  conversations.value.forEach(conv => {
+    states[conv.id] = {
+      pinned: conv.pinned || false,
+      muted: conv.muted || false,
+      disabled: conv.disabled || false,
+      blocked: conv.blocked || false,
+      unread: conv.unread || 0,
+    }
+  })
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(states))
+  } catch { /* quota exceeded, silently ignore */ }
+}
+
+function loadConvStates() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY)
+    if (!raw) return
+    const states = JSON.parse(raw)
+    conversations.value.forEach(conv => {
+      const s = states[conv.id]
+      if (s) {
+        conv.pinned = s.pinned ?? conv.pinned
+        conv.muted = s.muted ?? conv.muted
+        conv.disabled = s.disabled ?? conv.disabled
+        conv.blocked = s.blocked ?? conv.blocked
+        conv.unread = s.unread ?? conv.unread
+      }
+    })
+  } catch { /* invalid data, ignore */ }
+}
 
 function closeAllMenus() {
   convMenuOpen.value = null
@@ -805,11 +999,13 @@ function closeAllMenus() {
 function togglePin(conv) {
   conv.pinned = !conv.pinned
   convMenuOpen.value = null
+  saveConvStates()
 }
 
 function toggleMute(conv) {
   conv.muted = !conv.muted
   convMenuOpen.value = null
+  saveConvStates()
 }
 
 function toggleDisable(conv) {
@@ -819,6 +1015,7 @@ function toggleDisable(conv) {
   }
   convMenuOpen.value = null
   showConvActions.value = false
+  saveConvStates()
 }
 
 function toggleBlock(conv) {
@@ -828,6 +1025,7 @@ function toggleBlock(conv) {
   }
   convMenuOpen.value = null
   showConvActions.value = false
+  saveConvStates()
 }
 
 function markUnread(conv) {
@@ -836,6 +1034,7 @@ function markUnread(conv) {
     activeConv.value = null
   }
   convMenuOpen.value = null
+  saveConvStates()
 }
 
 function deleteConversation(conv) {
@@ -853,6 +1052,7 @@ function confirmDelete() {
   }
   delete messagesByConv.value[conv.id]
   confirmDeleteConv.value = null
+  saveConvStates()
 }
 
 /* ═══════════════════════════════════════════
@@ -867,6 +1067,8 @@ function selectConversation(conv) {
   showConvActions.value = false
   messageSearchQuery.value = ''
   messageSearchIndex.value = 0
+  // Clear note input
+  newNote.value = ''
   nextTick(() => scrollToBottom(false))
 }
 
@@ -964,6 +1166,27 @@ async function sendMessage() {
   // Simulate delivery after 1s, read after 2s
   setTimeout(() => { msg.status = 'delivered' }, 1000)
   setTimeout(() => { msg.status = 'read' }, 2000)
+
+  nextTick(() => scrollToBottom(true))
+}
+
+function sendNote() {
+  if (!newNote.value.trim() || !activeConv.value) return
+
+  const note = {
+    id: Date.now(),
+    text: newNote.value.trim(),
+    time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+    is_admin: true,
+    is_note: true,
+    status: 'sent',
+    createdAt: Date.now(),
+  }
+
+  messagesByConv.value[activeConv.value.id].push(note)
+
+  newNote.value = ''
+  noteInput.value?.focus()
 
   nextTick(() => scrollToBottom(true))
 }
@@ -1103,18 +1326,64 @@ watch(currentMessages, () => {
 onMounted(() => {
   setTimeout(() => {
     conversations.value = [
-      { id: 1, name: 'Sarah Johnson', email: 'sarah@example.com', last_message: 'Have a great day! 🌟', time: '9:38 AM', unread: 2, online: true, color: colors[0], lastSeen: null, pinned: true, muted: false, disabled: false, blocked: false },
-      { id: 2, name: 'Mike Chen', email: 'mike@example.com', last_message: 'When will my order arrive?', time: '15m ago', unread: 0, online: false, color: colors[1], lastSeen: 'yesterday', pinned: false, muted: true, disabled: false, blocked: false },
-      { id: 3, name: 'Emily Davis', email: 'emily@example.com', last_message: 'I want to return this product', time: '1h ago', unread: 1, online: true, color: colors[2], lastSeen: null, pinned: false, muted: false, disabled: false, blocked: false },
-      { id: 4, name: 'Alex Kumar', email: 'alex@example.com', last_message: 'Payment issue with my last order', time: '3h ago', unread: 0, online: false, color: colors[3], lastSeen: '3 hours ago', pinned: false, muted: false, disabled: false, blocked: false },
-      { id: 5, name: 'Lisa Martinez', email: 'lisa@example.com', last_message: 'Shipping address change', time: '1d ago', unread: 0, online: false, color: colors[4], lastSeen: 'yesterday', pinned: false, muted: false, disabled: false, blocked: false },
-      { id: 6, name: 'Tom Wilson', email: 'tom@example.com', last_message: 'Discount code not working', time: '2d ago', unread: 0, online: false, color: colors[5], lastSeen: '2 days ago', pinned: false, muted: false, disabled: false, blocked: false },
+      // ── Customers (Admin ↔ Customer) ──
+      { id: 1, name: 'Sarah Johnson', email: 'sarah@example.com', last_message: 'Have a great day! 🌟', time: '9:38 AM', unread: 2, online: true, color: colors[0], lastSeen: null, pinned: true, muted: false, disabled: false, blocked: false, type: 'customer' },
+      { id: 2, name: 'Mike Chen', email: 'mike@example.com', last_message: 'When will my order arrive?', time: '15m ago', unread: 0, online: false, color: colors[1], lastSeen: 'yesterday', pinned: false, muted: true, disabled: false, blocked: false, type: 'customer' },
+      { id: 3, name: 'Emily Davis', email: 'emily@example.com', last_message: 'I want to return this product', time: '1h ago', unread: 1, online: true, color: colors[2], lastSeen: null, pinned: false, muted: false, disabled: false, blocked: false, type: 'customer' },
+      { id: 4, name: 'Alex Kumar', email: 'alex@example.com', last_message: 'Payment issue with my last order', time: '3h ago', unread: 0, online: false, color: colors[3], lastSeen: '3 hours ago', pinned: false, muted: false, disabled: false, blocked: false, type: 'customer' },
+      { id: 5, name: 'Lisa Martinez', email: 'lisa@example.com', last_message: 'Shipping address change', time: '1d ago', unread: 0, online: false, color: colors[4], lastSeen: 'yesterday', pinned: false, muted: false, disabled: false, blocked: false, type: 'customer' },
+      { id: 6, name: 'Tom Wilson', email: 'tom@example.com', last_message: 'Discount code not working', time: '2d ago', unread: 0, online: false, color: colors[5], lastSeen: '2 days ago', pinned: false, muted: false, disabled: false, blocked: false, type: 'customer' },
+
+      // ── Vendors (Admin ↔ Vendor) ──
+      { id: 7, name: 'GreenLeaf Supplies', email: 'contact@greenleaf.com', last_message: 'New inventory arriving next week', time: '1h ago', unread: 0, online: true, color: vendorColors[0], lastSeen: null, pinned: false, muted: false, disabled: false, blocked: false, type: 'vendor', contact_person: 'Robert Green' },
+      { id: 8, name: 'TechMart Wholesale', email: 'sales@techmart.com', last_message: 'Bulk order discount available', time: '3h ago', unread: 1, online: false, color: vendorColors[1], lastSeen: '2 hours ago', pinned: false, muted: false, disabled: false, blocked: false, type: 'vendor', contact_person: 'Sarah Lee' },
+
+      // ── Monitor (Vendor ↔ Customer) ──
+      { id: 9, name: 'Sarah Johnson ⬄ GreenLeaf', email: '', last_message: 'Your organic produce order has been dispatched!', time: '2h ago', unread: 0, online: false, color: monitorColors[0], lastSeen: null, pinned: false, muted: false, disabled: false, blocked: false, type: 'vendor_customer', participants: ['Sarah Johnson', 'GreenLeaf Supplies'] },
+      { id: 10, name: 'Mike Chen ⬄ TechMart', email: '', last_message: 'The laptop stand you ordered is out of stock', time: '5h ago', unread: 0, online: false, color: monitorColors[1], lastSeen: null, pinned: false, muted: false, disabled: false, blocked: false, type: 'vendor_customer', participants: ['Mike Chen', 'TechMart Wholesale'] },
     ]
 
     // Populate messages for each conversation
+    const now = Date.now()
+    const H = 3600000
+    const M = 60000
+
     conversations.value.forEach(conv => {
       if (conv.id === 1) {
         messagesByConv.value[conv.id] = buildSampleMessages()
+      } else if (conv.id === 7) {
+        // Vendor: Admin ↔ GreenLeaf Supplies
+        messagesByConv.value[conv.id] = [
+          { id: 701, text: 'Hi Robert, just checking on the new inventory shipment.', time: '10:00 AM', is_admin: true, status: 'read', createdAt: now - H * 3 },
+          { id: 702, text: 'Hi! Yes, the shipment is on track for next Monday.', time: '10:05 AM', is_admin: false, status: 'read', createdAt: now - H * 3 + M * 5 },
+          { id: 703, text: 'We\'ve added 50 new organic products to the catalog.', time: '10:06 AM', is_admin: false, status: 'read', createdAt: now - H * 3 + M * 6 },
+          { id: 704, text: 'Great, I\'ll review the catalog and approve them today.', time: '10:10 AM', is_admin: true, status: 'read', createdAt: now - H * 3 + M * 10 },
+          { id: 705, text: 'Also, can you send updated pricing for the winter collection?', time: '10:15 AM', is_admin: true, status: 'sent', createdAt: now - H * 3 + M * 15 },
+        ]
+      } else if (conv.id === 8) {
+        // Vendor: Admin ↔ TechMart Wholesale
+        messagesByConv.value[conv.id] = [
+          { id: 801, text: 'Sarah, we\'re seeing high demand for your electronics.', time: '1:00 PM', is_admin: true, status: 'read', createdAt: now - H * 5 },
+          { id: 802, text: 'That\'s great to hear! We can increase production.', time: '1:30 PM', is_admin: false, status: 'read', createdAt: now - H * 5 + M * 30 },
+          { id: 803, text: 'We\'re offering a bulk discount for orders over 500 units.', time: '1:32 PM', is_admin: false, status: 'read', createdAt: now - H * 5 + M * 32 },
+          { id: 804, text: 'Excellent! Let me discuss with the team and get back to you.', time: '1:45 PM', is_admin: true, status: 'delivered', createdAt: now - H * 5 + M * 45 },
+        ]
+      } else if (conv.id === 9) {
+        // Monitor: GreenLeaf ↔ Sarah Johnson
+        messagesByConv.value[conv.id] = [
+          { id: 901, text: 'Hi, I\'d like to order your organic vegetable box for this week.', time: '12:00 PM', is_admin: false, status: 'read', createdAt: now - H * 4 },
+          { id: 902, text: 'Sure! We have the weekly box for $35 and a large for $55.', time: '12:05 PM', is_admin: false, status: 'read', createdAt: now - H * 4 + M * 5 },
+          { id: 903, text: 'I\'ll take the large box please!', time: '12:10 PM', is_admin: false, status: 'read', createdAt: now - H * 4 + M * 10 },
+          { id: 904, text: 'Your large organic box has been dispatched! 🎉', time: '1:00 PM', is_admin: false, status: 'read', createdAt: now - H * 3 },
+        ]
+      } else if (conv.id === 10) {
+        // Monitor: TechMart ↔ Mike Chen
+        messagesByConv.value[conv.id] = [
+          { id: 1001, text: 'I ordered a laptop stand 3 days ago, where is it?', time: '11:00 AM', is_admin: false, status: 'read', createdAt: now - H * 6 },
+          { id: 1002, text: 'Sorry about the delay. We\'re currently out of stock on that item.', time: '11:15 AM', is_admin: false, status: 'read', createdAt: now - H * 6 + M * 15 },
+          { id: 1003, text: 'Can I get a refund or exchange?', time: '11:20 AM', is_admin: false, status: 'read', createdAt: now - H * 6 + M * 20 },
+          { id: 1004, text: 'We can offer a full refund or an upgrade to the premium stand at no extra cost.', time: '11:30 AM', is_admin: false, status: 'read', createdAt: now - H * 6 + M * 30 },
+        ]
       } else {
         messagesByConv.value[conv.id] = [
           { id: conv.id * 10 + 1, text: conv.last_message, time: conv.time, is_admin: false, status: 'read', createdAt: Date.now() - 86400000 },
@@ -1123,6 +1392,7 @@ onMounted(() => {
     })
 
     loading.value = false
+    loadConvStates()
     simulateIncoming()
   }, 800)
 })

@@ -60,6 +60,7 @@ import PurchaseInvoiceDetailPage from "@/pages/invoices/PurchaseInvoiceDetailPag
 // Chat
 import ChatPage from "@/pages/chat/ChatPage.vue";
 import NotificationsPage from "@/pages/chat/NotificationsPage.vue";
+import ChatDashboardPage from "@/pages/chat/ChatDashboardPage.vue";
 
 // Reviews
 import ReviewsPage from "@/pages/reviews/ReviewsPage.vue";
@@ -353,6 +354,11 @@ const routes = [
             },
 
             // Chat
+            {
+                path: "chat-dashboard",
+                name: "chat-dashboard",
+                component: ChatDashboardPage,
+            },
             {
                 path: "messages",
                 name: "messages",
