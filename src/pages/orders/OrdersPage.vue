@@ -141,10 +141,12 @@
                     </td>
 
                     <td class="table-cell text-right">
-                        <router-link :to="`/orders/${item.id}`"
-                            class="inline-flex items-center justify-center w-8 h-8 rounded-lg border border-gray-200 hover:border-[#2E7D32] hover:bg-green-50 transition">
-                            <Eye class="w-4 h-4 text-gray-700" />
-                        </router-link>
+                        <Tooltip text="View Order">
+                            <router-link :to="`/orders/${item.id}`"
+                                class="inline-flex items-center justify-center w-8 h-8 rounded-lg border border-gray-200 hover:border-[#2E7D32] hover:bg-green-50 transition">
+                                <Eye class="w-4 h-4 text-gray-700" />
+                            </router-link>
+                        </Tooltip>
                     </td>
                 </template>
 
@@ -167,6 +169,7 @@ import DatePicker from '@/components/common/DatePicker.vue'
 import { orderApi } from '@/api'
 import { useCsvExport } from '@/composables/useCsvExport'
 
+import Tooltip from '@/components/common/Tooltip.vue'
 import {
     Eye,
     ClipboardList,

@@ -31,16 +31,18 @@
           }}</span></td>
         <td class="table-cell">
           <div class="flex items-center justify-end gap-1 whitespace-nowrap">
-            <button @click="openForm(item)"
-                    class="inline-flex items-center gap-1 px-2 py-1.5 rounded-lg text-xs font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 transition-colors">
-              <PencilIcon class="w-3.5 h-3.5"/>
-
-            </button>
-            <button @click="confirmDelete(item)"
-                    class="inline-flex items-center gap-1 px-2 py-1.5 rounded-lg text-xs font-medium text-red-500 bg-red-50 hover:bg-red-100 transition-colors">
-              <TrashIcon class="w-3.5 h-3.5"/>
-
-            </button>
+            <Tooltip text="Edit">
+              <button @click="openForm(item)"
+                      class="inline-flex items-center gap-1 px-2 py-1.5 rounded-lg text-xs font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 transition-colors">
+                <PencilIcon class="w-3.5 h-3.5"/>
+              </button>
+            </Tooltip>
+            <Tooltip text="Delete">
+              <button @click="confirmDelete(item)"
+                      class="inline-flex items-center gap-1 px-2 py-1.5 rounded-lg text-xs font-medium text-red-500 bg-red-50 hover:bg-red-100 transition-colors">
+                <TrashIcon class="w-3.5 h-3.5"/>
+              </button>
+            </Tooltip>
           </div>
         </td>
       </template>
@@ -121,6 +123,7 @@ import PageHeader from '@/components/common/PageHeader.vue'
 import DataTable from '@/components/common/DataTable.vue'
 import ConfirmModal from '@/components/common/ConfirmModal.vue'
 import {bannerApi} from '@/api'
+import Tooltip from '@/components/common/Tooltip.vue'
 import {PlusIcon, PencilIcon, TrashIcon} from '@heroicons/vue/24/outline'
 
 const toast = useToast()

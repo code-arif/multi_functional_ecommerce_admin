@@ -12,8 +12,12 @@
         <td class="table-cell text-xs text-gray-400">{{ item.expires_at ? new Date(item.expires_at).toLocaleDateString() : 'Never' }}</td>
         <td class="table-cell"><span class="badge" :class="item.is_active?'badge-green':'badge-gray'">{{ item.is_active?'Active':'Inactive' }}</span></td>
         <td class="table-cell text-right">
-          <button @click="openForm(item)" class="p-1.5 rounded-lg text-blue-500 hover:bg-blue-50 mr-1"><PencilIcon class="w-4 h-4" /></button>
-          <button @click="confirmDelete(item)" class="p-1.5 rounded-lg text-red-400 hover:bg-red-50"><TrashIcon class="w-4 h-4" /></button>
+          <Tooltip text="Edit">
+            <button @click="openForm(item)" class="p-1.5 rounded-lg text-blue-500 hover:bg-blue-50 mr-1"><PencilIcon class="w-4 h-4" /></button>
+          </Tooltip>
+          <Tooltip text="Delete">
+            <button @click="confirmDelete(item)" class="p-1.5 rounded-lg text-red-400 hover:bg-red-50"><TrashIcon class="w-4 h-4" /></button>
+          </Tooltip>
         </td>
       </template>
     </DataTable>
@@ -75,6 +79,7 @@ import DataTable from '@/components/common/DataTable.vue'
 import Pagination from '@/components/common/Pagination.vue'
 import ConfirmModal from '@/components/common/ConfirmModal.vue'
 import { couponApi } from '@/api'
+import Tooltip from '@/components/common/Tooltip.vue'
 import { PlusIcon, PencilIcon, TrashIcon } from '@heroicons/vue/24/outline'
 const toast=useToast()
 const coupons=ref([]), pagination=ref(null), loading=ref(true), showForm=ref(false), saving=ref(false), search=ref(''), perPage=ref(15)

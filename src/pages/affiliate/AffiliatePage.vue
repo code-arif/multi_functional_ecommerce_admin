@@ -30,12 +30,16 @@
 
         <td class="table-cell text-right">
           <div class="flex justify-end gap-1">
-            <button @click="openForm(item)" class="p-1.5 rounded-lg text-blue-500 bg-blue-50 hover:bg-blue-100">
-              <PencilIcon class="w-4 h-4" />
-            </button>
-            <button @click="confirmDelete(item)" class="p-1.5 rounded-lg text-red-400 bg-red-50 hover:bg-red-100">
-              <TrashIcon class="w-4 h-4" />
-            </button>
+            <Tooltip text="Edit">
+              <button @click="openForm(item)" class="p-1.5 rounded-lg text-blue-500 bg-blue-50 hover:bg-blue-100">
+                <PencilIcon class="w-4 h-4" />
+              </button>
+            </Tooltip>
+            <Tooltip text="Delete">
+              <button @click="confirmDelete(item)" class="p-1.5 rounded-lg text-red-400 bg-red-50 hover:bg-red-100">
+                <TrashIcon class="w-4 h-4" />
+              </button>
+            </Tooltip>
           </div>
         </td>
 
@@ -173,6 +177,7 @@ import DataTable from '@/components/common/DataTable.vue'
 import Pagination from '@/components/common/Pagination.vue'
 import ConfirmModal from '@/components/common/ConfirmModal.vue'
 import { affiliateApi } from '@/api'
+import Tooltip from '@/components/common/Tooltip.vue'
 import { PlusIcon, PencilIcon, TrashIcon, PhotoIcon } from '@heroicons/vue/24/outline'
 import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css'

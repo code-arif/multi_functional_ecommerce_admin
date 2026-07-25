@@ -29,12 +29,16 @@
           item.is_active ? 'Active' : 'Inactive'
         }}</span></td>
         <td class="table-cell text-right">
-          <button @click="openForm(item)" class="p-1.5 rounded-lg text-blue-500 bg-blue-50 hover:bg-blue-100 transition mr-1">
-            <PencilIcon class="w-4 h-4" />
-          </button>
-          <button @click="confirmDelete(item)" class="p-1.5 rounded-lg text-red-400 bg-red-50 hover:bg-red-100 transition">
-            <TrashIcon class="w-4 h-4" />
-          </button>
+          <Tooltip text="Edit">
+            <button @click="openForm(item)" class="p-1.5 rounded-lg text-blue-500 bg-blue-50 hover:bg-blue-100 transition mr-1">
+              <PencilIcon class="w-4 h-4" />
+            </button>
+          </Tooltip>
+          <Tooltip text="Delete">
+            <button @click="confirmDelete(item)" class="p-1.5 rounded-lg text-red-400 bg-red-50 hover:bg-red-100 transition">
+              <TrashIcon class="w-4 h-4" />
+            </button>
+          </Tooltip>
         </td>
       </template>
     </DataTable>
@@ -118,6 +122,7 @@ import PageHeader from '@/components/common/PageHeader.vue'
 import DataTable from '@/components/common/DataTable.vue'
 import ConfirmModal from '@/components/common/ConfirmModal.vue'
 import { categoryApi } from '@/api'
+import Tooltip from '@/components/common/Tooltip.vue'
 import { PlusIcon, PencilIcon, TrashIcon } from '@heroicons/vue/24/outline'
 import { Tag } from 'lucide-vue-next'
 

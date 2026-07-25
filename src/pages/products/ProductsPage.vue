@@ -104,19 +104,24 @@
 
         <td class="table-cell text-right">
           <div class="flex items-center justify-end gap-1">
-            <!-- View button -->
-            <router-link :to="`/products/${item.id}`"
-              class="p-1.5 rounded-lg text-gray-500 bg-gray-50 hover:bg-gray-100 transition" title="View">
-              <EyeIcon class="w-4 h-4" />
-            </router-link>
-            <router-link :to="`/products/${item.id}/edit`"
-              class="p-1.5 rounded-lg text-blue-500 bg-blue-50 hover:bg-blue-100 transition" title="Edit">
-              <PencilIcon class="w-4 h-4" />
-            </router-link>
-            <button @click="confirmDelete(item)"
-              class="p-1.5 rounded-lg text-red-400 bg-red-50 hover:bg-red-100 transition" title="Delete">
-              <TrashIcon class="w-4 h-4" />
-            </button>
+            <Tooltip text="View">
+              <router-link :to="`/products/${item.id}`"
+                class="p-1.5 rounded-lg text-gray-500 bg-gray-50 hover:bg-gray-100 transition">
+                <EyeIcon class="w-4 h-4" />
+              </router-link>
+            </Tooltip>
+            <Tooltip text="Edit">
+              <router-link :to="`/products/${item.id}/edit`"
+                class="p-1.5 rounded-lg text-blue-500 bg-blue-50 hover:bg-blue-100 transition">
+                <PencilIcon class="w-4 h-4" />
+              </router-link>
+            </Tooltip>
+            <Tooltip text="Delete">
+              <button @click="confirmDelete(item)"
+                class="p-1.5 rounded-lg text-red-400 bg-red-50 hover:bg-red-100 transition">
+                <TrashIcon class="w-4 h-4" />
+              </button>
+            </Tooltip>
           </div>
         </td>
 
@@ -139,6 +144,7 @@ import Pagination from '@/components/common/Pagination.vue'
 import StatusBadge from '@/components/common/StatusBadge.vue'
 import ConfirmModal from '@/components/common/ConfirmModal.vue'
 import { productApi } from '@/api'
+import Tooltip from '@/components/common/Tooltip.vue'
 import { PlusIcon, PencilIcon, TrashIcon, ArrowPathIcon, EyeIcon, ArrowUpTrayIcon } from '@heroicons/vue/24/outline'
 import { Package } from 'lucide-vue-next'
 import SelectBox from '@/components/common/SelectBox.vue'
