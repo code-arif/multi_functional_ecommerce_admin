@@ -20,29 +20,26 @@
         </td>
         <td class="table-cell text-sm" :style="{ color: 'var(--text-secondary)' }">{{ item.phone || '—' }}</td>
         <td class="table-cell">
-          <StatusBadge :value="item.status" />
+          <div class="relative">
+            <button @click="toggleDropdown(item.id)" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium transition-colors" :class="statusBtnClass(item.status)">
+              {{ item.status }}
+              <ChevronDownIcon class="w-3.5 h-3.5" />
+            </button>
+            <div v-if="openDropdownId === item.id" class="absolute left-0 top-full mt-1 z-50 w-36 bg-white rounded-xl border border-gray-200 shadow-lg py-1 animate-in">
+              <button v-for="opt in statusRowOptions" :key="opt.value" @click="changeStatus(item.id, opt.value)"
+                class="flex items-center gap-2 w-full px-3 py-2 text-sm text-left transition-colors"
+                :class="item.status === opt.value ? 'bg-gray-50 font-medium' : 'hover:bg-gray-50'">
+                <span class="w-2 h-2 rounded-full" :class="statusDotClass(opt.value)"></span>
+                {{ opt.label }}
+              </button>
+            </div>
+          </div>
         </td>
         <td class="table-cell text-xs" :style="{ color: 'var(--text-muted)' }">{{ formatDate(item.created_at) }}</td>
         <td class="table-cell text-right">
-          <div class="flex items-center justify-end gap-1 whitespace-nowrap">
-            <Tooltip text="View">
-              <router-link :to="'/users/' + item.id" class="p-1.5 rounded-lg border border-gray-300 hover:border-gray-400 text-gray-500 hover:text-gray-700 transition-all"><EyeIcon class="w-4 h-4" /></router-link>
-            </Tooltip>
-            <div class="relative">
-              <button @click="toggleDropdown(item.id)" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium transition-colors" :class="statusBtnClass(item.status)">
-                {{ item.status }}
-                <ChevronDownIcon class="w-3.5 h-3.5" />
-              </button>
-              <div v-if="openDropdownId === item.id" class="absolute right-0 top-full mt-1 z-50 w-36 bg-white rounded-xl border border-gray-200 shadow-lg py-1 animate-in">
-                <button v-for="opt in statusRowOptions" :key="opt.value" @click="changeStatus(item.id, opt.value)"
-                  class="flex items-center gap-2 w-full px-3 py-2 text-sm text-left transition-colors"
-                  :class="item.status === opt.value ? 'bg-gray-50 font-medium' : 'hover:bg-gray-50'">
-                  <span class="w-2 h-2 rounded-full" :class="statusDotClass(opt.value)"></span>
-                  {{ opt.label }}
-                </button>
-              </div>
-            </div>
-          </div>
+          <Tooltip text="View">
+            <router-link :to="'/users/' + item.id" class="p-1.5 rounded-lg border border-gray-300 hover:border-gray-400 text-gray-500 hover:text-gray-700 transition-all"><EyeIcon class="w-4 h-4" /></router-link>
+          </Tooltip>
         </td>
       </template>
     </DataTable>
@@ -56,7 +53,6 @@ import DataTable from '@/components/common/DataTable.vue'
 import Pagination from '@/components/common/Pagination.vue'
 import SelectBox from '@/components/common/SelectBox.vue'
 import Tooltip from '@/components/common/Tooltip.vue'
-import StatusBadge from '@/components/common/StatusBadge.vue'
 import { EyeIcon, ChevronDownIcon } from '@heroicons/vue/24/outline'
 import { userApi } from '@/api'
 
@@ -83,7 +79,7 @@ const columns = [
   { key: 'phone', label: 'Phone', class: 'w-32' },
   { key: 'status', label: 'Status', class: 'w-24' },
   { key: 'joined', label: 'Joined', class: 'w-32' },
-  { key: 'actions', label: '', class: 'w-36 text-right' },
+  { key: 'actions', label: 'Action', class: 'w-16 text-right' },
 ]
 
 function formatDate(d) {
