@@ -173,21 +173,31 @@
                 <td class="px-4 py-3 text-sm text-slate-500">{{ conv.time }}</td>
                 <td class="px-4 py-3 text-right">
                   <div class="flex items-center justify-end gap-1">
-                    <button @click="toggleMute(conv)" class="p-1.5 rounded-lg hover:bg-slate-100 transition text-slate-400" :title="conv.muted ? 'Unmute' : 'Mute'">
-                      <BellIcon class="w-4 h-4" :class="conv.muted ? 'text-slate-500' : ''" />
-                    </button>
-                    <button @click="toggleDisable(conv)" class="p-1.5 rounded-lg hover:bg-red-50 transition" :class="conv.disabled ? 'text-red-500' : 'text-slate-400'" :title="conv.disabled ? 'Enable chat' : 'Disable chat'">
-                      <NoSymbolIcon class="w-4 h-4" />
-                    </button>
-                    <button @click="toggleBlock(conv)" class="p-1.5 rounded-lg hover:bg-red-50 transition" :class="conv.blocked ? 'text-red-600' : 'text-slate-400'" :title="conv.blocked ? 'Unblock' : 'Block'">
-                      <ExclamationTriangleIcon class="w-4 h-4" />
-                    </button>
-                    <button @click="openChat(conv)" class="p-1.5 rounded-lg hover:bg-green-50 transition text-green-600" title="Open chat">
-                      <ChatBubbleLeftRightIcon class="w-4 h-4" />
-                    </button>
-                    <button @click="confirmDeleteConv = conv" class="p-1.5 rounded-lg hover:bg-red-50 transition text-slate-400 hover:text-red-500" title="Delete">
-                      <TrashIcon class="w-4 h-4" />
-                    </button>
+                    <Tooltip :text="conv.muted ? 'Unmute' : 'Mute'" position="top">
+                      <button @click="toggleMute(conv)" class="p-1.5 rounded-lg hover:bg-slate-100 transition text-slate-400">
+                        <BellIcon class="w-4 h-4" :class="conv.muted ? 'text-slate-500' : ''" />
+                      </button>
+                    </Tooltip>
+                    <Tooltip :text="conv.disabled ? 'Enable chat' : 'Disable chat'" position="top">
+                      <button @click="toggleDisable(conv)" class="p-1.5 rounded-lg hover:bg-red-50 transition" :class="conv.disabled ? 'text-red-500' : 'text-slate-400'">
+                        <NoSymbolIcon class="w-4 h-4" />
+                      </button>
+                    </Tooltip>
+                    <Tooltip :text="conv.blocked ? 'Unblock' : 'Block'" position="top">
+                      <button @click="toggleBlock(conv)" class="p-1.5 rounded-lg hover:bg-red-50 transition" :class="conv.blocked ? 'text-red-600' : 'text-slate-400'">
+                        <ExclamationTriangleIcon class="w-4 h-4" />
+                      </button>
+                    </Tooltip>
+                    <Tooltip text="Open chat" position="top">
+                      <button @click="openChat(conv)" class="p-1.5 rounded-lg hover:bg-green-50 transition text-green-600">
+                        <ChatBubbleLeftRightIcon class="w-4 h-4" />
+                      </button>
+                    </Tooltip>
+                    <Tooltip text="Delete" position="top">
+                      <button @click="confirmDeleteConv = conv" class="p-1.5 rounded-lg hover:bg-red-50 transition text-slate-400 hover:text-red-500">
+                        <TrashIcon class="w-4 h-4" />
+                      </button>
+                    </Tooltip>
                   </div>
                 </td>
               </tr>
@@ -260,6 +270,7 @@ import {
 } from '@heroicons/vue/24/outline'
 import { ChartBarSquareIcon } from '@heroicons/vue/24/outline'
 import SelectBox from '@/components/common/SelectBox.vue'
+import Tooltip from '@/components/common/Tooltip.vue'
 
 Chart.register(...registerables)
 
