@@ -31,7 +31,7 @@
             </div>
           </div>
         </td>
-        <td class="table-cell"><span class="badge badge-purple">{{ item.role }}</span></td>
+        <td class="table-cell"><span class="badge badge-purple whitespace-nowrap">{{ item.role }}</span></td>
         <td class="table-cell">
           <div class="relative">
             <button @click="toggleDropdown(item.id)" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium transition-colors" :class="statusBtnClass(item.status)">

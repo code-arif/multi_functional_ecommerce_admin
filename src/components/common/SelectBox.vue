@@ -279,15 +279,18 @@ onUnmounted(() => {
   position: absolute;
   top: calc(100% + 4px);
   left: 0;
-  right: 0;
   z-index: 1000;
   background: var(--surface, #fff);
   border: 1px solid var(--border, #E2E8F0);
   border-radius: 10px;
   box-shadow: var(--shadow-dropdown, 0 10px 40px rgba(0,0,0,0.12));
   padding: 4px;
+  min-width: 100%;
+  width: max-content;
+  max-width: 320px;
   max-height: 240px;
   overflow-y: auto;
+  overflow-x: visible;
   animation: sbFadeIn 0.12s ease-out;
 }
 
@@ -337,8 +340,7 @@ onUnmounted(() => {
 
 .sb-option-label {
   flex: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .sb-option-check {
