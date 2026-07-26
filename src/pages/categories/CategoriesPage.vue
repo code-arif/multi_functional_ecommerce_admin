@@ -87,12 +87,10 @@
               </div>
 
               <div class="flex items-end pb-1">
-                <label class="flex items-center gap-2 text-sm cursor-pointer">
-                  <input type="checkbox" v-model="form.is_active" class="accent-[#2E7D32]" /> Active
-                  <p v-if="errors.is_active" class="text-red-500 text-xs">
-                    {{ errors.is_active[0] }}
-                  </p>
-                </label>
+                <ToggleSwitch v-model="form.is_active" label="Active" />
+                <p v-if="errors.is_active" class="text-red-500 text-xs">
+                  {{ errors.is_active[0] }}
+                </p>
               </div>
 
             </div>
@@ -124,6 +122,7 @@ import ConfirmModal from '@/components/common/ConfirmModal.vue'
 import { categoryApi } from '@/api'
 import Tooltip from '@/components/common/Tooltip.vue'
 import { PlusIcon, PencilIcon, TrashIcon } from '@heroicons/vue/24/outline'
+import ToggleSwitch from '@/components/common/ToggleSwitch.vue'
 import { Tag } from 'lucide-vue-next'
 
 const toast = useToast()

@@ -121,10 +121,9 @@
                 }}</p>
               </div>
             </div>
-            <label class="flex items-center gap-2 mt-3 text-sm cursor-pointer">
-              <input type="checkbox" v-model="form.manage_stock" class="accent-[#2E7D32]" />
-              <span>Manage stock quantity</span>
-            </label>
+            <div class="mt-3">
+              <ToggleSwitch v-model="form.manage_stock" label="Manage stock quantity" />
+            </div>
             <p v-if="errors.manage_stock" class="text-red-500 text-xs mt-1">{{ errors.manage_stock[0] }}</p>
           </div>
 
@@ -236,17 +235,11 @@
                 <p v-if="errors.status" class="text-red-500 text-xs mt-1">{{ errors.status[0] }}</p>
               </div>
               <div class="space-y-2">
-                <label class="flex items-center gap-2 text-sm cursor-pointer">
-                  <input type="checkbox" v-model="form.is_featured" class="accent-[#2E7D32]" /> Featured Product
-                </label>
+                <ToggleSwitch v-model="form.is_featured" label="Featured Product" />
                 <p v-if="errors.is_featured" class="text-red-500 text-xs">{{ errors.is_featured[0] }}</p>
-                <label class="flex items-center gap-2 text-sm cursor-pointer">
-                  <input type="checkbox" v-model="form.is_new" class="accent-[#2E7D32]" /> Mark as New
-                </label>
+                <ToggleSwitch v-model="form.is_new" label="Mark as New" />
                 <p v-if="errors.is_new" class="text-red-500 text-xs">{{ errors.is_new[0] }}</p>
-                <label class="flex items-center gap-2 text-sm cursor-pointer">
-                  <input type="checkbox" v-model="form.is_bestseller" class="accent-[#2E7D32]" /> Bestseller
-                </label>
+                <ToggleSwitch v-model="form.is_bestseller" label="Bestseller" />
                 <p v-if="errors.is_bestseller" class="text-red-500 text-xs">{{ errors.is_bestseller[0] }}</p>
               </div>
             </div>
@@ -397,6 +390,7 @@ import PageHeader from '@/components/common/PageHeader.vue'
 import { productApi, categoryApi, brandApi } from '@/api'
 import { TrashIcon, PhotoIcon } from '@heroicons/vue/24/outline'
 import { Star, Trash2, ImagePlus } from 'lucide-vue-next'
+import ToggleSwitch from '@/components/common/ToggleSwitch.vue'
 
 const route = useRoute()
 const router = useRouter()

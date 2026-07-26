@@ -1,6 +1,6 @@
 <template>
   <div>
-    <PageHeader title="Vendor Reports" subtitle="Vendor performance analytics and sales data" />
+    <Breadcrumb :items="breadcrumbItems" />
     <div class="card p-4 mb-6 flex flex-wrap items-center gap-4">
       <DatePicker v-model:from="filters.from" v-model:to="filters.to" :presets="presets" range placeholder="Date range" display-format="MMM dd, yyyy" />
       <button @click="loadAll" class="btn-primary text-sm py-1.5 px-4">Apply</button>
@@ -34,12 +34,16 @@
   </div>
 </template>
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { startOfYear } from 'date-fns'
-import PageHeader from '@/components/common/PageHeader.vue'
 import DatePicker from '@/components/common/DatePicker.vue'
+import Breadcrumb from '@/components/common/Breadcrumb.vue'
 import { Printer, DollarSign } from 'lucide-vue-next'
-import { BuildingStorefrontIcon, ShieldCheckIcon, StarIcon } from '@heroicons/vue/24/outline'
+import { BuildingStorefrontIcon, ShieldCheckIcon, StarIcon, ChartBarSquareIcon } from '@heroicons/vue/24/outline'
+const breadcrumbItems = computed(() => [
+    { label: 'Vendor Reports', icon: ChartBarSquareIcon }
+])
+
 const filters = ref({ from: new Date(Date.now()-30*24*60*60*1000).toISOString().slice(0,10), to: new Date().toISOString().slice(0,10) })
 const presets = [{label:'7 Days',days:7},{label:'30 Days',days:30},{label:'90 Days',days:90},{label:'This Year',getRange:()=>({from:startOfYear(new Date()),to:new Date()})}]
 function loadAll() {}

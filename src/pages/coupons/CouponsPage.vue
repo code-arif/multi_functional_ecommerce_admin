@@ -49,7 +49,7 @@
               <div><label class="label">Starts At</label><input v-model="form.starts_at" type="datetime-local" class="input" /></div>
               <div><label class="label">Expires At</label><input v-model="form.expires_at" type="datetime-local" class="input" /></div>
             </div>
-            <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" v-model="form.is_active" class="accent-[#2E7D32]" /> Active</label>
+            <ToggleSwitch v-model="form.is_active" label="Active" />
             <div class="flex gap-3 pt-2">
               <button type="submit" :disabled="saving" class="btn-primary flex-1 justify-center">{{ saving?'Saving...':'Save Coupon' }}</button>
               <button type="button" @click="showForm=false" class="btn-ghost px-5">Cancel</button>
@@ -81,6 +81,7 @@ import ConfirmModal from '@/components/common/ConfirmModal.vue'
 import { couponApi } from '@/api'
 import Tooltip from '@/components/common/Tooltip.vue'
 import { PlusIcon, PencilIcon, TrashIcon } from '@heroicons/vue/24/outline'
+import ToggleSwitch from '@/components/common/ToggleSwitch.vue'
 const toast=useToast()
 const coupons=ref([]), pagination=ref(null), loading=ref(true), showForm=ref(false), saving=ref(false), search=ref(''), perPage=ref(15)
 const editing=ref(null), deleteTarget=ref(null), deleting=ref(false)

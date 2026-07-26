@@ -1,6 +1,6 @@
 <template>
   <div>
-    <PageHeader title="Product Reports" subtitle="Detailed product performance and sales analytics" />
+    <Breadcrumb :items="breadcrumbItems" />
 
     <!-- Date Range Filter -->
     <div class="card p-4 mb-6 flex flex-wrap items-center gap-4">
@@ -130,12 +130,13 @@
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { startOfYear } from 'date-fns'
 import { Chart, registerables } from 'chart.js'
-import PageHeader from '@/components/common/PageHeader.vue'
 import DatePicker from '@/components/common/DatePicker.vue'
 import SelectBox from '@/components/common/SelectBox.vue'
+import Breadcrumb from '@/components/common/Breadcrumb.vue'
 import { reportApi, productApi } from '@/api'
 import { useThemeStore } from '@/stores/theme'
 import { ShoppingBag, Package, DollarSign, TrendingUp, Printer } from 'lucide-vue-next'
+import { ChartBarSquareIcon } from '@heroicons/vue/24/outline'
 
 Chart.register(...registerables)
 
@@ -170,6 +171,10 @@ const groupOptions = [
   { value: 'monthly', label: 'Monthly' },
   { value: 'yearly', label: 'Yearly' },
 ]
+
+const breadcrumbItems = computed(() => [
+    { label: 'Product Reports', icon: ChartBarSquareIcon }
+])
 
 const presets = [
   { label: '7 Days', days: 7 },

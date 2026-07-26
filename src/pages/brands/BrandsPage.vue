@@ -53,9 +53,7 @@
             <div><label class="label">Logo</label><input type="file" accept="image/*"
                 @change="e => logoFile = e.target.files[0]" class="input" />
             </div>
-            <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox"
-                v-model="form.is_active" class="accent-[#2E7D32]" />
-              Active</label>
+            <ToggleSwitch v-model="form.is_active" label="Active" />
             <div class="flex gap-3 pt-2">
               <button type="submit" :disabled="saving" class="btn-primary flex-1 justify-center">{{
                 saving ? 'Saving...' : 'Save Brand'
@@ -86,6 +84,7 @@ import { brandApi } from '@/api'
 import Tooltip from '@/components/common/Tooltip.vue'
 import { PlusIcon, PencilIcon, TrashIcon } from '@heroicons/vue/24/outline'
 import { Factory } from 'lucide-vue-next'
+import ToggleSwitch from '@/components/common/ToggleSwitch.vue'
 
 const toast = useToast()
 const brands = ref([]), loading = ref(true), showForm = ref(false), saving = ref(false), search = ref('')

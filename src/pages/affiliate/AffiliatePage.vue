@@ -128,10 +128,7 @@
                 <input ref="thumbInput" type="file" accept="image/*" class="hidden" @change="onThumbChange" />
               </div>
 
-              <label class="flex items-center gap-2 text-sm cursor-pointer">
-                <input type="checkbox" v-model="form.is_active" class="accent-[#2E7D32]" />
-                Active
-              </label>
+              <ToggleSwitch v-model="form.is_active" label="Active" />
 
               <!-- <div class="flex gap-3 pt-2">
                 <button type="submit" :disabled="saving" class="btn-primary flex-1 justify-center">{{
@@ -180,6 +177,7 @@ import { affiliateApi } from '@/api'
 import Tooltip from '@/components/common/Tooltip.vue'
 import { PlusIcon, PencilIcon, TrashIcon, PhotoIcon } from '@heroicons/vue/24/outline'
 import { QuillEditor } from '@vueup/vue-quill'
+import ToggleSwitch from '@/components/common/ToggleSwitch.vue'
 import '@vueup/vue-quill/dist/vue-quill.snow.css'
 
 const toast = useToast()
