@@ -1,6 +1,6 @@
 <template>
   <div class="space-y-6">
-    <PageHeader title="Chat Dashboard" subtitle="Super admin conversation management & analytics" />
+    <Breadcrumb :items="breadcrumbItems" />
 
     <!-- Stat Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4">
@@ -101,32 +101,26 @@
     </div>
 
     <!-- Main row: Conversation table + Recent Activity -->
-    <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 xl:grid-cols-10 gap-6">
       <!-- Conversation Table -->
-      <div class="card overflow-hidden xl:col-span-2">
-        <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100">
-          <h3 class="text-sm font-bold text-slate-800">All Conversations</h3>
+      <div class="card overflow-hidden xl:col-span-7">
+        <div class="px-5 py-3 border-b border-slate-100 space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-bold text-slate-800">All Conversations</h3>
+            <button @click="resetAllStates" class="text-xs font-semibold text-red-600 hover:text-red-700 px-2 py-1 rounded-lg hover:bg-red-50 transition">Reset All</button>
+          </div>
           <div class="flex items-center gap-2">
-            <select
-              v-model="typeFilter"
-              class="text-xs border border-slate-200 rounded-lg px-2 py-1.5 text-slate-600 bg-white focus:outline-none focus:ring-2 focus:ring-green-500/30"
-            >
-              <option value="all">All Types</option>
-              <option value="customer">Customers</option>
-              <option value="vendor">Vendors</option>
-              <option value="vendor_customer">Monitors</option>
-            </select>
-            <select
-              v-model="statusFilter"
-              class="text-xs border border-slate-200 rounded-lg px-2 py-1.5 text-slate-600 bg-white focus:outline-none focus:ring-2 focus:ring-green-500/30"
-            >
-              <option value="all">All Status</option>
-              <option value="active">Active</option>
-              <option value="disabled">Disabled</option>
-              <option value="blocked">Blocked</option>
-              <option value="muted">Muted</option>
-            </select>
-            <button @click="resetAllStates" class="text-xs font-semibold text-red-600 hover:text-red-700 px-2 py-1.5 rounded-lg hover:bg-red-50 transition">Reset All</button>
+            <div class="relative flex-1">
+              <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--text-muted)"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+              <input
+                v-model="searchQuery"
+                type="text"
+                placeholder="Search conversations..."
+                class="search-input"
+              />
+            </div>
+            <SelectBox v-model="typeFilter" :options="typeOptions" size="sm" placeholder="All Types" />
+            <SelectBox v-model="statusFilter" :options="statusOptions" size="sm" placeholder="All Status" />
           </div>
         </div>
         <div class="overflow-x-auto">
@@ -206,7 +200,7 @@
       </div>
 
       <!-- Recent Activity -->
-      <div class="card overflow-hidden">
+      <div class="card overflow-hidden xl:col-span-3">
         <div class="px-5 py-4 border-b border-slate-100">
           <h3 class="text-sm font-bold text-slate-800">Recent Activity</h3>
         </div>
@@ -253,7 +247,7 @@
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { Chart, registerables } from 'chart.js'
-import PageHeader from '@/components/common/PageHeader.vue'
+import Breadcrumb from '@/components/common/Breadcrumb.vue'
 import StatCard from '@/components/common/StatCard.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useThemeStore } from '@/stores/theme'
@@ -264,10 +258,16 @@ import {
   ExclamationTriangleIcon,
   TrashIcon
 } from '@heroicons/vue/24/outline'
+import { ChartBarSquareIcon } from '@heroicons/vue/24/outline'
+import SelectBox from '@/components/common/SelectBox.vue'
 
 Chart.register(...registerables)
 
 // StatCard icons (passed as component refs)
+const breadcrumbItems = computed(() => [
+    { label: 'Chat Dashboard', icon: ChartBarSquareIcon }
+])
+
 const statIcons = {
   chat: ChatBubbleLeftRightIcon,
   noSymbol: NoSymbolIcon,
@@ -278,6 +278,7 @@ const router = useRouter()
 const auth = useAuthStore()
 const themeStore = useThemeStore()
 
+const searchQuery = ref('')
 const statusFilter = ref('all')
 const typeFilter = ref('all') // 'all', 'customer', 'vendor', 'vendor_customer'
 const confirmDeleteConv = ref(null)
@@ -287,6 +288,21 @@ const typeBreakdownChartRef = ref(null)
 let responseTimeChart = null
 let messageVolumeChart = null
 let typeBreakdownChart = null
+
+const typeOptions = [
+  { value: 'all', label: 'All Types' },
+  { value: 'customer', label: 'Customers' },
+  { value: 'vendor', label: 'Vendors' },
+  { value: 'vendor_customer', label: 'Monitors' },
+]
+
+const statusOptions = [
+  { value: 'all', label: 'All Status' },
+  { value: 'active', label: 'Active' },
+  { value: 'disabled', label: 'Disabled' },
+  { value: 'blocked', label: 'Blocked' },
+  { value: 'muted', label: 'Muted' },
+]
 
 // ─── Shared conversation data ───
 const conversations = ref([])
@@ -471,6 +487,13 @@ const stats = computed(() => {
 
 const filteredConvs = computed(() => {
   let list = [...conversations.value]
+  if (searchQuery.value.trim()) {
+    const q = searchQuery.value.trim().toLowerCase()
+    list = list.filter(c =>
+      c.name.toLowerCase().includes(q) ||
+      c.email.toLowerCase().includes(q)
+    )
+  }
   if (typeFilter.value !== 'all') {
     list = list.filter(c => c.type === typeFilter.value)
   }
@@ -939,6 +962,27 @@ onUnmounted(() => {
 .chat-stat-icon-4 {
   background-color: color-mix(in srgb, var(--info) 15%, transparent);
   color: var(--info);
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.375rem 0.75rem 0.375rem 2.25rem;
+  font-size: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  color: var(--text-primary);
+  background: var(--surface);
+  transition: border-color 0.15s, box-shadow 0.15s, background-color 0.25s ease;
+  outline: none;
+}
+
+.search-input::placeholder {
+  color: var(--text-muted);
+}
+
+.search-input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary-light) 25%, transparent);
 }
 
 .modal-fade-enter-active,
