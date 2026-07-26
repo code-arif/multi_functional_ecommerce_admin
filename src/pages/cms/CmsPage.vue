@@ -5,7 +5,7 @@ VUEEOF
         <DataTable :items="pages" :columns="columns" :loading="loading" empty-icon="📄">
             <template #actions>
                 <button @click="openForm()" class="btn-primary">
-                    <PlusIcon class="w-4 h-4" /> New Page
+                    New Page
                 </button>
             </template>
             <template #default="{ item }">
@@ -91,7 +91,7 @@ import ConfirmModal from '@/components/common/ConfirmModal.vue'
 import Breadcrumb from '@/components/common/Breadcrumb.vue'
 import { cmsApi } from '@/api'
 import Tooltip from '@/components/common/Tooltip.vue'
-import { PlusIcon, PencilIcon, TrashIcon, DocumentTextIcon, ChevronDownIcon } from '@heroicons/vue/24/outline'
+import { PencilIcon, TrashIcon, DocumentTextIcon, ChevronDownIcon } from '@heroicons/vue/24/outline'
 
 const toast = useToast()
 const pages = ref([]), loading = ref(true), showForm = ref(false), saving = ref(false)
