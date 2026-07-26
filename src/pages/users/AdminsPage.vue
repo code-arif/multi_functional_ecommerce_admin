@@ -1,5 +1,6 @@
 <template>
   <div>
+    <Breadcrumb :items="breadcrumbItems" />
     <!-- Role Stats -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
       <StatCard label="Total Admins" :value="roleStats.total" :icon="UserGroupIcon" icon-bg="bg-indigo-50" icon-color="text-indigo-600" />
@@ -140,6 +141,7 @@ import SelectBox from '@/components/common/SelectBox.vue'
 import ConfirmModal from '@/components/common/ConfirmModal.vue'
 import Tooltip from '@/components/common/Tooltip.vue'
 import StatCard from '@/components/common/StatCard.vue'
+import Breadcrumb from '@/components/common/Breadcrumb.vue'
 import { PencilIcon, TrashIcon, EyeIcon, EyeSlashIcon, ChevronDownIcon, UserGroupIcon, ShieldCheckIcon, UserCircleIcon, UserIcon } from '@heroicons/vue/24/outline'
 
 const toast = useToast()
@@ -162,6 +164,10 @@ const form = reactive({
   password: '',
   password_confirmation: ''
 })
+
+const breadcrumbItems = computed(() => [
+  { label: 'Admins', icon: UserGroupIcon }
+])
 
 const roleStats = computed(() => {
   const counts = { super_admin: 0, admin: 0, moderator: 0, total: 0 }

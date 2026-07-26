@@ -1,30 +1,47 @@
 VUEEOF
 <template>
     <div>
-        <PageHeader title="CMS Pages" subtitle="Manage website content pages">
-            <button @click="openForm()" class="btn-primary">
-                <PlusIcon class="w-4 h-4" /> New Page
-            </button>
-        </PageHeader>
+        <Breadcrumb :items="breadcrumbItems" />
         <DataTable :items="pages" :columns="columns" :loading="loading" empty-icon="📄">
+            <template #actions>
+                <button @click="openForm()" class="btn-primary">
+                    <PlusIcon class="w-4 h-4" /> New Page
+                </button>
+            </template>
             <template #default="{ item }">
                 <td class="table-cell">
                     <p class="font-semibold text-gray-900 text-sm">{{ item.title }}</p>
                     <p class="text-xs text-gray-400">/{{ item.slug }}</p>
                 </td>
-                <td class="table-cell"><span class="badge" :class="item.is_active ? 'badge-green' : 'badge-gray'">{{
-                    item.is_active ? 'Active' : 'Inactive' }}</span></td>
+                <td class="table-cell">
+                    <div class="relative">
+                        <button @click="toggleDropdown(item.id)" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium transition-colors" :class="statusBtnClass(item.is_active)">
+                            {{ item.is_active ? 'Active' : 'Inactive' }}
+                            <ChevronDownIcon class="w-3.5 h-3.5" />
+                        </button>
+                        <div v-if="openDropdownId === item.id" class="absolute left-0 top-full mt-1 z-50 w-36 bg-white rounded-xl border border-gray-200 shadow-lg py-1 animate-in">
+                            <button v-for="opt in statusOptions" :key="opt.value" @click="updateStatus(item, opt.value)"
+                                class="flex items-center gap-2 w-full px-3 py-2 text-sm text-left transition-colors"
+                                :class="item.is_active === opt.value ? 'bg-gray-50 font-medium' : 'hover:bg-gray-50'">
+                                <span class="w-2 h-2 rounded-full" :class="statusDotClass(opt.value)"></span>
+                                {{ opt.label }}
+                            </button>
+                        </div>
+                    </div>
+                </td>
                 <td class="table-cell text-right">
-                    <Tooltip text="Edit">
-                        <button @click="openForm(item)" class="p-1.5 rounded-lg text-blue-500 hover:bg-blue-50 mr-1">
-                            <PencilIcon class="w-4 h-4" />
-                        </button>
-                    </Tooltip>
-                    <Tooltip text="Delete">
-                        <button @click="confirmDelete(item)" class="p-1.5 rounded-lg text-red-400 hover:bg-red-50">
-                            <TrashIcon class="w-4 h-4" />
-                        </button>
-                    </Tooltip>
+                    <div class="flex items-center justify-end gap-1 whitespace-nowrap">
+                        <Tooltip text="Edit">
+                            <button @click="openForm(item)" class="p-1.5 rounded-lg border border-gray-300 hover:border-blue-400 text-blue-500 hover:text-blue-600 transition-all">
+                                <PencilIcon class="w-4 h-4" />
+                            </button>
+                        </Tooltip>
+                        <Tooltip text="Delete">
+                            <button @click="confirmDelete(item)" class="p-1.5 rounded-lg border border-gray-300 hover:border-red-400 text-red-400 hover:text-red-500 transition-all">
+                                <TrashIcon class="w-4 h-4" />
+                            </button>
+                        </Tooltip>
+                    </div>
                 </td>
             </template>
         </DataTable>
@@ -48,12 +65,14 @@ VUEEOF
                         </div>
                         <div><label class="label">Meta Description</label><textarea v-model="form.meta_description"
                                 rows="2" class="input" /></div>
-                        <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox"
-                                v-model="form.is_active" class="accent-[#2E7D32]" /> Active</label>
+                        <div>
+                            <label class="label">Status</label>
+                            <SelectBox v-model="form.status" :options="formStatusOptions" placeholder="Select status" fullWidth />
+                        </div>
                         <div class="flex gap-3 pt-2">
                             <button type="submit" :disabled="saving" class="btn-primary flex-1 justify-center">{{
                                 saving ? 'Saving...' : 'Save Page' }}</button>
-                            <button type="button" @click="showForm = false" class="btn-ghost px-5">Cancel</button>
+                            <button type="button" @click="showForm = false" class="px-5 py-2.5 rounded-xl border border-gray-300 text-gray-600 text-sm font-medium hover:bg-gray-50 transition-colors">Cancel</button>
                         </div>
                     </form>
                 </div>
@@ -64,23 +83,39 @@ VUEEOF
     </div>
 </template>
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, onUnmounted, computed } from 'vue'
 import { useToast } from 'vue-toastification'
-import PageHeader from '@/components/common/PageHeader.vue'
 import DataTable from '@/components/common/DataTable.vue'
+import SelectBox from '@/components/common/SelectBox.vue'
 import ConfirmModal from '@/components/common/ConfirmModal.vue'
+import Breadcrumb from '@/components/common/Breadcrumb.vue'
 import { cmsApi } from '@/api'
 import Tooltip from '@/components/common/Tooltip.vue'
-import { PlusIcon, PencilIcon, TrashIcon } from '@heroicons/vue/24/outline'
+import { PlusIcon, PencilIcon, TrashIcon, DocumentTextIcon, ChevronDownIcon } from '@heroicons/vue/24/outline'
 
 const toast = useToast()
 const pages = ref([]), loading = ref(true), showForm = ref(false), saving = ref(false)
 const editing = ref(null), deleteTarget = ref(null), deleting = ref(false)
-const form = reactive({ title: '', content: '', meta_title: '', meta_description: '', sort_order: 0, is_active: true })
+const openDropdownId = ref(null)
+
+const form = reactive({ title: '', content: '', meta_title: '', meta_description: '', sort_order: 0, status: 'active' })
+const breadcrumbItems = computed(() => [
+    { label: 'CMS Pages', icon: DocumentTextIcon }
+])
+
+const statusOptions = [
+    { value: true, label: 'Active' },
+    { value: false, label: 'Inactive' }
+]
+
+const formStatusOptions = [
+    { value: 'active', label: 'Active' },
+    { value: 'inactive', label: 'Inactive' }
+]
 const columns = [
     { key: 'title', label: 'Page' },
     { key: 'status', label: 'Status', class: 'w-24' },
-    { key: 'actions', label: '', class: 'w-20 text-right' }
+    { key: 'actions', label: 'Action', class: 'w-24 text-right' }
 ]
 
 async function load() {
@@ -95,21 +130,50 @@ async function load() {
 
 function openForm(item = null) {
     editing.value = item;
-    if (item) Object.assign(form, { title: item.title, content: item.content || '', meta_title: item.meta_title || '',          meta_description: item.meta_description || '', sort_order: item.sort_order || 0, is_active: item.is_active });
-    else Object.assign(form, { title: '', content: '', meta_title: '', meta_description: '', sort_order: 0, is_active: true });
+    if (item) Object.assign(form, { title: item.title, content: item.content || '', meta_title: item.meta_title || '',          meta_description: item.meta_description || '', sort_order: item.sort_order || 0, status: item.is_active ? 'active' : 'inactive' });
+    else Object.assign(form, { title: '', content: '', meta_title: '', meta_description: '', sort_order: 0, status: 'active' });
     showForm.value = true
 }
 
 async function save() {
     saving.value = true;
     try {
-        if (editing.value) await cmsApi.update(editing.value.id, form);
-        else await cmsApi.store(form);
+        const { status, ...rest } = form
+        const payload = { ...rest, is_active: status === 'active' }
+        if (editing.value) await cmsApi.update(editing.value.id, payload);
+        else await cmsApi.store(payload);
         toast.success('Saved.');
         showForm.value = false;
         load()
     } finally {
         saving.value = false
+    }
+}
+
+function toggleDropdown(id) {
+    openDropdownId.value = openDropdownId.value === id ? null : id
+}
+
+function updateStatus(item, status) {
+    item.is_active = status
+    toast.success(status ? 'Page activated.' : 'Page deactivated.')
+    openDropdownId.value = null
+}
+
+function statusBtnClass(isActive) {
+    return isActive
+        ? 'text-green-700 bg-green-50 hover:bg-green-100'
+        : 'text-gray-600 bg-gray-100 hover:bg-gray-200'
+}
+
+function statusDotClass(isActive) {
+    return isActive ? 'bg-green-500' : 'bg-gray-400'
+}
+
+function onDocumentClick(e) {
+    if (openDropdownId.value !== null) {
+        const dropdown = e.target.closest('.relative')
+        if (!dropdown) openDropdownId.value = null
     }
 }
 
@@ -127,5 +191,12 @@ async function doDelete() {
     }
 }
 
-onMounted(load)
+onMounted(() => {
+    load()
+    document.addEventListener('click', onDocumentClick)
+})
+
+onUnmounted(() => {
+    document.removeEventListener('click', onDocumentClick)
+})
 </script>
