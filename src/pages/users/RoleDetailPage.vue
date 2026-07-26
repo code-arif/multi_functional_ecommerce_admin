@@ -1,8 +1,6 @@
 <template>
-  <div class="max-w-5xl">
-    <PageHeader :title="role?.name || 'Role'" subtitle="Role details and assigned permissions">
-      <button @click="$router.push('/roles')" class="btn-ghost">← Roles</button>
-    </PageHeader>
+  <div>
+    <Breadcrumb :items="breadcrumbItems" />
     <div v-if="!role" class="card p-12 text-center" :style="{ color: 'var(--text-muted)' }">
       <svg class="w-8 h-8 animate-spin mx-auto mb-3" :style="{ color: 'var(--color-primary)' }" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>Loading role...
     </div>
@@ -48,13 +46,18 @@
   </div>
 </template>
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import PageHeader from '@/components/common/PageHeader.vue'
 import StatusBadge from '@/components/common/StatusBadge.vue'
+import Breadcrumb from '@/components/common/Breadcrumb.vue'
 import { IdentificationIcon, LockOpenIcon, CheckIcon, XMarkIcon } from '@heroicons/vue/24/outline'
 const route = useRoute()
 const role = ref(null)
+
+const breadcrumbItems = computed(() => [
+  { label: 'Roles', to: '/roles', icon: IdentificationIcon },
+  { label: role.value?.name || 'Loading...' }
+])
 const allPermissions = {
   'Products': [{slug:'products.create',name:'Create'},{slug:'products.read',name:'Read'},{slug:'products.update',name:'Update'},{slug:'products.delete',name:'Delete'}],
   'Orders': [{slug:'orders.create',name:'Create'},{slug:'orders.read',name:'Read'},{slug:'orders.update',name:'Update'},{slug:'orders.delete',name:'Delete'}],
