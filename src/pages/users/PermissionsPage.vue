@@ -1,12 +1,11 @@
 <template>
   <div>
-    <PageHeader title="Permissions" subtitle="System permission management" />
+    <Breadcrumb :items="breadcrumbItems" />
     <DataTable :items="permissions" :columns="columns" :loading="loading" searchable
       search-placeholder="Search permissions..." empty-icon="🔑" empty-text="No permissions found"
       @search="q => { search = q; load(1) }">
       <template #actions>
         <button @click="openForm()" class="btn-primary">
-          <PlusIcon class="w-4 h-4" />
           Add Permission
         </button>
       </template>
@@ -19,12 +18,14 @@
         <td class="table-cell"><span class="badge badge-purple">{{ item.group }}</span></td>
         <td class="table-cell text-xs" style="color:var(--text-muted)">{{ item.description }}</td>
         <td class="table-cell text-right">
-          <Tooltip text="Edit">
-            <button @click="openForm(item)" class="p-1.5 rounded-lg text-blue-500 bg-blue-50 hover:bg-blue-100 transition mr-1"><PencilIcon class="w-4 h-4" /></button>
-          </Tooltip>
-          <Tooltip text="Delete">
-            <button @click="confirmDelete(item)" class="p-1.5 rounded-lg text-red-400 bg-red-50 hover:bg-red-100 transition"><TrashIcon class="w-4 h-4" /></button>
-          </Tooltip>
+          <div class="flex items-center justify-end gap-1 whitespace-nowrap">
+            <Tooltip text="Edit">
+              <button @click="openForm(item)" class="p-1.5 rounded-lg border border-gray-300 hover:border-blue-400 text-blue-500 hover:text-blue-600 transition-all"><PencilIcon class="w-4 h-4" /></button>
+            </Tooltip>
+            <Tooltip text="Delete">
+              <button @click="confirmDelete(item)" class="p-1.5 rounded-lg border border-gray-300 hover:border-red-400 text-red-400 hover:text-red-500 transition-all"><TrashIcon class="w-4 h-4" /></button>
+            </Tooltip>
+          </div>
         </td>
       </template>
     </DataTable>
@@ -108,15 +109,19 @@
   </div>
 </template>
 <script setup>
-import { ref, reactive, watch, onMounted } from 'vue'
+import { ref, reactive, computed, watch, onMounted } from 'vue'
 import { useToast } from 'vue-toastification'
-import PageHeader from '@/components/common/PageHeader.vue'
 import DataTable from '@/components/common/DataTable.vue'
 import SelectBox from '@/components/common/SelectBox.vue'
 import Pagination from '@/components/common/Pagination.vue'
 import ConfirmModal from '@/components/common/ConfirmModal.vue'
 import Tooltip from '@/components/common/Tooltip.vue'
-import { PlusIcon, PencilIcon, TrashIcon } from '@heroicons/vue/24/outline'
+import Breadcrumb from '@/components/common/Breadcrumb.vue'
+import { PencilIcon, TrashIcon, LockOpenIcon } from '@heroicons/vue/24/outline'
+const breadcrumbItems = computed(() => [
+  { label: 'Permissions', icon: LockOpenIcon }
+])
+
 const permissions = ref([]), loading = ref(true), search = ref(''), groupFilter = ref('')
 const showForm = ref(false), saving = ref(false), editing = ref(null), deleteTarget = ref(null), deleting = ref(false)
 const confirmDuplicate = ref(false)
@@ -135,7 +140,7 @@ const errors = ref({})
 const groupOptions = [{value:'',label:'All'},{value:'Products',label:'Products'},{value:'Orders',label:'Orders'},{value:'Users',label:'Users'},{value:'Settings',label:'Settings'}]
 const columns = [
   {key:'name',label:'Permission'},{key:'slug',label:'Slug',class:'w-40'},{key:'group',label:'Group',class:'w-24'},
-  {key:'description',label:'Description'},{key:'actions',label:'',class:'w-24 text-right'}
+  {key:'description',label:'Description'},{key:'actions',label:'Action',class:'w-24 text-right'}
 ]
 
 const perPage = ref(10)
