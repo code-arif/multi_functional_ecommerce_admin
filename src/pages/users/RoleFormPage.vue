@@ -44,6 +44,11 @@
                 <span class="text-[10px] px-1.5 py-0.5 rounded-full font-medium" :style="{ backgroundColor: 'color-mix(in srgb, var(--color-primary) 10%, transparent)', color: 'var(--color-primary)' }">
                   {{ selectedCount(group) }}/{{ perms.length }}
                 </span>
+                <button type="button" @click="toggleGroup(group)"
+                  class="ml-auto text-[10px] font-semibold px-2 py-0.5 rounded-md transition-all"
+                  :style="{ color: groupAllSelected(group) ? 'var(--color-primary)' : 'var(--text-muted)', backgroundColor: groupAllSelected(group) ? 'color-mix(in srgb, var(--color-primary-pale) 60%, transparent)' : 'transparent' }">
+                  {{ groupAllSelected(group) ? 'Deselect' : 'Select All' }}
+                </button>
               </div>
               <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 <label v-for="perm in perms" :key="perm.slug"
@@ -140,6 +145,21 @@ function toggleSelectAll() {
 
 function selectedCount(group) {
   return allPermissions[group].filter(p => selectedPermissions.value.includes(p.slug)).length
+}
+
+function groupAllSelected(group) {
+  return allPermissions[group].every(p => selectedPermissions.value.includes(p.slug))
+}
+
+function toggleGroup(group) {
+  const groupSlugs = allPermissions[group].map(p => p.slug)
+  if (groupAllSelected(group)) {
+    selectedPermissions.value = selectedPermissions.value.filter(s => !groupSlugs.includes(s))
+  } else {
+    const existing = new Set(selectedPermissions.value)
+    groupSlugs.forEach(s => existing.add(s))
+    selectedPermissions.value = [...existing]
+  }
 }
 
 const breadcrumbItems = computed(() => [
