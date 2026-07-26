@@ -90,15 +90,24 @@
                             </div>
                             <ImagePicker v-model="imageFile" label="Banner Image {{ editing ? '(leave empty to keep current)' : '' }} *" :preview-url="editing?.image_url || ''" hint="Recommended: 1920×600 px" />
                             <div class="grid grid-cols-2 gap-3">
-                                <div><label class="label">Starts At</label><input v-model="form.starts_at"
-                                                                                  type="datetime-local" class="input" /></div>
-                                <div><label class="label">Ends At</label><input v-model="form.ends_at" type="datetime-local"
-                                                                                class="input" /></div>
+                                <div class="date-picker-wrapper">
+                                    <label class="label">Starts At</label>
+                                    <DatePicker v-model="form.starts_at" placeholder="Start date" />
+                                </div>
+                                <div class="date-picker-wrapper">
+                                    <label class="label">Ends At</label>
+                                    <DatePicker v-model="form.ends_at" placeholder="End date" />
+                                </div>
                             </div>
-                            <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox"
-                                                                                                 v-model="form.is_active"
-                                                                                                 class="accent-[#2E7D32]" />
-                                Active</label>
+                            <label class="toggle-label">
+                                <span class="toggle-track">
+                                    <input type="checkbox" v-model="form.is_active" class="toggle-input" />
+                                    <span class="toggle-thumb"></span>
+                                </span>
+                                <span class="toggle-text" :class="{ 'toggle-text--active': form.is_active }">
+                                    {{ form.is_active ? 'Active' : 'Inactive' }}
+                                </span>
+                            </label>
                             <div class="flex gap-3 pt-2">
                                 <button type="submit" :disabled="saving" class="btn-primary flex-1 justify-center">{{
                                         saving ? 'Saving...' : 'Save Banner'
@@ -129,6 +138,7 @@ import { bannerApi } from '@/api'
 import Tooltip from '@/components/common/Tooltip.vue'
 import { PencilIcon, TrashIcon, ChevronDownIcon, PhotoIcon } from '@heroicons/vue/24/outline'
 import SelectBox from '@/components/common/SelectBox.vue'
+import DatePicker from '@/components/common/DatePicker.vue'
 import ImagePicker from '@/components/common/ImagePicker.vue'
 
 const toast = useToast()
@@ -286,10 +296,81 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-.select-box-wrapper :deep(.sb-trigger) {
+.select-box-wrapper :deep(.sb-trigger),
+.date-picker-wrapper :deep(.dp-input) {
     min-height: 42px;
     padding-top: 0.625rem;
     padding-bottom: 0.625rem;
     font-size: 0.875rem;
+}
+
+.date-picker-wrapper :deep(.dp-single-text) {
+    font-size: 0.875rem;
+}
+
+.date-picker-wrapper :deep(.dp-root) {
+    width: 100%;
+}
+
+/* ─── Theme-aware Toggle Switch ─── */
+.toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    cursor: pointer;
+    user-select: none;
+}
+
+.toggle-track {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    width: 44px;
+    height: 24px;
+    border-radius: 999px;
+    background: var(--text-muted);
+    transition: background-color 0.25s ease;
+    flex-shrink: 0;
+}
+
+.toggle-input {
+    position: absolute;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    z-index: 1;
+    margin: 0;
+}
+
+.toggle-thumb {
+    display: block;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    transition: transform 0.2s ease;
+    margin-left: 3px;
+}
+
+.toggle-input:checked + .toggle-thumb {
+    transform: translateX(20px);
+}
+
+.toggle-track:has(.toggle-input:checked) {
+    background: var(--color-primary);
+}
+
+.toggle-text {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    transition: color 0.2s ease;
+}
+
+.toggle-text--active {
+    color: var(--color-primary);
+    font-weight: 600;
 }
 </style>
