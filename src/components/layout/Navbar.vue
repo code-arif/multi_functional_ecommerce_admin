@@ -18,6 +18,13 @@
 
         <!-- Right -->
         <div class="ml-auto flex items-center gap-1">
+            <!-- Date -->
+            <div class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium mr-1"
+                :style="{ color: 'var(--navbar-text-muted)', backgroundColor: 'var(--border-light)' }">
+                <CalendarDaysIcon class="w-3.5 h-3.5" />
+                {{ todayDate }}
+            </div>
+
             <!-- Theme Switcher -->
             <div class="relative" ref="themeSwitcherRef">
                 <button @click="isThemeOpen = !isThemeOpen"
@@ -164,7 +171,8 @@ import {
     BellIcon,
     ArrowTopRightOnSquareIcon,
     UserIcon,
-    ArrowRightOnRectangleIcon
+    ArrowRightOnRectangleIcon,
+    CalendarDaysIcon
 } from '@heroicons/vue/24/outline'
 import NotificationModal from '@/components/common/NotificationModal.vue'
 
@@ -272,6 +280,13 @@ const pageRoutes = [
     { path: '/emails', title: 'Emails' },
     { path: '/settings', title: 'Settings' },
 ]
+
+const todayDate = new Date().toLocaleDateString('en-GB', {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric'
+})
 
 const pageTitle = computed(() => {
     const path = route.path

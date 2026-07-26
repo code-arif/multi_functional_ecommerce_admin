@@ -1,8 +1,21 @@
 <template>
-  <div class="max-w-4xl">
-    <PageHeader :title="admin?.name || 'Admin'" subtitle="Admin details and permissions">
-      <button @click="$router.push('/admins')" class="btn-ghost">← Admins</button>
-    </PageHeader>
+  <div>
+    <!-- Smart Breadcrumb -->
+    <nav class="flex items-center gap-1.5 text-sm mb-5">
+      <router-link to="/admins" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-50 border border-transparent hover:border-gray-200 transition-all">
+        <UsersIcon class="w-4 h-4" />
+        <span>Admins</span>
+      </router-link>
+      <ChevronRightIcon class="w-4 h-4 text-gray-300" />
+      <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg font-semibold"
+            :style="{ 
+              color: 'var(--color-primary)', 
+              backgroundColor: 'color-mix(in srgb, var(--color-primary-pale) 60%, transparent)'
+            }">
+        <span class="w-2 h-2 rounded-full" :style="{ backgroundColor: 'var(--color-primary)' }"></span>
+        {{ admin?.name || 'Loading...' }}
+      </span>
+    </nav>
     <div v-if="admin" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div class="card p-5">
         <div class="flex flex-col items-center text-center mb-5">
@@ -60,8 +73,8 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useToast } from 'vue-toastification'
-import PageHeader from '@/components/common/PageHeader.vue'
 import StatusBadge from '@/components/common/StatusBadge.vue'
+import { UsersIcon, ChevronRightIcon } from '@heroicons/vue/24/outline'
 const route = useRoute(), toast = useToast()
 const admin = ref(null), newRole = ref('')
 
