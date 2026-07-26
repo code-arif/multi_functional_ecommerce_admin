@@ -7,8 +7,10 @@
           <div class="w-16 h-16 rounded-full flex items-center justify-center text-white text-2xl font-black mb-3" :style="{ backgroundColor: 'var(--color-primary)' }">{{ admin.name?.charAt(0)?.toUpperCase() }}</div>
           <h2 class="font-bold text-lg" :style="{ color: 'var(--text-primary)' }">{{ admin.name }}</h2>
           <p class="text-sm" :style="{ color: 'var(--text-muted)' }">{{ admin.email }}</p>
-          <span class="mt-2 badge badge-purple">{{ admin.role }}</span>
-          <StatusBadge :value="admin.status" class="mt-2" />
+          <div class="flex flex-col sm:flex-row items-center gap-1.5 sm:gap-2 mt-2">
+            <span class="badge badge-purple">{{ admin.role }}</span>
+            <StatusBadge :value="admin.status" />
+          </div>
         </div>
         <div class="space-y-2.5 text-sm border-t pt-4" :style="{ borderColor: 'var(--border)' }">
           <div class="flex justify-between"><span :style="{ color: 'var(--text-muted)' }">Phone</span><span :style="{ color: 'var(--text-primary)' }">{{ admin.phone || '—' }}</span></div>
@@ -17,11 +19,7 @@
         </div>
         <div class="mt-4 pt-4 border-t" :style="{ borderColor: 'var(--border)' }">
           <label class="label">Role</label>
-          <select v-model="newRole" @change="updateRole" class="input text-sm">
-            <option value="super_admin">Super Admin</option>
-            <option value="admin">Admin</option>
-            <option value="moderator">Moderator</option>
-          </select>
+          <SelectBox v-model="newRole" :options="roleOptions" placeholder="Select role" fullWidth @change="updateRole" />
         </div>
       </div>
       <div class="lg:col-span-2 space-y-6">
@@ -60,9 +58,16 @@ import { useRoute } from 'vue-router'
 import { useToast } from 'vue-toastification'
 import StatusBadge from '@/components/common/StatusBadge.vue'
 import Breadcrumb from '@/components/common/Breadcrumb.vue'
+import SelectBox from '@/components/common/SelectBox.vue'
 import { UsersIcon } from '@heroicons/vue/24/outline'
 const route = useRoute(), toast = useToast()
 const admin = ref(null), newRole = ref('')
+
+const roleOptions = [
+  { value: 'super_admin', label: 'Super Admin' },
+  { value: 'admin', label: 'Admin' },
+  { value: 'moderator', label: 'Moderator' }
+]
 
 const allPermissions = {
   'Products': ['Create Products','Edit Products','Delete Products','View Products'],
