@@ -99,15 +99,7 @@
                                     <DatePicker v-model="form.ends_at" placeholder="End date" />
                                 </div>
                             </div>
-                            <label class="toggle-label">
-                                <span class="toggle-track">
-                                    <input type="checkbox" v-model="form.is_active" class="toggle-input" />
-                                    <span class="toggle-thumb"></span>
-                                </span>
-                                <span class="toggle-text" :class="{ 'toggle-text--active': form.is_active }">
-                                    {{ form.is_active ? 'Active' : 'Inactive' }}
-                                </span>
-                            </label>
+                            <ToggleSwitch v-model="form.is_active" :label="form.is_active ? 'Active' : 'Inactive'" />
                             <div class="flex gap-3 pt-2">
                                 <button type="submit" :disabled="saving" class="btn-primary flex-1 justify-center">{{
                                         saving ? 'Saving...' : 'Save Banner'
@@ -139,6 +131,7 @@ import Tooltip from '@/components/common/Tooltip.vue'
 import { PencilIcon, TrashIcon, ChevronDownIcon, PhotoIcon } from '@heroicons/vue/24/outline'
 import SelectBox from '@/components/common/SelectBox.vue'
 import DatePicker from '@/components/common/DatePicker.vue'
+import ToggleSwitch from '@/components/common/ToggleSwitch.vue'
 import ImagePicker from '@/components/common/ImagePicker.vue'
 
 const toast = useToast()
@@ -312,65 +305,4 @@ onUnmounted(() => {
     width: 100%;
 }
 
-/* ─── Theme-aware Toggle Switch ─── */
-.toggle-label {
-    display: flex;
-    align-items: center;
-    gap: 0.625rem;
-    cursor: pointer;
-    user-select: none;
-}
-
-.toggle-track {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    width: 44px;
-    height: 24px;
-    border-radius: 999px;
-    background: var(--text-muted);
-    transition: background-color 0.25s ease;
-    flex-shrink: 0;
-}
-
-.toggle-input {
-    position: absolute;
-    opacity: 0;
-    width: 100%;
-    height: 100%;
-    cursor: pointer;
-    z-index: 1;
-    margin: 0;
-}
-
-.toggle-thumb {
-    display: block;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    background: #fff;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-    transition: transform 0.2s ease;
-    margin-left: 3px;
-}
-
-.toggle-input:checked + .toggle-thumb {
-    transform: translateX(20px);
-}
-
-.toggle-track:has(.toggle-input:checked) {
-    background: var(--color-primary);
-}
-
-.toggle-text {
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: var(--text-muted);
-    transition: color 0.2s ease;
-}
-
-.toggle-text--active {
-    color: var(--color-primary);
-    font-weight: 600;
-}
 </style>
