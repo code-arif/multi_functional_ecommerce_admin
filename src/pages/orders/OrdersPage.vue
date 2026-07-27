@@ -1,26 +1,6 @@
 <template>
-    <div class="w-full max-w-full overflow-hidden">
-        <PageHeader title="Orders" :subtitle="`${pagination?.total || 0} total orders`">
-
-            <template #actions>
-                <button @click="showFilters = !showFilters"
-                    class="btn-ghost text-sm gap-1.5"
-                    :style="{ color: showFilters ? 'var(--color-primary)' : '' }">
-                    <Funnel class="w-4 h-4" />
-                    Filters
-                </button>
-                <button @click="exportOrders"
-                    class="btn-ghost text-sm gap-1.5">
-                    <Download class="w-4 h-4" />
-                    Export
-                </button>
-                <router-link to="/orders"
-                    class="inline-flex items-center justify-center px-4 py-2 text-xs font-semibold text-[#2E7D32] border border-[#2E7D32] rounded-lg hover:bg-[#2E7D32] hover:text-white transition-all duration-200">
-                    View All
-                </router-link>
-            </template>
-
-        </PageHeader>
+    <div>
+        <Breadcrumb :items="breadcrumbItems" />
 
         <!-- Bulk Action Bar -->
         <transition name="panel-slide">
@@ -42,7 +22,7 @@
                         Apply
                     </button>
                     <button @click="clearSelection"
-                        class="btn-ghost text-xs">
+                        class="px-3 py-1.5 rounded-lg border border-gray-300 text-gray-600 text-xs font-medium hover:bg-gray-50 transition-colors">
                         Clear
                     </button>
                 </div>
@@ -64,41 +44,40 @@
                     />
                 </div>
                 <button @click="load(1)" class="btn-primary text-sm py-1.5 px-4">Apply</button>
-                <button @click="clearDateFilter" class="btn-ghost text-xs" v-if="dateFrom || dateTo">
+                <button @click="clearDateFilter" class="px-3 py-1.5 rounded-lg border border-gray-300 text-gray-600 text-xs font-medium hover:bg-gray-50 transition-colors" v-if="dateFrom || dateTo">
                     Clear Dates
                 </button>
             </div>
         </transition>
 
-        <!-- Status filter tabs -->
-        <div class="flex gap-2 mb-5 overflow-x-auto pb-1 scrollbar-hide w-full">
-            <button v-for="tab in statusTabs" :key="tab.value" @click="statusFilter = tab.value; load(1)"
-                class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all shrink-0"
-                :class="statusFilter === tab.value
-                    ? 'bg-[#2E7D32] text-white'
-                    : 'bg-white border border-gray-200 text-gray-600 hover:border-gray-400'">
-
-                {{ tab.label }}
-
-                <span v-if="tab.count"
-                    class="text-[10px] px-1.5 py-0.5 rounded-full"
-                    :class="statusFilter === tab.value
-                        ? 'bg-white/20 text-white'
-                        : 'bg-gray-100 text-gray-500'">
-                    {{ tab.count }}
-                </span>
-            </button>
-        </div>
-
         <!-- Table -->
         <div class="w-full overflow-x-auto">
-            <DataTable :items="orders" :columns="columns" :loading="loading" searchable
+            <DataTable :items="orders" :columns="columns" :loading="loading" searchable :pagination="pagination"
                 search-placeholder="Order number, name, phone..."
                 empty-text="No orders found"
-                @search="q => { search = q; load(1) }">
+                @search="q => { search = q; load(1) }"
+                @page="load">
+
+                <template #actions>
+                    <button @click="showFilters = !showFilters"
+                        class="px-3 py-2 rounded-lg border border-gray-300 text-gray-600 text-xs font-medium hover:bg-gray-50 transition-colors inline-flex items-center gap-1.5"
+                        :style="{ color: showFilters ? 'var(--color-primary)' : '', borderColor: showFilters ? 'var(--color-primary)' : '' }">
+                        <Funnel class="w-4 h-4" />
+                        Filters
+                    </button>
+                    <button @click="exportOrders"
+                        class="px-3 py-2 rounded-lg border border-gray-300 text-gray-600 text-xs font-medium hover:bg-gray-50 transition-colors inline-flex items-center gap-1.5">
+                        <Download class="w-4 h-4" />
+                        Export
+                    </button>
+                </template>
+
+                <template #filters>
+                    <SelectBox v-model="statusFilter" :options="statusOptions" placeholder="All Status" size="md" @change="load(1)" />
+                </template>
 
                 <template #empty-icon>
-                    <ClipboardList class="w-10 h-10 text-gray-300 mx-auto" />
+                    <ClipboardList class="w-10 h-10 mx-auto" style="color:var(--text-muted)" />
                 </template>
 
                 <template #default="{ item }">
@@ -106,19 +85,20 @@
                         <input type="checkbox"
                             :checked="selectedOrders.has(item.id)"
                             @change="toggleSelect(item.id)"
-                            class="w-4 h-4 rounded accent-[#2E7D32] cursor-pointer"
+                            class="w-4 h-4 rounded cursor-pointer"
+                            style="accent-color:var(--color-primary)"
                         />
                     </td>
                     <td class="table-cell">
-                        <p class="font-bold text-gray-900 text-sm">#{{ item.order_number }}</p>
-                        <p class="text-gray-400 text-xs">{{ formatDate(item.created_at) }}</p>
+                        <p class="font-bold text-sm" style="color:var(--text-primary)">#{{ item.order_number }}</p>
+                        <p class="text-xs" style="color:var(--text-muted)">{{ formatDate(item.created_at) }}</p>
                     </td>
 
                     <td class="table-cell">
-                        <p class="font-semibold text-gray-800 text-sm">
+                        <p class="font-semibold text-sm" style="color:var(--text-primary)">
                             {{ item.shipping_address?.name }}
                         </p>
-                        <p class="text-gray-400 text-xs">
+                        <p class="text-xs" style="color:var(--text-muted)">
                             {{ item.shipping_address?.phone }}
                         </p>
                     </td>
@@ -132,50 +112,51 @@
                     </td>
 
                     <td class="table-cell">
-                        <p class="font-bold text-[#2E7D32]">
+                        <p class="font-bold" style="color:var(--color-primary)">
                             ৳{{ Number(item.total_amount).toLocaleString() }}
                         </p>
-                        <p class="text-xs text-gray-400 uppercase">
+                        <p class="text-xs uppercase" style="color:var(--text-muted)">
                             {{ item.payment_method }}
                         </p>
                     </td>
 
                     <td class="table-cell text-right">
-                        <Tooltip text="View Order">
-                            <router-link :to="`/orders/${item.id}`"
-                                class="inline-flex items-center justify-center w-8 h-8 rounded-lg border border-gray-200 hover:border-[#2E7D32] hover:bg-green-50 transition">
-                                <Eye class="w-4 h-4 text-gray-700" />
-                            </router-link>
-                        </Tooltip>
+                        <div class="flex items-center justify-end gap-1 whitespace-nowrap">
+                            <Tooltip text="View">
+                                <router-link :to="`/orders/${item.id}`"
+                                    class="p-1.5 rounded-lg border border-gray-300 hover:border-gray-400 text-gray-500 hover:text-gray-700 transition-all">
+                                    <Eye class="w-4 h-4" />
+                                </router-link>
+                            </Tooltip>
+                        </div>
                     </td>
                 </template>
 
             </DataTable>
-            <Pagination v-model:perPage="perPage" :pagination="pagination" @page="load" />
         </div>
     </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { startOfYear } from 'date-fns'
 import { useToast } from 'vue-toastification'
-import PageHeader from '@/components/common/PageHeader.vue'
+import Breadcrumb from '@/components/common/Breadcrumb.vue'
 import DataTable from '@/components/common/DataTable.vue'
-import Pagination from '@/components/common/Pagination.vue'
 import StatusBadge from '@/components/common/StatusBadge.vue'
 import SelectBox from '@/components/common/SelectBox.vue'
 import DatePicker from '@/components/common/DatePicker.vue'
+import Tooltip from '@/components/common/Tooltip.vue'
 import { orderApi } from '@/api'
 import { useCsvExport } from '@/composables/useCsvExport'
 
-import Tooltip from '@/components/common/Tooltip.vue'
 import {
     Eye,
     ClipboardList,
     Funnel,
     Download
 } from 'lucide-vue-next'
+import { ClipboardDocumentListIcon } from '@heroicons/vue/24/outline'
 
 const toast = useToast()
 const { exportToCsv } = useCsvExport()
@@ -189,13 +170,26 @@ const statusFilter = ref('')
 const showFilters = ref(false)
 const dateFrom = ref('')
 const dateTo = ref('')
-const perPage = ref(20)
+
+const breadcrumbItems = computed(() => [
+  { label: 'Orders', icon: ClipboardDocumentListIcon }
+])
 
 /* ─── Bulk Actions ─── */
 const selectedOrders = ref(new Set())
 const bulkStatus = ref('')
 const bulkStatusOptions = [
     { value: '', label: 'Change status to...' },
+    { value: 'pending', label: 'Pending' },
+    { value: 'confirmed', label: 'Confirmed' },
+    { value: 'processing', label: 'Processing' },
+    { value: 'shipped', label: 'Shipped' },
+    { value: 'delivered', label: 'Delivered' },
+    { value: 'cancelled', label: 'Cancelled' },
+]
+
+const statusOptions = [
+    { value: '', label: 'All' },
     { value: 'pending', label: 'Pending' },
     { value: 'confirmed', label: 'Confirmed' },
     { value: 'processing', label: 'Processing' },
@@ -243,16 +237,6 @@ function clearDateFilter() {
     load(1)
 }
 
-const statusTabs = [
-    { value: '', label: 'All' },
-    { value: 'pending', label: 'Pending' },
-    { value: 'confirmed', label: 'Confirmed' },
-    { value: 'processing', label: 'Processing' },
-    { value: 'shipped', label: 'Shipped' },
-    { value: 'delivered', label: 'Delivered' },
-    { value: 'cancelled', label: 'Cancelled' },
-]
-
 const columns = [
     { key: 'select', label: '', class: 'w-10' },
     { key: 'order', label: 'Order', class: 'min-w-[150px]' },
@@ -296,7 +280,7 @@ async function load(page = 1) {
             status: statusFilter.value,
             date_from: dateFrom.value || undefined,
             date_to: dateTo.value || undefined,
-            per_page: perPage.value
+            per_page: 20
         })
 
         orders.value = res.data.data || []

@@ -1,14 +1,6 @@
 <template>
-    <div class="max-w-full xl:max-w-7xl w-full">
-        <PageHeader :title="`Order #${order?.order_number || ''}`"
-            :subtitle="order ? formatDate(order.created_at) : ''">
-
-            <button @click="$router.push('/orders')"
-                class="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold text-[#2E7D32] border border-[#2E7D32] rounded-lg hover:bg-[#2E7D32] hover:text-white transition-all duration-200">
-                <ArrowLeft class="w-4 h-4" />
-                Orders
-            </button>
-        </PageHeader>
+    <div>
+        <Breadcrumb :items="breadcrumbItems" />
 
         <div v-if="loading" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div v-for="i in 4" :key="i" class="skeleton h-40 rounded-xl" />
@@ -19,11 +11,9 @@
             <div class="card p-5 flex flex-wrap items-center gap-4">
                 <div class="flex items-center gap-3 flex-1">
                     <StatusBadge :value="order.status" class="text-sm px-3 py-1.5" />
-                    <span class="text-gray-400 text-sm">→</span>
+                    <span style="color:var(--text-muted)">→</span>
                     <div class="flex items-center gap-2">
-                        <select v-model="newStatus" class="input-sm w-36">
-                            <option v-for="s in statusOptions" :key="s" :value="s">{{ s }}</option>
-                        </select>
+                        <SelectBox v-model="newStatus" :options="statusSelectOptions" size="sm" class="w-36" />
                         <input v-model="statusComment" class="input-sm w-48" placeholder="Optional note..." />
                         <button @click="updateStatus" :disabled="updatingStatus || newStatus === order.status"
                             class="btn-primary text-xs py-1.5 px-3">
@@ -33,12 +23,12 @@
                 </div>
                 <div class="flex items-center gap-3 ml-auto">
                     <div class="text-right">
-                        <p class="text-xs text-gray-400">Payment</p>
+                        <p class="text-xs" style="color:var(--text-muted)">Payment</p>
                         <StatusBadge :value="order.payment_status" />
                     </div>
                     <div class="text-right">
-                        <p class="text-xs text-gray-400">Total</p>
-                        <p class="font-black text-[#2E7D32] text-lg">৳{{ Number(order.total_amount).toLocaleString() }}
+                        <p class="text-xs" style="color:var(--text-muted)">Total</p>
+                        <p class="font-black text-lg" style="color:var(--color-primary)">৳{{ Number(order.total_amount).toLocaleString() }}
                         </p>
                     </div>
                 </div>
@@ -48,8 +38,8 @@
                 <!-- Order Items (left 2/3) -->
                 <div class="lg:col-span-2 space-y-5">
                     <div class="card overflow-hidden">
-                        <div class="p-4 border-b border-gray-100">
-                            <h3 class="font-bold text-gray-900">Items Ordered</h3>
+                        <div class="p-4 border-b" style="border-color:var(--border)">
+                            <h3 class="font-bold text-sm" style="color:var(--text-primary)">Items Ordered</h3>
                         </div>
                         <table class="w-full">
                             <tbody>
@@ -57,17 +47,17 @@
                                     <td class="table-cell">
                                         <div class="flex items-center gap-3">
                                             <img v-if="item.product_image" :src="`/storage/${item.product_image}`"
-                                                class="w-12 h-12 rounded-lg object-cover bg-gray-100 shrink-0" />
+                                                class="w-12 h-12 rounded-lg object-cover shrink-0" style="background-color:var(--border-light)" />
                                             <div v-else
-                                                class="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center shrink-0">
-                                                <Package class="w-5 h-5 text-gray-400" />
+                                                class="w-12 h-12 rounded-lg flex items-center justify-center shrink-0" style="background-color:var(--border-light)">
+                                                <Package class="w-5 h-5" style="color:var(--text-muted)" />
                                             </div>
                                             <div>
-                                                <p class="font-semibold text-gray-900 text-sm">{{ item.product_name }}
+                                                <p class="font-semibold text-sm" style="color:var(--text-primary)">{{ item.product_name }}
                                                 </p>
-                                                <p v-if="item.product_sku" class="text-xs text-gray-400">SKU: {{
+                                                <p v-if="item.product_sku" class="text-xs" style="color:var(--text-muted)">SKU: {{
                                                     item.product_sku }}</p>
-                                                <p v-if="item.variant_attributes" class="text-xs text-gray-500">
+                                                <p v-if="item.variant_attributes" class="text-xs" style="color:var(--text-secondary)">
                                                     {{Object.entries(item.variant_attributes || {}).map(([k, v]) =>
                                                         `${k}:
                                                     ${v}`).join(', ')}}
@@ -75,25 +65,25 @@
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="table-cell text-center text-sm text-gray-600">× {{ item.quantity }}</td>
-                                    <td class="table-cell text-right font-semibold text-gray-900">৳{{
+                                    <td class="table-cell text-center text-sm" style="color:var(--text-secondary)">× {{ item.quantity }}</td>
+                                    <td class="table-cell text-right font-semibold" style="color:var(--text-primary)">৳{{
                                         Number(item.subtotal).toLocaleString() }}</td>
                                 </tr>
                             </tbody>
                         </table>
                         <!-- Totals -->
-                        <div class="p-4 border-t border-gray-100 space-y-2">
-                            <div class="flex justify-between text-sm text-gray-600"><span>Subtotal</span><span>৳{{
+                        <div class="p-4 border-t space-y-2" style="border-color:var(--border);color:var(--text-secondary)">
+                            <div class="flex justify-between text-sm"><span>Subtotal</span><span style="color:var(--text-primary)">৳{{
                                 Number(order.subtotal).toLocaleString() }}</span></div>
-                            <div v-if="order.discount_amount > 0" class="flex justify-between text-sm text-green-700">
+                            <div v-if="order.discount_amount > 0" class="flex justify-between text-sm" style="color:var(--success)">
                                 <span>Discount{{ order.coupon_code ? ` (${order.coupon_code})` : '' }}</span><span>−৳{{
                                     Number(order.discount_amount).toLocaleString() }}</span>
                             </div>
-                            <div class="flex justify-between text-sm text-gray-600"><span>Shipping</span><span>{{
+                            <div class="flex justify-between text-sm"><span>Shipping</span><span>{{
                                 order.shipping_charge > 0 ? `৳${Number(order.shipping_charge).toLocaleString()}` :
                                     'FREE' }}</span></div>
-                            <div class="flex justify-between font-black text-gray-900 border-t border-gray-100 pt-2">
-                                <span>Total</span><span class="text-[#2E7D32]">৳{{
+                            <div class="flex justify-between font-black pt-2 border-t" style="border-color:var(--border);color:var(--text-primary)">
+                                <span>Total</span><span style="color:var(--color-primary)">৳{{
                                     Number(order.total_amount).toLocaleString() }}</span>
                             </div>
                         </div>
@@ -101,7 +91,7 @@
 
                     <!-- Tracking -->
                     <div class="card p-5">
-                        <h3 class="font-bold text-gray-900 mb-4">Shipping & Tracking</h3>
+                        <h3 class="font-bold text-sm mb-4" style="color:var(--text-primary)">Shipping & Tracking</h3>
                         <div class="grid grid-cols-2 gap-3">
                             <div>
                                 <label class="label">Tracking Number</label>
@@ -122,17 +112,17 @@
 
                     <!-- Status History -->
                     <div class="card p-5">
-                        <h3 class="font-bold text-gray-900 mb-4">Status History</h3>
+                        <h3 class="font-bold text-sm mb-4" style="color:var(--text-primary)">Status History</h3>
                         <div class="space-y-3">
                             <div v-for="h in order.status_history || []" :key="h.created_at"
                                 class="flex items-start gap-3">
-                                <div class="w-2 h-2 rounded-full bg-[#2E7D32] mt-1.5 shrink-0" />
+                                <div class="w-2 h-2 rounded-full mt-1.5 shrink-0" style="background-color:var(--color-primary)" />
                                 <div>
-                                    <p class="text-sm font-semibold text-gray-800">
+                                    <p class="text-sm font-semibold" style="color:var(--text-primary)">
                                         <span v-if="h.old_status">{{ h.old_status }} → </span>{{ h.new_status }}
                                     </p>
-                                    <p v-if="h.comment" class="text-xs text-gray-500">{{ h.comment }}</p>
-                                    <p class="text-[11px] text-gray-400 mt-0.5">{{ formatDate(h.created_at) }}</p>
+                                    <p v-if="h.comment" class="text-xs" style="color:var(--text-secondary)">{{ h.comment }}</p>
+                                    <p class="text-[11px]" style="color:var(--text-muted)">{{ formatDate(h.created_at) }}</p>
                                 </div>
                             </div>
                         </div>
@@ -142,26 +132,26 @@
                 <!-- Right sidebar: customer + shipping -->
                 <div class="space-y-5">
                     <div class="card p-5">
-                        <h3 class="font-bold text-gray-900 mb-3">Customer</h3>
+                        <h3 class="font-bold text-sm mb-3" style="color:var(--text-primary)">Customer</h3>
 
-                        <div class="text-sm space-y-2 text-gray-600">
-                            <p class="font-semibold text-gray-900">{{ order.shipping_name }}</p>
+                        <div class="text-sm space-y-2" style="color:var(--text-secondary)">
+                            <p class="font-semibold" style="color:var(--text-primary)">{{ order.shipping_name }}</p>
 
                             <p v-if="order.shipping_email" class="flex items-center gap-2">
-                                <Mail class="w-4 h-4 text-gray-400" />
+                                <Mail class="w-4 h-4" style="color:var(--text-muted)" />
                                 {{ order.shipping_email }}
                             </p>
 
                             <p class="flex items-center gap-2">
-                                <Phone class="w-4 h-4 text-gray-400" />
+                                <Phone class="w-4 h-4" style="color:var(--text-muted)" />
                                 {{ order.shipping_phone }}
                             </p>
 
-                            <div v-if="order.user" class="pt-2 border-t border-gray-100 mt-2">
-                                <p class="text-xs text-gray-400 mb-2">Account</p>
+                            <div v-if="order.user" class="pt-2 border-t mt-2" style="border-color:var(--border)">
+                                <p class="text-xs mb-2" style="color:var(--text-muted)">Account</p>
 
                                 <router-link :to="`/users/${order.user.id}`"
-                                    class="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold text-[#2E7D32] border border-[#2E7D32] rounded-lg hover:bg-[#2E7D32] hover:text-white transition-all duration-200">
+                                    class="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-lg border border-gray-300 hover:border-blue-400 text-blue-500 hover:bg-blue-50 transition-all duration-200">
                                     View Customer
                                     <ArrowRight class="w-4 h-4" />
                                 </router-link>
@@ -169,8 +159,8 @@
                         </div>
                     </div>
                     <div class="card p-5">
-                        <h3 class="font-bold text-gray-900 mb-3">Shipping Address</h3>
-                        <address class="not-italic text-sm text-gray-600 space-y-1">
+                        <h3 class="font-bold text-sm mb-3" style="color:var(--text-primary)">Shipping Address</h3>
+                        <address class="not-italic text-sm space-y-1" style="color:var(--text-secondary)">
                             <p>{{ order.shipping_address?.address_line1 }}</p>
                             <p v-if="order.shipping_address?.address_line2">{{ order.shipping_address.address_line2 }}
                             </p>
@@ -180,15 +170,15 @@
                         </address>
                     </div>
                     <div class="card p-5">
-                        <h3 class="font-bold text-gray-900 mb-3">Payment</h3>
+                        <h3 class="font-bold text-sm mb-3" style="color:var(--text-primary)">Payment</h3>
                         <div class="text-sm space-y-1.5">
-                            <div class="flex justify-between"><span class="text-gray-500">Method</span><span
-                                    class="font-semibold uppercase">{{ order.payment_method }}</span></div>
-                            <div class="flex justify-between"><span class="text-gray-500">Status</span>
+                            <div class="flex justify-between"><span style="color:var(--text-muted)">Method</span><span
+                                    class="font-semibold uppercase" style="color:var(--text-primary)">{{ order.payment_method }}</span></div>
+                            <div class="flex justify-between"><span style="color:var(--text-muted)">Status</span>
                                 <StatusBadge :value="order.payment_status" />
                             </div>
                             <div v-if="order.payment?.transaction_id" class="flex justify-between"><span
-                                    class="text-gray-500">TXN ID</span><span class="text-xs font-mono">{{
+                                    style="color:var(--text-muted)">TXN ID</span><span class="text-xs font-mono" style="color:var(--text-primary)">{{
                                         order.payment.transaction_id }}</span></div>
                         </div>
                     </div>
@@ -198,23 +188,40 @@
     </div>
 </template>
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useToast } from 'vue-toastification'
-import PageHeader from '@/components/common/PageHeader.vue'
+import Breadcrumb from '@/components/common/Breadcrumb.vue'
 import StatusBadge from '@/components/common/StatusBadge.vue'
+import SelectBox from '@/components/common/SelectBox.vue'
 import { orderApi } from '@/api'
 
 import {
-    ArrowLeft,
     ArrowRight,
     Mail,
     Phone,
     Package
 } from 'lucide-vue-next'
+import { ClipboardDocumentListIcon } from '@heroicons/vue/24/outline'
 
 const route = useRoute(), toast = useToast()
 const order = ref(null), loading = ref(true)
+
+const breadcrumbItems = computed(() => [
+  { label: 'Orders', to: '/orders', icon: ClipboardDocumentListIcon },
+  { label: order.value ? '#ORD-' + String(order.value.order_number) : 'Loading...' }
+])
+
+const statusSelectOptions = [
+  { value: 'pending', label: 'Pending' },
+  { value: 'confirmed', label: 'Confirmed' },
+  { value: 'processing', label: 'Processing' },
+  { value: 'shipped', label: 'Shipped' },
+  { value: 'delivered', label: 'Delivered' },
+  { value: 'cancelled', label: 'Cancelled' },
+]
+
+
 const newStatus = ref(''), statusComment = ref(''), updatingStatus = ref(false)
 const trackingNumber = ref(''), shippingCarrier = ref(''), adminNote = ref(''), savingTracking = ref(false)
 const statusOptions = ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled']
