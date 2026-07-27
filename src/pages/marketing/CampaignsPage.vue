@@ -35,10 +35,11 @@
 
     <!-- Add / Edit Campaign Modal -->
     <Teleport to="body">
-      <div v-if="showForm" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" @click="showForm = false" />
-        <div class="relative bg-white rounded-2xl p-6 w-full max-w-md animate-in"
-          style="box-shadow:0 20px 60px rgba(0,0,0,0.15)">
+      <div v-if="showForm" class="fixed inset-0 z-50">
+        <div class="fixed inset-0 bg-black/50 backdrop-blur-sm" @click="showForm = false" />
+        <div class="relative z-10 h-full overflow-y-auto flex items-center justify-center p-4">
+          <div class="bg-white rounded-2xl p-6 w-full max-w-md my-8 animate-in"
+            style="box-shadow:0 20px 60px rgba(0,0,0,0.15)">
           <h2 class="font-bold text-gray-900 text-lg mb-5">{{ editing ? 'Edit' : 'Add' }} Campaign</h2>
           <form @submit.prevent="doSave" class="space-y-4">
             <div>
@@ -56,11 +57,11 @@
             <div class="grid grid-cols-2 gap-4">
               <div>
                 <label class="label">Start Date</label>
-                <input v-model="form.start_date" type="date" class="input" />
+                <DatePicker v-model="form.start_date" placeholder="Start date" />
               </div>
               <div>
                 <label class="label">End Date</label>
-                <input v-model="form.end_date" type="date" class="input" />
+                <DatePicker v-model="form.end_date" placeholder="End date" />
               </div>
             </div>
             <div>
@@ -79,6 +80,7 @@
           </form>
         </div>
       </div>
+      </div>
     </Teleport>
 
     <ConfirmModal :show="!!deleteTarget" title="Delete Campaign"
@@ -90,6 +92,7 @@
 import { ref, reactive, onMounted, computed } from 'vue'
 import { useToast } from 'vue-toastification'
 import DataTable from '@/components/common/DataTable.vue'
+import DatePicker from '@/components/common/DatePicker.vue'
 import SelectBox from '@/components/common/SelectBox.vue'
 import Tooltip from '@/components/common/Tooltip.vue'
 import ConfirmModal from '@/components/common/ConfirmModal.vue'
