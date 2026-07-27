@@ -49,8 +49,8 @@
         <div class="card p-5">
           <h3 class="font-bold text-sm mb-4" style="color:var(--text-primary)"><FileText class="w-4 h-4 inline mr-1.5" style="color:var(--color-primary)" />Invoice Details</h3>
           <div class="space-y-3">
-            <div><label class="label">Invoice Date *</label><input v-model="form.invoice_date" type="date" class="input" /></div>
-            <div><label class="label">Due Date *</label><input v-model="form.due_date" type="date" class="input" /></div>
+            <div><label class="label">Invoice Date *</label><DatePicker v-model="form.invoice_date" placeholder="Invoice date" /></div>
+            <div><label class="label">Due Date *</label><DatePicker v-model="form.due_date" placeholder="Due date" /></div>
             <div><label class="label">Order Reference</label><input v-model="form.order_ref" class="input" placeholder="#ORD-001" /></div>
             <div><label class="label">Status</label><SelectBox v-model="form.status" :options="statusOptions" size="md" full-width /></div>
           </div>
@@ -186,6 +186,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
 import SelectBox from '@/components/common/SelectBox.vue'
+import DatePicker from '@/components/common/DatePicker.vue'
 import Breadcrumb from '@/components/common/Breadcrumb.vue'
 import ProductSelectionModal from '@/components/invoices/ProductSelectionModal.vue'
 import { invoiceApi } from '@/api'

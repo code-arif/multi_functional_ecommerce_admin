@@ -19,7 +19,7 @@
             <div class="flex items-center justify-between mb-3">
               <h3 class="font-bold text-sm" style="color:var(--text-primary)">Status</h3>
               <StatusBadge :value="invoice.status" />
-              <router-link :to="'/invoices/purchases/' + invoice.id + '/edit'" class="btn-secondary text-xs py-1.5 px-3 inline-flex items-center gap-1.5"><Pencil class="w-3.5 h-3.5" />Edit</router-link>
+              <router-link :to="'/invoices/purchases/' + invoice.id + '/edit'" class="p-1.5 rounded-lg border border-gray-200 hover:border-blue-400 text-blue-500 hover:bg-blue-50 transition-all" title="Edit purchase"><Pencil class="w-3.5 h-3.5" /></router-link>
             </div>
             <div class="space-y-2 text-sm">
               <div class="flex justify-between"><span style="color:var(--text-muted)">Date</span><span style="color:var(--text-primary)">{{ formatDate(invoice.purchase_date) }}</span></div>
