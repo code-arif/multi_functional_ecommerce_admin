@@ -1,21 +1,10 @@
 <template>
   <div>
-    <PageHeader title="Products" :subtitle="`${pagination?.total || 0} total products`">
-      <div class="flex items-center gap-2">
-        <router-link to="/products/import" class="btn-ghost text-xs gap-1.5 px-3">
-          <ArrowUpTrayIcon class="w-4 h-4" />
-          Import
-        </router-link>
-        <router-link to="/products/create" class="btn-primary">
-          <PlusIcon class="w-4 h-4" />
-          Add Product
-        </router-link>
-      </div>
-    </PageHeader>
+    <Breadcrumb :items="breadcrumbItems" />
 
-    <DataTable :items="products" :columns="columns" :loading="loading" searchable
+    <DataTable :items="products" :columns="columns" :loading="loading" searchable :pagination="pagination"
       search-placeholder="Search products..." empty-icon="📦" empty-text="No products found"
-      @search="q => { search = q; load(1) }">
+      @search="q => { search = q; load(1) }" @page="load">
       <template #filters>
         <SelectBox
           v-model="statusFilter"
@@ -26,26 +15,33 @@
         />
       </template>
       <template #actions>
-        <button @click="exportProducts" class="btn-ghost text-xs gap-1.5 px-3" title="Export CSV">
+        <button @click="exportProducts" class="px-3 py-2 rounded-lg border border-gray-300 text-gray-600 text-xs font-medium hover:bg-gray-50 transition-colors inline-flex items-center gap-1.5" title="Export CSV">
           <Download class="w-4 h-4" />
           Export
         </button>
-        <button @click="load()" class="btn-ghost p-2" title="Refresh">
+        <button @click="load()" class="px-3 py-2 rounded-lg border border-gray-300 text-gray-600 text-xs font-medium hover:bg-gray-50 transition-colors inline-flex items-center gap-1.5" title="Refresh">
           <ArrowPathIcon class="w-4 h-4" />
         </button>
+        <router-link to="/products/import" class="px-3 py-2 rounded-lg border border-gray-300 text-gray-600 text-xs font-medium hover:bg-gray-50 transition-colors inline-flex items-center gap-1.5">
+          <ArrowUpTrayIcon class="w-4 h-4" />
+          Import
+        </router-link>
+        <router-link to="/products/create" class="btn-primary">
+          Add Product
+        </router-link>
       </template>
       <template #default="{ item }">
         <td class="table-cell">
           <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-lg bg-gray-100 overflow-hidden shrink-0">
+            <div class="w-10 h-10 rounded-lg overflow-hidden shrink-0" style="background-color:var(--border-light)">
               <img v-if="item.thumbnail_url" :src="item.thumbnail_url" class="w-full h-full object-cover" />
-              <div v-else class="w-full h-full flex items-center justify-center text-gray-300 text-lg">
-                <Package class="w-4 h-4 text-gray-400" />
+              <div v-else class="w-full h-full flex items-center justify-center text-lg">
+                <Package class="w-4 h-4" style="color:var(--text-muted)" />
               </div>
             </div>
             <div>
-              <p class="font-semibold text-gray-900 text-sm">{{ item.name }}</p>
-              <p class="text-gray-400 text-xs">{{ item.sku || 'No SKU' }}</p>
+              <p class="font-semibold text-sm" style="color:var(--text-primary)">{{ item.name }}</p>
+              <p class="text-xs" style="color:var(--text-muted)">{{ item.sku || 'No SKU' }}</p>
             </div>
           </div>
         </td>
@@ -64,7 +60,7 @@
         <td class="table-cell">
           <!-- Variable product: price range -->
           <template v-if="item.type === 'variable'">
-            <p class="font-semibold text-gray-900 text-sm">
+            <p class="font-semibold text-sm" style="color:var(--text-primary)">
               <template v-if="item.price_range?.min === item.price_range?.max">
                 ৳{{ Number(item.price_range.min).toLocaleString() }}
               </template>
@@ -73,21 +69,20 @@
                   Number(item.price_range?.max).toLocaleString() }}
               </template>
             </p>
-            <p class="text-xs text-gray-400">Variable</p>
+            <p class="text-xs" style="color:var(--text-muted)">Variable</p>
           </template>
 
           <!-- Simple / Affiliate product -->
           <template v-else>
-            <p class="font-semibold text-gray-900 text-sm">৳{{ Number(item.current_price).toLocaleString() }}</p>
-            <p v-if="item.is_on_sale" class="text-xs text-gray-400 line-through">
+            <p class="font-semibold text-sm" style="color:var(--text-primary)">৳{{ Number(item.current_price).toLocaleString() }}</p>
+            <p v-if="item.is_on_sale" class="text-xs line-through" style="color:var(--text-muted)">
               ৳{{ Number(item.price).toLocaleString() }}
             </p>
           </template>
         </td>
 
         <td class="table-cell">
-          <span :class="item.stock_quantity <= 5 ? 'text-red-600 font-bold' : 'text-gray-700'" class="text-sm">{{
-            item.stock_quantity }}</span>
+          <span :class="item.stock_quantity <= 5 ? 'text-red-600 font-bold' : ''" class="text-sm" :style="{ color: item.stock_quantity <= 5 ? '' : 'var(--text-primary)' }">{{ item.stock_quantity }}</span>
         </td>
 
         <td class="table-cell">
@@ -106,19 +101,19 @@
           <div class="flex items-center justify-end gap-1">
             <Tooltip text="View">
               <router-link :to="`/products/${item.id}`"
-                class="p-1.5 rounded-lg text-gray-500 bg-gray-50 hover:bg-gray-100 transition">
+                class="p-1.5 rounded-lg border border-gray-300 hover:border-gray-400 text-gray-500 hover:text-gray-700 transition-all">
                 <EyeIcon class="w-4 h-4" />
               </router-link>
             </Tooltip>
             <Tooltip text="Edit">
               <router-link :to="`/products/${item.id}/edit`"
-                class="p-1.5 rounded-lg text-blue-500 bg-blue-50 hover:bg-blue-100 transition">
+                class="p-1.5 rounded-lg border border-gray-300 hover:border-blue-400 text-blue-500 hover:bg-blue-50 transition-all">
                 <PencilIcon class="w-4 h-4" />
               </router-link>
             </Tooltip>
             <Tooltip text="Delete">
               <button @click="confirmDelete(item)"
-                class="p-1.5 rounded-lg text-red-400 bg-red-50 hover:bg-red-100 transition">
+                class="p-1.5 rounded-lg border border-gray-300 hover:border-red-400 text-red-400 hover:bg-red-50 transition-all">
                 <TrashIcon class="w-4 h-4" />
               </button>
             </Tooltip>
@@ -127,7 +122,6 @@
 
       </template>
     </DataTable>
-    <Pagination v-model:perPage="perPage" :pagination="pagination" @page="load" />
 
     <ConfirmModal :show="!!deleteTarget" title="Delete Product"
       :message="`Delete '${deleteTarget?.name}'? This cannot be undone.`" :loading="deleting" @confirm="doDelete"
@@ -136,26 +130,29 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useToast } from 'vue-toastification'
-import PageHeader from '@/components/common/PageHeader.vue'
+import Breadcrumb from '@/components/common/Breadcrumb.vue'
 import DataTable from '@/components/common/DataTable.vue'
-import Pagination from '@/components/common/Pagination.vue'
 import StatusBadge from '@/components/common/StatusBadge.vue'
 import ConfirmModal from '@/components/common/ConfirmModal.vue'
-import { productApi } from '@/api'
 import Tooltip from '@/components/common/Tooltip.vue'
-import { PlusIcon, PencilIcon, TrashIcon, ArrowPathIcon, EyeIcon, ArrowUpTrayIcon } from '@heroicons/vue/24/outline'
-import { Package } from 'lucide-vue-next'
+import { productApi } from '@/api'
+import { PencilIcon, TrashIcon, EyeIcon, CubeIcon, ArrowPathIcon, ArrowUpTrayIcon } from '@heroicons/vue/24/outline'
 import SelectBox from '@/components/common/SelectBox.vue'
 import { useCsvExport } from '@/composables/useCsvExport'
-import { Download } from 'lucide-vue-next'
+import { Package, Download } from 'lucide-vue-next'
 
 const toast = useToast()
 const { exportToCsv } = useCsvExport()
 const products = ref([]), pagination = ref(null), loading = ref(true)
 const search = ref(''), statusFilter = ref(''), deleteTarget = ref(null), deleting = ref(false)
-const perPage = ref(20)
+
+const breadcrumbItems = computed(() => [
+  { label: 'Products', icon: CubeIcon }
+])
+
+
 
 const statusOptions = [
   { value: '', label: 'All Status' },
@@ -178,7 +175,7 @@ const columns = [
 async function load(page = 1) {
   loading.value = true
   try {
-    const res = await productApi.list({ page, search: search.value, status: statusFilter.value, per_page: perPage.value })
+    const res = await productApi.list({ page, search: search.value, status: statusFilter.value, per_page: 20 })
     products.value = res.data.data || []
     pagination.value = res.data.pagination || null
   } catch {

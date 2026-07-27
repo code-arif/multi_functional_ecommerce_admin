@@ -1,11 +1,7 @@
 <template>
-  <div class="max-w-5xl mx-auto space-y-6">
-    <PageHeader title="Import Products" subtitle="Bulk upload products from CSV or Excel spreadsheet">
-      <router-link to="/products" class="btn-ghost text-xs gap-1.5 px-3">
-        <ArrowLeftIcon class="w-4 h-4" />
-        Back to Products
-      </router-link>
-    </PageHeader>
+  <div>
+    <Breadcrumb :items="breadcrumbItems" />
+    <div class="space-y-6">
 
     <!-- Step Indicator -->
     <div class="flex items-center gap-2 sm:gap-4 px-1 mb-2">
@@ -356,6 +352,7 @@
       </div>
     </div>
   </div>
+  </div>
 </template>
 
 <script setup>
@@ -363,10 +360,9 @@ import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
 import * as XLSX from 'xlsx'
-import PageHeader from '@/components/common/PageHeader.vue'
+import Breadcrumb from '@/components/common/Breadcrumb.vue'
 import { productApi } from '@/api'
 import {
-  ArrowLeftIcon,
   ArrowPathIcon,
   ArrowDownTrayIcon,
   CheckCircleIcon,
@@ -376,6 +372,7 @@ import {
   ChevronDownIcon,
   ChevronUpIcon,
   XMarkIcon,
+  CubeIcon,
 } from '@heroicons/vue/24/outline'
 import {
   Upload,
@@ -391,6 +388,13 @@ const toast = useToast()
 
 // ─── State ────────────────────────────────────────
 const steps = ['Upload File', 'Map Columns', 'Preview & Import']
+
+const breadcrumbItems = computed(() => [
+  { label: 'Products', to: '/products', icon: CubeIcon },
+  { label: 'Import Products' }
+])
+
+
 const currentStep = ref(0)
 
 const dragOver = ref(false)

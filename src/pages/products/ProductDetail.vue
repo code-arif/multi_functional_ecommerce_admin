@@ -1,17 +1,11 @@
 <template>
   <div class="w-full">
-    <!-- Header -->
-    <PageHeader :title="product?.name || 'Product Details'" :subtitle="product?.sku ? `SKU: ${product.sku}` : ''">
-      <div class="flex items-center gap-2">
-        <button @click="$router.push('/products')"
-          class="border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:border-[#4CAF50] hover:text-[#4CAF50] transition text-sm">
-          ← Back
-        </button>
-        <router-link :to="`/products/${product?.id}/edit`" class="btn-primary text-sm" v-if="product">
-          Edit Product
-        </router-link>
-      </div>
-    </PageHeader>
+    <div class="flex items-center justify-between mb-6">
+      <Breadcrumb :items="breadcrumbItems" />
+      <router-link :to="`/products/${product?.id}/edit`" class="btn-primary text-sm" v-if="product">
+        Edit Product
+      </router-link>
+    </div>
 
     <!-- Loading state -->
     <div v-if="loading" class="flex items-center justify-center py-24">
@@ -462,11 +456,11 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
-import PageHeader from '@/components/common/PageHeader.vue'
+import Breadcrumb from '@/components/common/Breadcrumb.vue'
 import StatusBadge from '@/components/common/StatusBadge.vue'
 import ConfirmModal from '@/components/common/ConfirmModal.vue'
 import { productApi } from '@/api'
-import { PencilIcon, TrashIcon, PencilSquareIcon } from '@heroicons/vue/24/outline'
+import { PencilIcon, TrashIcon, PencilSquareIcon, CubeIcon } from '@heroicons/vue/24/outline'
 import { Flame } from 'lucide-vue-next'
 
 const route = useRoute()
@@ -479,6 +473,13 @@ const error = ref(null)
 const activeImage = ref(null)
 const deleteTarget = ref(null)
 const deleting = ref(false)
+
+const breadcrumbItems = computed(() => [
+  { label: 'Products', to: '/products', icon: CubeIcon },
+  { label: product.value?.name || 'Loading...' }
+])
+
+
 
 // Merge thumbnail + gallery into one list for the image strip
 const allImages = computed(() => {

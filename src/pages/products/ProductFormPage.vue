@@ -1,12 +1,6 @@
 <template>
   <div class="w-full">
-    <PageHeader :title="isEdit ? 'Edit Product' : 'Add Product'"
-      :subtitle="isEdit ? `Editing: ${form.name}` : 'Create a new product'">
-      <button @click="$router.push('/products')"
-        class="border border-gray-300 text-gray-700 px-4 py-1 rounded-lg hover:border-[#4CAF50] hover:text-[#4CAF50] transition">
-        Back
-      </button>
-    </PageHeader>
+    <Breadcrumb :items="breadcrumbItems" />
 
     <form @submit.prevent="save" class="space-y-6">
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 w-full">
@@ -25,11 +19,7 @@
               <div class="grid grid-cols-2 gap-4">
                 <div>
                   <label class="label">Product Type *</label>
-                  <select v-model="form.type" class="input">
-                    <option value="simple">Simple</option>
-                    <option value="variable">Variable</option>
-                    <option value="affiliate">Affiliate</option>
-                  </select>
+                  <SelectBox v-model="form.type" :options="typeOptions" full-width />
                   <p v-if="errors.type" class="text-red-500 text-xs mt-1">{{ errors.type[0] }}</p>
                 </div>
                 <div>
@@ -227,11 +217,7 @@
             <div class="space-y-3">
               <div>
                 <label class="label">Publish Status</label>
-                <select v-model="form.status" class="input">
-                  <option value="active">Active</option>
-                  <option value="inactive">Inactive</option>
-                  <option value="draft">Draft</option>
-                </select>
+                <SelectBox v-model="form.status" :options="statusOptions" full-width />
                 <p v-if="errors.status" class="text-red-500 text-xs mt-1">{{ errors.status[0] }}</p>
               </div>
               <div class="space-y-2">
@@ -330,18 +316,12 @@
             <div class="space-y-3">
               <div>
                 <label class="label">Category</label>
-                <select v-model.number="form.category_id" class="input">
-                  <option :value="null">No Category</option>
-                  <option v-for="cat in categories" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
-                </select>
+                <SelectBox v-model="form.category_id" :options="categoryOptions" placeholder="No Category" full-width />
                 <p v-if="errors.category_id" class="text-red-500 text-xs mt-1">{{ errors.category_id[0] }}</p>
               </div>
               <div>
                 <label class="label">Brand</label>
-                <select v-model.number="form.brand_id" class="input">
-                  <option :value="null">No Brand</option>
-                  <option v-for="brand in brands" :key="brand.id" :value="brand.id">{{ brand.name }}</option>
-                </select>
+                <SelectBox v-model="form.brand_id" :options="brandOptions" placeholder="No Brand" full-width />
                 <p v-if="errors.brand_id" class="text-red-500 text-xs mt-1">{{ errors.brand_id[0] }}</p>
               </div>
             </div>
@@ -386,9 +366,10 @@ import { useRoute, useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
 import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css'
-import PageHeader from '@/components/common/PageHeader.vue'
+import Breadcrumb from '@/components/common/Breadcrumb.vue'
+import SelectBox from '@/components/common/SelectBox.vue'
 import { productApi, categoryApi, brandApi } from '@/api'
-import { TrashIcon, PhotoIcon } from '@heroicons/vue/24/outline'
+import { TrashIcon, PhotoIcon, CubeIcon } from '@heroicons/vue/24/outline'
 import { Star, Trash2, ImagePlus } from 'lucide-vue-next'
 import ToggleSwitch from '@/components/common/ToggleSwitch.vue'
 
@@ -398,6 +379,35 @@ const toast = useToast()
 const isEdit = computed(() => !!route.params.id)
 
 const saving = ref(false), errors = ref({})
+
+const breadcrumbItems = computed(() => [
+  { label: 'Products', to: '/products', icon: CubeIcon },
+  { label: isEdit.value ? 'Edit Product' : 'Add Product' }
+])
+
+const typeOptions = [
+  { value: 'simple', label: 'Simple' },
+  { value: 'variable', label: 'Variable' },
+  { value: 'affiliate', label: 'Affiliate' },
+]
+
+const statusOptions = [
+  { value: 'active', label: 'Active' },
+  { value: 'inactive', label: 'Inactive' },
+  { value: 'draft', label: 'Draft' },
+]
+
+const categoryOptions = computed(() => [
+  { value: null, label: 'No Category' },
+  ...categories.value.map(c => ({ value: c.id, label: c.name }))
+])
+
+const brandOptions = computed(() => [
+  { value: null, label: 'No Brand' },
+  ...brands.value.map(b => ({ value: b.id, label: b.name }))
+])
+
+
 const thumbnailPreview = ref(null), thumbnailFile = ref(null)
 const categories = ref([]), brands = ref([])
 const newTag = ref(''), newAttrValues = ref([])

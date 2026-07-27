@@ -58,7 +58,7 @@ function onToggle(e) {
    ═══════════════════════════════════════════ */
 
 .toggle-label {
-    display: inline-flex;
+    display: flex;
     align-items: center;
     gap: 0.625rem;
     cursor: pointer;
