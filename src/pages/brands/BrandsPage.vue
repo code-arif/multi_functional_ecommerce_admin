@@ -48,9 +48,7 @@
                 placeholder="https://" /></div>
             <div><label class="label">Description</label><textarea v-model="form.description" rows="2" class="input" />
             </div>
-            <div><label class="label">Logo</label><input type="file" accept="image/*"
-                @change="e => logoFile = e.target.files[0]" class="input" />
-            </div>
+            <ImagePicker v-model="logoFile" label="Logo" :preview-url="editing?.logo_url || ''" hint="PNG, JPG, WEBP - Max 5MB" />
             <ToggleSwitch v-model="form.is_active" label="Active" />
             <div class="flex gap-3 pt-2">
               <button type="submit" :disabled="saving" class="btn-primary flex-1 justify-center">{{
@@ -83,6 +81,7 @@ import Tooltip from '@/components/common/Tooltip.vue'
 import { brandApi } from '@/api'
 import { PencilIcon, TrashIcon, BuildingStorefrontIcon } from '@heroicons/vue/24/outline'
 import { Factory } from 'lucide-vue-next'
+import ImagePicker from '@/components/common/ImagePicker.vue'
 import ToggleSwitch from '@/components/common/ToggleSwitch.vue'
 
 const toast = useToast()
