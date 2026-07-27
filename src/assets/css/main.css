@@ -145,6 +145,14 @@
         border-color: var(--color-primary) !important;
     }
 
+    /* ── Surface / white backgrounds (DataTable pagination buttons) ── */
+    .bg-white {
+        background-color: var(--surface) !important;
+    }
+    .hover\:bg-white:hover {
+        background-color: var(--surface) !important;
+    }
+
     /* ── Gray opacity modifiers (DataTable pagination footer) ── */
     .bg-gray-50\/50 {
         background-color: color-mix(in srgb, var(--border-light) 50%, transparent) !important;

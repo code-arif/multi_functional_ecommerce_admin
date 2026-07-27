@@ -1,44 +1,88 @@
 <template>
   <div>
-    <PageHeader title="Sale Invoices" :subtitle="`${pagination?.total || 0} sale invoices`">
-      <router-link to="/invoices/sales/create" class="btn-primary"><PlusIcon class="w-4 h-4" />New Invoice</router-link>
-    </PageHeader>
+    <Breadcrumb :items="breadcrumbItems" />
     <DataTable :items="invoices" :columns="columns" :loading="loading" searchable
       search-placeholder="Search by invoice #, customer..." empty-icon="📄" empty-text="No sale invoices found"
-      @search="q => { search = q; load(1) }">
+      :pagination="pagination" @search="q => { search = q; load(1) }" @page="load">
+      <template #actions>
+        <router-link to="/invoices/sales/create" class="btn-primary">New Invoice</router-link>
+      </template>
       <template #filters>
-        <SelectBox v-model="statusFilter" :options="statusOptions" placeholder="All Status" size="sm" @change="load(1)" />
+        <SelectBox v-model="statusFilter" :options="statusOptions" placeholder="All Status" size="md" @change="load(1)" />
       </template>
       <template #default="{ item }">
         <td class="table-cell"><router-link :to="'/invoices/sales/' + item.id" class="font-semibold underline" :style="{ color: 'var(--color-primary)' }">#INV-{{ String(item.id).padStart(5, '0') }}</router-link></td>
         <td class="table-cell font-semibold" style="color:var(--text-primary)">{{ item.customer_name }}</td>
-        <td class="table-cell" style="color:var(--text-muted)">{{ formatDate(item.invoice_date) }}</td>
+        <td class="table-cell text-xs" style="color:var(--text-muted)">{{ formatDate(item.invoice_date) }}</td>
         <td class="table-cell font-bold" style="color:var(--color-primary)">৳{{ Number(item.total).toLocaleString() }}</td>
         <td class="table-cell"><StatusBadge :value="item.status" /></td>
         <td class="table-cell text-xs" style="color:var(--text-muted)">{{ item.due_date ? 'Due: ' + formatDate(item.due_date) : '—' }}</td>
         <td class="table-cell text-right">
-          <router-link :to="'/invoices/sales/' + item.id" class="p-1.5 rounded-lg inline-flex items-center transition" :style="{ color: 'var(--navbar-text)' }" title="View" @mouseenter="e => e.target.style.backgroundColor = 'var(--border-light)'" @mouseleave="e => e.target.style.backgroundColor = 'transparent'"><EyeIcon class="w-4 h-4" /></router-link>
+          <div class="flex items-center justify-end gap-1 whitespace-nowrap">
+            <Tooltip text="View">
+              <router-link :to="'/invoices/sales/' + item.id" class="p-1.5 rounded-lg border border-gray-300 hover:border-gray-400 text-gray-500 hover:text-gray-700 transition-all"><EyeIcon class="w-4 h-4" /></router-link>
+            </Tooltip>
+            <Tooltip text="Edit">
+              <router-link :to="'/invoices/sales/' + item.id + '/edit'" class="p-1.5 rounded-lg border border-gray-300 hover:border-blue-400 text-blue-500 hover:text-blue-600 transition-all"><PencilIcon class="w-4 h-4" /></router-link>
+            </Tooltip>
+            <Tooltip text="Delete">
+              <button @click="confirmDelete(item)" class="p-1.5 rounded-lg border border-gray-300 hover:border-red-400 text-red-400 hover:text-red-500 transition-all"><TrashIcon class="w-4 h-4" /></button>
+            </Tooltip>
+          </div>
         </td>
       </template>
     </DataTable>
-    <Pagination v-model:perPage="perPage" :pagination="pagination" @page="load" />
+
+    <ConfirmModal :show="!!deleteTarget" title="Delete Invoice"
+      :message="`Delete invoice #INV-${String(deleteTarget?.id).padStart(5, '0')}? This cannot be undone.`"
+      :loading="deleting" @confirm="doDelete" @cancel="deleteTarget = null" />
   </div>
 </template>
 <script setup>
-import { ref, onMounted } from 'vue'
-import PageHeader from '@/components/common/PageHeader.vue'
+import { ref, onMounted, computed } from 'vue'
+import { useToast } from 'vue-toastification'
 import DataTable from '@/components/common/DataTable.vue'
-import Pagination from '@/components/common/Pagination.vue'
 import SelectBox from '@/components/common/SelectBox.vue'
 import StatusBadge from '@/components/common/StatusBadge.vue'
-import { PlusIcon, EyeIcon } from '@heroicons/vue/24/outline'
-const invoices = ref([]), pagination = ref(null), loading = ref(true), search = ref(''), statusFilter = ref(''), perPage = ref(10)
+import Tooltip from '@/components/common/Tooltip.vue'
+import Breadcrumb from '@/components/common/Breadcrumb.vue'
+import ConfirmModal from '@/components/common/ConfirmModal.vue'
+import { DocumentTextIcon, EyeIcon, PencilIcon, TrashIcon } from '@heroicons/vue/24/outline'
+
+const toast = useToast()
+const invoices = ref([]), pagination = ref(null), loading = ref(true), search = ref(''), statusFilter = ref('')
+const deleteTarget = ref(null), deleting = ref(false)
+
 const statusOptions = [{value:'',label:'All'},{value:'paid',label:'Paid'},{value:'unpaid',label:'Unpaid'},{value:'overdue',label:'Overdue'},{value:'cancelled',label:'Cancelled'},{value:'refunded',label:'Refunded'}]
+
+const breadcrumbItems = computed(() => [
+  { label: 'Sale Invoices', icon: DocumentTextIcon }
+])
+
 const columns = [
   {key:'invoice_no',label:'Invoice #',class:'w-28'},{key:'customer',label:'Customer'},{key:'date',label:'Date',class:'w-24'},
-  {key:'total',label:'Amount',class:'w-28'},{key:'status',label:'Status',class:'w-20'},{key:'due',label:'Due Date',class:'w-28'},{key:'actions',label:'',class:'w-16 text-right'}
+  {key:'total',label:'Amount',class:'w-28'},{key:'status',label:'Status',class:'w-20'},{key:'due',label:'Due Date',class:'w-28'},{key:'actions',label:'Action',class:'w-36 text-right'}
 ]
+
 function formatDate(d) { return d ? new Date(d).toLocaleDateString('en-BD',{day:'2-digit',month:'short',year:'numeric'}) : '' }
+
+function confirmDelete(item) {
+  deleteTarget.value = item
+}
+
+async function doDelete() {
+  deleting.value = true
+  try {
+    await new Promise(r => setTimeout(r, 300))
+    invoices.value = invoices.value.filter(inv => inv.id !== deleteTarget.value.id)
+    toast.success('Invoice deleted.')
+    deleteTarget.value = null
+    load()
+  } finally {
+    deleting.value = false
+  }
+}
+
 async function load(page=1) {
   loading.value = true
   setTimeout(() => {
@@ -48,7 +92,7 @@ async function load(page=1) {
       total:Math.random()*50000+1500,status:['paid','paid','unpaid','overdue','paid','unpaid','paid','refunded'][i],
       due_date:['','',new Date(Date.now()+7*86400000).toISOString(),new Date(Date.now()-5*86400000).toISOString(),'','',new Date(Date.now()+14*86400000).toISOString(),''][i]
     }))
-    pagination.value = {current_page:page,last_page:Math.ceil(29/perPage.value),total:29,per_page:perPage.value}
+    pagination.value = {current_page:page,last_page:Math.ceil(29/10),total:29,per_page:10}
     loading.value = false
   }, 400)
 }

@@ -76,7 +76,7 @@
             :class="[
             'px-3 py-1.5 text-xs rounded-lg border transition',
             page === pagination.current_page
-                ? 'bg-[#4CAF50] text-white border-[#4CAF50]'
+                ? 'bg-[#2E7D32] text-white border-[#2E7D32]'
                 : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50'
         ]"
         >
