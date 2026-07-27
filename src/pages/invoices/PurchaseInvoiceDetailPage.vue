@@ -1,8 +1,6 @@
 <template>
-  <div class="max-w-5xl mx-auto">
-    <PageHeader :title="'Purchase #PUR-' + String(invoice?.id || '').padStart(5, '0')" subtitle="Purchase invoice details">
-      <button @click="$router.push('/invoices/purchases')" class="btn-ghost text-sm">← All Purchases</button>
-    </PageHeader>
+  <div>
+    <Breadcrumb :items="breadcrumbItems" />
     <div v-if="!invoice" class="card p-12 text-center" style="color:var(--text-muted)"><svg class="w-8 h-8 animate-spin mx-auto mb-3" :style="{color:'var(--color-primary)'}" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>Loading purchase...</div>
     <template v-if="invoice">
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
@@ -70,12 +68,18 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import PageHeader from '@/components/common/PageHeader.vue'
 import StatusBadge from '@/components/common/StatusBadge.vue'
-import { BuildingStorefrontIcon, ShoppingBagIcon } from '@heroicons/vue/24/outline'
+import Breadcrumb from '@/components/common/Breadcrumb.vue'
+import { BuildingStorefrontIcon, ShoppingBagIcon, DocumentTextIcon } from '@heroicons/vue/24/outline'
 import { Pencil } from 'lucide-vue-next'
 const route = useRoute()
 const invoice = ref(null)
+
+const breadcrumbItems = computed(() => [
+  { label: 'Purchase Invoices', to: '/invoices/purchases', icon: DocumentTextIcon },
+  { label: invoice.value ? '#PUR-' + String(invoice.value.id).padStart(5, '0') : 'Loading...' }
+])
+
 const taxAmount = computed(() => ((invoice.value?.subtotal || 0) * ((invoice.value?.tax_rate || 0) / 100)))
 function formatDate(d) { return d ? new Date(d).toLocaleDateString('en-BD',{day:'2-digit',month:'short',year:'numeric'}) : '—' }
 onMounted(() => {
