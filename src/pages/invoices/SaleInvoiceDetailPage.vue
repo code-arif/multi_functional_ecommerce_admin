@@ -1,8 +1,6 @@
 <template>
-  <div class="max-w-5xl mx-auto">
-    <PageHeader :title="'Invoice #INV-' + String(invoice?.id || '').padStart(5, '0')" subtitle="Sale invoice details">
-      <button @click="$router.push('/invoices/sales')" class="btn-ghost text-sm">← All Invoices</button>
-    </PageHeader>
+  <div>
+    <Breadcrumb :items="breadcrumbItems" />
     <div v-if="!invoice" class="card p-12 text-center" style="color:var(--text-muted)"><svg class="w-8 h-8 animate-spin mx-auto mb-3" :style="{color:'var(--color-primary)'}" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>Loading invoice...</div>
     <template v-if="invoice">
       <div class="card overflow-hidden mb-6" id="invoice-print">
@@ -90,12 +88,18 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useToast } from 'vue-toastification'
-import PageHeader from '@/components/common/PageHeader.vue'
 import StatusBadge from '@/components/common/StatusBadge.vue'
+import Breadcrumb from '@/components/common/Breadcrumb.vue'
 import { Printer, Check, Pencil } from 'lucide-vue-next'
+import { DocumentTextIcon } from '@heroicons/vue/24/outline'
 const route = useRoute()
 const toast = useToast()
 const invoice = ref(null)
+
+const breadcrumbItems = computed(() => [
+  { label: 'Sale Invoices', to: '/invoices/sales', icon: DocumentTextIcon },
+  { label: invoice.value ? '#INV-' + String(invoice.value.id).padStart(5, '0') : 'Loading...' }
+])
 const taxAmount = computed(() => ((invoice.value?.subtotal || 0) - (invoice.value?.discount || 0)) * ((invoice.value?.tax_rate || 0) / 100))
 function formatDate(d) { return d ? new Date(d).toLocaleDateString('en-BD',{day:'2-digit',month:'short',year:'numeric'}) : '—' }
 function printInvoice() { window.print() }

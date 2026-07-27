@@ -1,8 +1,6 @@
 <template>
-  <div class="max-w-6xl">
-    <PageHeader :title="isEdit ? 'Edit Sale Invoice' : 'New Sale Invoice'" :subtitle="isEdit ? 'Update invoice #INV-' + String(route.params.id).padStart(5, '0') : 'Create a professional sale invoice'">
-      <button @click="$router.push('/invoices/sales')" class="btn-ghost text-sm">← Sale Invoices</button>
-    </PageHeader>
+  <div>
+    <Breadcrumb :items="breadcrumbItems" />
     <div v-if="loading" class="card p-12 text-center" style="color:var(--text-muted)">
       <svg class="w-8 h-8 animate-spin mx-auto mb-3" :style="{color:'var(--color-primary)'}" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>Loading invoice data...
     </div>
@@ -25,7 +23,7 @@
             <div><label class="label">Invoice Date *</label><input v-model="form.invoice_date" type="date" class="input" /></div>
             <div><label class="label">Due Date *</label><input v-model="form.due_date" type="date" class="input" /></div>
             <div><label class="label">Order Reference</label><input v-model="form.order_ref" class="input" placeholder="#ORD-001" /></div>
-            <div><label class="label">Status</label><SelectBox v-model="form.status" :options="statusOptions" size="sm" full-width /></div>
+            <div><label class="label">Status</label><SelectBox v-model="form.status" :options="statusOptions" size="md" full-width /></div>
           </div>
         </div>
         <!-- Summary -->
@@ -89,7 +87,8 @@
       </div>
       <!-- Actions -->
       <div class="flex items-center gap-3 justify-end">
-        <button type="button" @click="$router.push('/invoices/sales')" class="btn-ghost">Cancel</button>
+        <button type="button" @click="$router.push('/invoices/sales')"
+          class="px-4 py-2 rounded-lg border border-gray-300 text-gray-600 text-sm font-semibold hover:bg-gray-50 transition-colors">Cancel</button>
         <button type="button" @click="saveInvoice" v-if="!isEdit" class="btn-secondary"><Printer class="w-4 h-4" />Save & Print</button>
         <button type="submit" class="btn-primary"><Check class="w-4 h-4" />{{ isEdit ? 'Update Invoice' : 'Create Invoice' }}</button>
       </div>
@@ -100,16 +99,22 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
-import PageHeader from '@/components/common/PageHeader.vue'
 import SelectBox from '@/components/common/SelectBox.vue'
+import Breadcrumb from '@/components/common/Breadcrumb.vue'
 import { invoiceApi } from '@/api'
 import { User, FileText, Calculator, ShoppingBag, Plus, Trash2, Pencil, Percent, Printer, Check } from 'lucide-vue-next'
+import { DocumentTextIcon } from '@heroicons/vue/24/outline'
 
 const route = useRoute()
 const router = useRouter()
 const toast = useToast()
 const loading = ref(false)
 const isEdit = computed(() => !!route.params.id)
+
+const breadcrumbItems = computed(() => [
+  { label: 'Sale Invoices', to: '/invoices/sales', icon: DocumentTextIcon },
+  { label: isEdit.value ? 'Edit #INV-' + String(route.params.id).padStart(5, '0') : 'New Invoice' }
+])
 
 const statusOptions = [{value:'unpaid',label:'Unpaid'},{value:'paid',label:'Paid'},{value:'pending',label:'Pending'}]
 
