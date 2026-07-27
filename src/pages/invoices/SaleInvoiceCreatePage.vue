@@ -176,52 +176,9 @@
       </div>
     </form>
 
-    <!-- Product Selection Modal -->
-    <Teleport to="body">
-      <div v-if="showProductModal" class="fixed inset-0 z-50">
-        <div class="fixed inset-0 bg-black/50 backdrop-blur-sm" @click="showProductModal = false" />
-        <div class="relative z-10 h-full overflow-y-auto flex items-center justify-center p-4">
-          <div class="bg-white rounded-2xl p-6 w-full max-w-lg my-8 animate-in" style="box-shadow:0 20px 60px rgba(0,0,0,0.15)">
-            <h2 class="font-bold text-gray-900 text-lg mb-4">Add Product</h2>
-            <div class="flex items-start gap-4 mb-5 p-4 rounded-xl" style="background-color:color-mix(in srgb, var(--color-primary-pale) 60%, transparent)">
-              <div class="w-12 h-12 rounded-xl flex items-center justify-center shrink-0" :style="{ backgroundColor: 'var(--color-primary)' }">
-                <Package class="w-6 h-6 text-white" />
-              </div>
-              <div class="min-w-0">
-                <p class="font-bold" style="color:var(--text-primary)">{{ selectedProduct?.name }}</p>
-                <p class="text-xs mt-0.5" style="color:var(--text-muted)">SKU: {{ selectedProduct?.sku }} &middot; In Stock: {{ selectedProduct?.stock }}</p>
-                <p class="font-semibold text-sm mt-1" style="color:var(--color-primary)">Base Price: ৳{{ selectedProduct?.price?.toLocaleString() }}</p>
-              </div>
-            </div>
-            <div class="grid grid-cols-2 gap-4 mb-5">
-              <div>
-                <label class="label">Quantity *</label>
-                <input v-model.number="modalQty" type="number" min="1" class="input" @input="modalQty = Math.max(1, modalQty || 1)" />
-              </div>
-              <div>
-                <label class="label">Sale Price (৳) *</label>
-                <input v-model.number="modalPrice" type="number" min="0" step="0.01" class="input" />
-              </div>
-            </div>
-            <div class="p-3 rounded-xl mb-5 flex items-center justify-between text-sm" style="background-color:var(--border-light)">
-              <span style="color:var(--text-muted)">Line Total</span>
-              <span class="font-bold text-lg" style="color:var(--color-primary)">৳{{ ((modalQty || 0) * (modalPrice || 0)).toLocaleString() }}</span>
-            </div>
-            <div class="flex gap-3">
-              <button type="button" @click="confirmProduct"
-                :disabled="!modalQty || !modalPrice"
-                class="btn-primary flex-1 justify-center">
-                <Plus class="w-4 h-4" />Add to Invoice
-              </button>
-              <button type="button" @click="showProductModal = false"
-                class="px-5 py-2.5 rounded-xl border border-gray-300 text-gray-600 text-sm font-medium hover:bg-gray-50 transition-colors">
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </Teleport>
+    <ProductSelectionModal v-model="showProductModal" :product="selectedProduct"
+      icon="package" price-label="Sale Price" price-key="price" button-text="Add to Invoice"
+      @confirm="onProductConfirm" />
   </div>
 </template>
 <script setup>
@@ -230,6 +187,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
 import SelectBox from '@/components/common/SelectBox.vue'
 import Breadcrumb from '@/components/common/Breadcrumb.vue'
+import ProductSelectionModal from '@/components/invoices/ProductSelectionModal.vue'
 import { invoiceApi } from '@/api'
 import { User, Users, UserPlus, FileText, Calculator, ShoppingBag, Package, Plus, Trash2, Pencil, Percent, Printer, Check, Search } from 'lucide-vue-next'
 import { DocumentTextIcon } from '@heroicons/vue/24/outline'
@@ -292,8 +250,6 @@ function selectCustomer(c) {
 const productSearch = ref('')
 const showProductModal = ref(false)
 const selectedProduct = ref(null)
-const modalQty = ref(1)
-const modalPrice = ref(0)
 
 const mockProducts = [
   { id: 1, name: 'Wireless Bluetooth Headphones', sku: 'WH-001', price: 4500, stock: 25 },
@@ -323,24 +279,13 @@ function openProductModal(p) {
   showProductModal.value = true
 }
 
-function confirmProduct() {
-  if (!modalQty.value || !modalPrice.value) return
-  // If the first item is empty (default blank row), replace it
+function onProductConfirm(data) {
   if (form.value.items.length === 1 && !form.value.items[0].description) {
-    form.value.items[0] = {
-      description: selectedProduct.value.name,
-      qty: modalQty.value,
-      price: modalPrice.value
-    }
+    form.value.items[0] = { description: data.name, qty: data.qty, price: data.price }
   } else {
-    form.value.items.push({
-      description: selectedProduct.value.name,
-      qty: modalQty.value,
-      price: modalPrice.value
-    })
+    form.value.items.push({ description: data.name, qty: data.qty, price: data.price })
   }
-  toast.success(`"${selectedProduct.value.name}" added to invoice`)
-  showProductModal.value = false
+  toast.success(`"${data.name}" added to invoice`)
 }
 
 // ─── General ───
