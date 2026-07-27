@@ -1,11 +1,11 @@
 <template>
   <div class="animate-in">
-    <PageHeader title="Vendor Payouts" subtitle="Manage vendor commissions and payment settlements">
+    <div class="flex items-center justify-between mb-6">
+      <Breadcrumb :items="breadcrumbItems" />
       <button @click="showCreateModal = true" class="btn-primary text-sm">
-        <PlusIcon class="w-4 h-4" />
         Create Payout
       </button>
-    </PageHeader>
+    </div>
 
     <!-- Summary Stats -->
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
@@ -281,7 +281,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useToast } from 'vue-toastification'
-import PageHeader from '@/components/common/PageHeader.vue'
+import Breadcrumb from '@/components/common/Breadcrumb.vue'
 import SelectBox from '@/components/common/SelectBox.vue'
 import DatePicker from '@/components/common/DatePicker.vue'
 import Pagination from '@/components/common/Pagination.vue'
@@ -289,7 +289,6 @@ import { vendorApi } from '@/api/vendor'
 import { useCsvExport } from '@/composables/useCsvExport'
 import { Download as DownloadIcon } from 'lucide-vue-next'
 import {
-  PlusIcon,
   BanknotesIcon,
   EyeIcon,
   CheckCircleIcon,
@@ -312,6 +311,12 @@ const pagination = ref(null)
 const currentPage = ref(1)
 const perPage = ref(20)
 const showCreateModal = ref(false)
+
+const breadcrumbItems = computed(() => [
+  { label: 'Vendor Payouts', icon: CurrencyDollarIcon }
+])
+
+
 
 const filters = ref({ status: '', vendor: '', dateFrom: '', dateTo: '' })
 const payoutForm = ref({ vendorId: '', amount: null, method: '', note: '' })

@@ -1,17 +1,13 @@
 <template>
     <div>
-        <PageHeader title="Vendors" :subtitle="`${pagination?.total || 0} vendors on the marketplace`">
-            <button @click="showFilters = !showFilters"
-                class="btn-ghost text-sm gap-1.5"
-                :style="{ color: showFilters ? 'var(--color-primary)' : '' }">
-                <FunnelIcon class="w-4 h-4" />
-                Filters
-            </button>
-        </PageHeader>
+        <Breadcrumb :items="breadcrumbItems" />
 
         <!-- Filter Panel -->
         <transition name="panel-slide">
-            <div v-if="showFilters" class="card p-4 mb-4">
+            <div v-if="showFilters" class="card p-4 mb-4 relative">
+                <button @click="showFilters = false" class="absolute top-3 right-3 text-xs px-2 py-1 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-50 transition-colors">
+                    Hide Filters
+                </button>
                 <!-- Single row: All filters in one responsive line -->
                 <div class="flex flex-wrap items-end gap-3">
                     <div class="list-filter-item">
@@ -268,7 +264,7 @@
                 <div class="flex items-center gap-1">
                     <button @click="load(pagination.current_page - 1)"
                         :disabled="pagination.current_page === 1"
-                        class="list-pagination-btn" :style="{ color: 'var(--navbar-text)' }">
+                        class="list-pagination-btn">
                         <ChevronLeftIcon class="w-4 h-4" />
                     </button>
                     <button v-for="page in pagination.last_page" :key="page"
@@ -282,7 +278,7 @@
                     </button>
                     <button @click="load(pagination.current_page + 1)"
                         :disabled="pagination.current_page === pagination.last_page"
-                        class="list-pagination-btn" :style="{ color: 'var(--navbar-text)' }">
+                        class="list-pagination-btn">
                         <ChevronRightIcon class="w-4 h-4" />
                     </button>
                 </div>
@@ -292,10 +288,10 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useToast } from 'vue-toastification'
-import PageHeader from '@/components/common/PageHeader.vue'
+import Breadcrumb from '@/components/common/Breadcrumb.vue'
 import StatusBadge from '@/components/common/StatusBadge.vue'
 import DatePicker from '@/components/common/DatePicker.vue'
 import SelectBox from '@/components/common/SelectBox.vue'
@@ -320,7 +316,12 @@ const toast = useToast()
 const vendors = ref([])
 const pagination = ref(null)
 const loading = ref(true)
-const showFilters = ref(false)
+const showFilters = ref(true)
+
+const breadcrumbItems = computed(() => [
+  { label: 'Vendors', icon: BuildingStorefrontIcon }
+])
+
 
 
 const filters = reactive({

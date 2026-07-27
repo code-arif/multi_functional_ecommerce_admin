@@ -1,8 +1,6 @@
 <template>
-  <div class="max-w-6xl">
-    <PageHeader :title="shop?.name || 'Shop'" subtitle="Shop details and performance">
-      <button @click="$router.push('/shops')" class="btn-ghost text-sm">← All Shops</button>
-    </PageHeader>
+  <div>
+    <Breadcrumb :items="breadcrumbItems" />
     <div v-if="!shop" class="card p-12 text-center" :style="{ color: 'var(--text-muted)' }">
       <svg class="w-8 h-8 animate-spin mx-auto mb-3" :style="{ color: 'var(--color-primary)' }" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>Loading shop details...
     </div>
@@ -69,13 +67,20 @@
   </div>
 </template>
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import PageHeader from '@/components/common/PageHeader.vue'
+import Breadcrumb from '@/components/common/Breadcrumb.vue'
 import StatusBadge from '@/components/common/StatusBadge.vue'
 import { BuildingStorefrontIcon, ShoppingBagIcon } from '@heroicons/vue/24/outline'
 const route = useRoute()
 const shop = ref(null)
+
+const breadcrumbItems = computed(() => [
+  { label: 'Shops', to: '/shops', icon: BuildingStorefrontIcon },
+  { label: shop.value?.name || 'Loading...' }
+])
+
+
 function formatDate(d) { return d ? new Date(d).toLocaleDateString('en-BD',{day:'2-digit',month:'short',year:'numeric'}) : '—' }
 onMounted(() => {
   setTimeout(() => {

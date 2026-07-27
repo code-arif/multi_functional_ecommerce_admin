@@ -11,21 +11,21 @@
                 <td class="table-cell">
                     <div class="flex items-center gap-3">
                         <img v-if="item.image_url" :src="item.image_url"
-                             class="w-16 h-10 object-cover rounded-lg bg-gray-100 shrink-0" />
+                             class="w-16 h-10 object-cover rounded-lg shrink-0" style="background-color:var(--border-light)" />
                         <div v-else
-                             class="w-16 h-10 bg-gray-100 rounded-lg shrink-0 flex items-center justify-center text-gray-300">
+                             class="w-16 h-10 rounded-lg shrink-0 flex items-center justify-center" style="background-color:var(--border-light);color:var(--text-muted)">
                             🖼️
                         </div>
                         <div>
-                            <p class="font-semibold text-gray-900 text-sm">{{ item.title }}</p>
-                            <p v-if="item.subtitle" class="text-xs text-gray-400 line-clamp-1">{{ item.subtitle }}</p>
+                            <p class="font-semibold text-sm" style="color:var(--text-primary)">{{ item.title }}</p>
+                            <p v-if="item.subtitle" class="text-xs line-clamp-1" style="color:var(--text-muted)">{{ item.subtitle }}</p>
                         </div>
                     </div>
                 </td>
                 <td class="table-cell"><span class="badge badge-blue text-[10px]">{{
                     item.position?.replace('_', ' ')
                 }}</span></td>
-                <td class="table-cell text-sm text-gray-600">{{ item.sort_order }}</td>
+                <td class="table-cell text-sm" style="color:var(--text-secondary)">{{ item.sort_order }}</td>
                 <td class="table-cell">
                     <div class="relative">
                         <button @click="toggleDropdown(item.id)" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium transition-colors" :class="statusBtnClass(item.is_active)">
@@ -65,7 +65,7 @@
                 <div class="flex min-h-full items-center justify-center p-4 py-10">
                     <div class="relative bg-white rounded-2xl p-6 w-full max-w-lg animate-in"
                          style="box-shadow:0 20px 60px rgba(0,0,0,0.15)">
-                        <h2 class="font-bold text-gray-900 text-lg mb-5">{{ editing ? 'Edit' : 'Add' }} Banner</h2>
+                        <h2 class="font-bold text-lg mb-5" style="color:var(--text-primary)">{{ editing ? 'Edit' : 'Add' }} Banner</h2>
                         <form @submit.prevent="save" class="space-y-4">
                             <div><label class="label">Title *</label><input v-model="form.title" required class="input" />
                             </div>

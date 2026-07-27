@@ -1,42 +1,42 @@
 <template>
   <div>
-    <PageHeader title="Affiliate Products" subtitle="Manage external affiliate products">
-      <button @click="openForm()" class="btn-primary">
-        <PlusIcon class="w-4 h-4" />
-        Add Affiliate Product
-      </button>
-    </PageHeader>
-    <DataTable :items="products" :columns="columns" :loading="loading" searchable
-      @search="q => { search = q; load(1) }" empty-icon="🔗">
+    <Breadcrumb :items="breadcrumbItems" />
+    <DataTable :items="products" :columns="columns" :loading="loading" searchable :pagination="pagination"
+      @search="q => { search = q; load(1) }" @page="load" empty-icon="🔗">
+      <template #actions>
+        <button @click="openForm()" class="btn-primary">
+          Add Affiliate Product
+        </button>
+      </template>
       <template #default="{ item }">
         <td class="table-cell">
           <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-lg bg-gray-100 overflow-hidden shrink-0">
+            <div class="w-10 h-10 rounded-lg overflow-hidden shrink-0" style="background-color:var(--border-light)">
               <img v-if="item.thumbnail_url" :src="item.thumbnail_url" class="w-full h-full object-cover" />
             </div>
-            <p class="font-semibold text-gray-900 text-sm line-clamp-1">{{ item.title }}</p>
+            <p class="font-semibold text-sm line-clamp-1" style="color:var(--text-primary)">{{ item.title }}</p>
           </div>
         </td>
-        <td class="table-cell text-sm text-gray-600">{{ item.source_platform }}</td>
-        <td class="table-cell text-sm font-semibold text-gray-900">{{
+        <td class="table-cell text-sm" style="color:var(--text-secondary)">{{ item.source_platform }}</td>
+        <td class="table-cell text-sm font-semibold" style="color:var(--text-primary)">{{
           item.display_price ?
             `৳${Number(item.display_price).toLocaleString()}` : '—'
         }}
         </td>
-        <td class="table-cell text-sm text-gray-600">{{ item.click_count }}</td>
+        <td class="table-cell text-sm" style="color:var(--text-secondary)">{{ item.click_count }}</td>
         <td class="table-cell"><span class="badge" :class="item.is_active ? 'badge-green' : 'badge-gray'">{{
           item.is_active ? 'Active' : 'Inactive'
         }}</span></td>
 
         <td class="table-cell text-right">
-          <div class="flex justify-end gap-1">
+          <div class="flex items-center justify-end gap-1 whitespace-nowrap">
             <Tooltip text="Edit">
-              <button @click="openForm(item)" class="p-1.5 rounded-lg text-blue-500 bg-blue-50 hover:bg-blue-100">
+              <button @click="openForm(item)" class="p-1.5 rounded-lg border border-gray-300 hover:border-blue-400 text-blue-500 hover:bg-blue-50 transition-all">
                 <PencilIcon class="w-4 h-4" />
               </button>
             </Tooltip>
             <Tooltip text="Delete">
-              <button @click="confirmDelete(item)" class="p-1.5 rounded-lg text-red-400 bg-red-50 hover:bg-red-100">
+              <button @click="confirmDelete(item)" class="p-1.5 rounded-lg border border-gray-300 hover:border-red-400 text-red-400 hover:bg-red-50 transition-all">
                 <TrashIcon class="w-4 h-4" />
               </button>
             </Tooltip>
@@ -45,7 +45,6 @@
 
       </template>
     </DataTable>
-    <Pagination v-model:perPage="perPage" :pagination="pagination" @page="load" />
 
     <Teleport to="body">
       <div v-if="showForm" class="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -167,22 +166,26 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, computed } from 'vue'
 import { useToast } from 'vue-toastification'
-import PageHeader from '@/components/common/PageHeader.vue'
 import DataTable from '@/components/common/DataTable.vue'
-import Pagination from '@/components/common/Pagination.vue'
+import Breadcrumb from '@/components/common/Breadcrumb.vue'
 import ConfirmModal from '@/components/common/ConfirmModal.vue'
-import { affiliateApi } from '@/api'
 import Tooltip from '@/components/common/Tooltip.vue'
-import { PlusIcon, PencilIcon, TrashIcon, PhotoIcon } from '@heroicons/vue/24/outline'
+import { affiliateApi } from '@/api'
+import { PencilIcon, TrashIcon, PhotoIcon, LinkIcon } from '@heroicons/vue/24/outline'
 import { QuillEditor } from '@vueup/vue-quill'
 import ToggleSwitch from '@/components/common/ToggleSwitch.vue'
 import '@vueup/vue-quill/dist/vue-quill.snow.css'
 
 const toast = useToast()
 const products = ref([]), pagination = ref(null), loading = ref(true), showForm = ref(false), saving = ref(false),
-  search = ref(''), perPage = ref(15)
+  search = ref('')
+
+const breadcrumbItems = computed(() => [
+  { label: 'Affiliate Products', icon: LinkIcon }
+])
+
 const editing = ref(null), deleteTarget = ref(null), deleting = ref(false), thumbFile = ref(null)
 const form = reactive({
   title: '',
@@ -228,7 +231,7 @@ const columns = [{ key: 'title', label: 'Product' }, { key: 'platform', label: '
 async function load(page = 1) {
   loading.value = true;
   try {
-    const r = await affiliateApi.list({ page, search: search.value, per_page: perPage.value });
+    const r = await affiliateApi.list({ page, search: search.value, per_page: 15 });
     products.value = r.data.data || [];
     pagination.value = r.data.pagination
   } finally {

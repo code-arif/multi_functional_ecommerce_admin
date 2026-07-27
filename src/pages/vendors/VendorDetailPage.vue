@@ -1,8 +1,6 @@
 <template>
-    <div class="max-w-6xl">
-        <PageHeader :title="vendor?.shop_name || vendor?.name || 'Vendor'" subtitle="Vendor details and performance overview">
-            <button @click="$router.push('/vendors')" class="btn-ghost text-sm">← All Vendors</button>
-        </PageHeader>
+    <div>
+        <Breadcrumb :items="breadcrumbItems" />
 
         <!-- Loading -->
         <div v-if="!vendor" class="card p-12 text-center" :style="{ color: 'var(--text-muted)' }">
@@ -301,10 +299,10 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useToast } from 'vue-toastification'
-import PageHeader from '@/components/common/PageHeader.vue'
+import Breadcrumb from '@/components/common/Breadcrumb.vue'
 import StatusBadge from '@/components/common/StatusBadge.vue'
 import { vendorApi } from '@/api/vendor'
 import {
@@ -321,6 +319,13 @@ const route = useRoute()
 const toast = useToast()
 const vendor = ref(null)
 const newStatus = ref('')
+
+const breadcrumbItems = computed(() => [
+  { label: 'Vendors', to: '/vendors', icon: BuildingStorefrontIcon },
+  { label: vendor.value?.shop_name || vendor.value?.name || 'Loading...' }
+])
+
+
 
 function formatDate(d) {
     if (!d) return '—'

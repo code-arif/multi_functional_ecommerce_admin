@@ -1,49 +1,47 @@
 <template>
   <div>
-    <PageHeader title="Brands" subtitle="Manage product brands">
-      <button @click="openForm()" class="btn-primary">
-        <PlusIcon class="w-4 h-4" />
-        Add Brand
-      </button>
-    </PageHeader>
+    <Breadcrumb :items="breadcrumbItems" />
     <DataTable :items="brands" :columns="columns" :loading="loading" searchable @search="q => { search = q; load() }"
       empty-icon="🏭">
       <template #default="{ item }">
         <td class="table-cell">
           <div class="flex items-center gap-3">
-            <div class="w-9 h-9 rounded-lg bg-gray-100 overflow-hidden shrink-0 flex items-center justify-center">
+            <div class="w-9 h-9 rounded-lg overflow-hidden shrink-0 flex items-center justify-center" style="background-color:var(--border-light)">
               <img v-if="item.logo_url" :src="item.logo_url" class="w-full h-full object-contain p-1" />
               <span class="w-full h-full flex items-center justify-center">
-                <Factory class="w-4 h-4 text-gray-400" />
+                <Factory class="w-4 h-4" style="color:var(--text-muted)" />
               </span>
             </div>
-            <p class="font-semibold text-gray-900 text-sm">{{ item.name }}</p>
+            <p class="font-semibold text-sm" style="color:var(--text-primary)">{{ item.name }}</p>
           </div>
         </td>
-        <td class="table-cell text-sm text-gray-500">{{ item.products_count || 0 }} products</td>
+        <td class="table-cell text-sm" style="color:var(--text-secondary)">{{ item.products_count || 0 }} products</td>
         <td class="table-cell"><span class="badge" :class="item.is_active ? 'badge-green' : 'badge-gray'">{{
           item.is_active ? 'Active' : 'Inactive'
         }}</span></td>
         <td class="table-cell text-right">
-          <Tooltip text="Edit">
-            <button @click="openForm(item)" class="p-1.5 rounded-lg text-blue-500 bg-blue-50 hover:bg-blue-100 transition mr-1">
-              <PencilIcon class="w-4 h-4" />
-            </button>
-          </Tooltip>
-          <Tooltip text="Delete">
-            <button @click="confirmDelete(item)" class="p-1.5 rounded-lg text-red-400 bg-red-50 hover:bg-red-100 transition">
-              <TrashIcon class="w-4 h-4" />
-            </button>
-          </Tooltip>
+          <div class="flex items-center justify-end gap-1 whitespace-nowrap">
+            <Tooltip text="Edit">
+              <button @click="openForm(item)" class="p-1.5 rounded-lg border border-gray-300 hover:border-blue-400 text-blue-500 hover:bg-blue-50 transition-all">
+                <PencilIcon class="w-4 h-4" />
+              </button>
+            </Tooltip>
+            <Tooltip text="Delete">
+              <button @click="confirmDelete(item)" class="p-1.5 rounded-lg border border-gray-300 hover:border-red-400 text-red-400 hover:bg-red-50 transition-all">
+                <TrashIcon class="w-4 h-4" />
+              </button>
+            </Tooltip>
+          </div>
         </td>
       </template>
     </DataTable>
     <Teleport to="body">
-      <div v-if="showForm" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" @click="showForm = false" />
+      <div v-if="showForm" class="fixed inset-0 z-50">
+        <div class="fixed inset-0 bg-black/50 backdrop-blur-sm" @click="showForm = false" />
+        <div class="relative z-10 h-full overflow-y-auto flex items-center justify-center p-4">
         <div class="relative bg-white rounded-2xl p-6 w-full max-w-md animate-in"
           style="box-shadow:0 20px 60px rgba(0,0,0,0.15)">
-          <h2 class="font-bold text-gray-900 text-lg mb-5">{{ editing ? 'Edit' : 'Add' }} Brand</h2>
+          <h2 class="font-bold text-lg mb-5" style="color:var(--text-primary)">{{ editing ? 'Edit' : 'Add' }} Brand</h2>
           <form @submit.prevent="save" class="space-y-4">
             <div><label class="label">Brand Name *</label><input v-model="form.name" required class="input" /></div>
             <div><label class="label">Website</label><input v-model="form.website" type="url" class="input"
@@ -61,12 +59,13 @@
               </button>
 
               <button type="button" @click="showForm = false"
-                class="px-5 py-1 rounded-lg border border-gray-300 text-gray-600 hover:border-red-400 hover:text-red-500 transition">
+                class="px-5 py-2.5 rounded-xl border border-gray-300 text-gray-600 text-sm font-medium hover:bg-gray-50 transition-colors">
                 Cancel
               </button>
             </div>
           </form>
         </div>
+      </div>
       </div>
     </Teleport>
     <ConfirmModal :show="!!deleteTarget" title="Delete Brand" :message="`Delete '${deleteTarget?.name}'?`"
@@ -75,19 +74,24 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, computed } from 'vue'
 import { useToast } from 'vue-toastification'
-import PageHeader from '@/components/common/PageHeader.vue'
+import Breadcrumb from '@/components/common/Breadcrumb.vue'
 import DataTable from '@/components/common/DataTable.vue'
 import ConfirmModal from '@/components/common/ConfirmModal.vue'
-import { brandApi } from '@/api'
 import Tooltip from '@/components/common/Tooltip.vue'
-import { PlusIcon, PencilIcon, TrashIcon } from '@heroicons/vue/24/outline'
+import { brandApi } from '@/api'
+import { PencilIcon, TrashIcon, BuildingStorefrontIcon } from '@heroicons/vue/24/outline'
 import { Factory } from 'lucide-vue-next'
 import ToggleSwitch from '@/components/common/ToggleSwitch.vue'
 
 const toast = useToast()
 const brands = ref([]), loading = ref(true), showForm = ref(false), saving = ref(false), search = ref('')
+
+const breadcrumbItems = computed(() => [
+  { label: 'Brands', icon: BuildingStorefrontIcon }
+])
+
 const editing = ref(null), deleteTarget = ref(null), deleting = ref(false), logoFile = ref(null)
 const form = reactive({ name: '', website: '', description: '', is_active: true })
 const columns = [{ key: 'name', label: 'Brand' }, { key: 'products', label: 'Products', class: 'w-32' }, {
