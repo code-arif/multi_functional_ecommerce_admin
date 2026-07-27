@@ -128,13 +128,6 @@ const breadcrumbItems = computed(() => [
   { label: 'Categories', icon: TagIcon }
 ])
 
-const parentOptions = computed(() => [
-  { value: null, label: 'None (Root Category)' },
-  ...flatCategories.value.map(c => ({ value: c.id, label: c.name }))
-])
-
-
-
 const columns = [
   { key: 'name', label: 'Category' },
   { key: 'parent', label: 'Parent', class: 'w-32' },
@@ -143,6 +136,12 @@ const columns = [
   { key: 'actions', label: 'Action', class: 'w-24 text-right' },
 ]
 const flatCategories = computed(() => categories.value.filter(c => !editing.value || c.id !== editing.value.id))
+
+const parentOptions = computed(() => [
+  { value: null, label: 'None (Root Category)' },
+  ...flatCategories.value.map(c => ({ value: c.id, label: c.name }))
+])
+
 
 async function load() {
   loading.value = true
