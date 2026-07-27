@@ -1,42 +1,53 @@
 <template>
   <div>
-    <PageHeader title="Transactions" subtitle="Financial transaction history" />
-    <DataTable :items="transactions" :columns="columns" :loading="loading" searchable
+    <Breadcrumb :items="breadcrumbItems" />
+    <DataTable :items="transactions" :columns="columns" :loading="loading" searchable :pagination="pagination"
       search-placeholder="Search by ID, customer..." empty-icon="💳" empty-text="No transactions found"
-      @search="q => { search = q; load(1) }">
+      @search="q => { search = q; load(1) }" @page="load">
       <template #filters>
-        <SelectBox v-model="statusFilter" :options="statusOptions" placeholder="All Status" size="sm" @change="load(1)" />
-        <SelectBox v-model="methodFilter" :options="methodOptions" placeholder="All Methods" size="sm" @change="load(1)" />
+        <SelectBox v-model="statusFilter" :options="statusOptions" placeholder="All Status" size="md" @change="load(1)" />
+        <SelectBox v-model="methodFilter" :options="methodOptions" placeholder="All Methods" size="md" @change="load(1)" />
       </template>
       <template #default="{ item }">
         <td class="table-cell font-semibold" style="color:var(--text-primary)">#{{ item.id }}</td>
-        <td class="table-cell">{{ item.customer || 'Customer ' + item.user_id }}</td>
-        <td class="table-cell font-semibold" style="color:var(--text-primary)">৳{{ Number(item.amount || 0).toLocaleString() }}</td>
-        <td class="table-cell">{{ item.payment_method || '—' }}</td>
+        <td class="table-cell" style="color:var(--text-secondary)">{{ item.customer || 'Customer ' + item.user_id }}</td>
+        <td class="table-cell font-semibold" style="color:var(--color-primary)">৳{{ Number(item.amount || 0).toLocaleString() }}</td>
+        <td class="table-cell" style="color:var(--text-secondary)">{{ item.payment_method || '—' }}</td>
         <td class="table-cell"><StatusBadge :value="item.status || 'completed'" /></td>
         <td class="table-cell text-xs" style="color:var(--text-muted)">{{ formatDate(item.created_at) }}</td>
         <td class="table-cell text-right">
-          <router-link :to="'/transactions/' + item.id" class="p-1.5 rounded-lg inline-flex items-center transition" :style="{ color: 'var(--navbar-text)' }" title="View" @mouseenter="e => e.target.style.backgroundColor = 'var(--border-light)'" @mouseleave="e => e.target.style.backgroundColor = 'transparent'"><EyeIcon class="w-4 h-4" /></router-link>
+          <div class="flex items-center justify-end gap-1 whitespace-nowrap">
+            <Tooltip text="View">
+              <router-link :to="'/transactions/' + item.id"
+                class="p-1.5 rounded-lg border border-gray-300 hover:border-gray-400 text-gray-500 hover:text-gray-700 transition-all">
+                <EyeIcon class="w-4 h-4" />
+              </router-link>
+            </Tooltip>
+          </div>
         </td>
       </template>
     </DataTable>
-    <Pagination v-model:perPage="perPage" :pagination="pagination" @page="load" />
   </div>
 </template>
 <script setup>
-import { ref, onMounted } from 'vue'
-import PageHeader from '@/components/common/PageHeader.vue'
+import { ref, onMounted, computed } from 'vue'
+import Breadcrumb from '@/components/common/Breadcrumb.vue'
 import DataTable from '@/components/common/DataTable.vue'
-import Pagination from '@/components/common/Pagination.vue'
 import SelectBox from '@/components/common/SelectBox.vue'
+import Tooltip from '@/components/common/Tooltip.vue'
 import StatusBadge from '@/components/common/StatusBadge.vue'
-import { EyeIcon } from '@heroicons/vue/24/outline'
-const transactions = ref([]), pagination = ref(null), loading = ref(true), search = ref(''), statusFilter = ref(''), methodFilter = ref(''), perPage = ref(10)
+import { CurrencyDollarIcon, EyeIcon } from '@heroicons/vue/24/outline'
+const transactions = ref([]), pagination = ref(null), loading = ref(true), search = ref(''), statusFilter = ref(''), methodFilter = ref('')
+
+const breadcrumbItems = computed(() => [
+  { label: 'Transactions', icon: CurrencyDollarIcon }
+])
+
 const statusOptions = [{value:'',label:'All'},{value:'completed',label:'Completed'},{value:'pending',label:'Pending'},{value:'failed',label:'Failed'},{value:'refunded',label:'Refunded'}]
 const methodOptions = [{value:'',label:'All'},{value:'bkash',label:'bKash'},{value:'nagad',label:'Nagad'},{value:'card',label:'Card'},{value:'cod',label:'COD'}]
 const columns = [
   {key:'id',label:'ID',class:'w-20'},{key:'customer',label:'Customer'},{key:'amount',label:'Amount',class:'w-28'},
-  {key:'method',label:'Method',class:'w-24'},{key:'status',label:'Status',class:'w-24'},  {key:'date',label:'Date',class:'w-32'},{key:'actions',label:'',class:'w-16 text-right'}
+  {key:'method',label:'Method',class:'w-24'},{key:'status',label:'Status',class:'w-24'},{key:'date',label:'Date',class:'w-32'},{key:'actions',label:'Action',class:'w-16 text-right'}
 ]
 function formatDate(d) { return d ? new Date(d).toLocaleDateString('en-BD',{day:'2-digit',month:'short',year:'numeric'}) : '' }
 async function load(page=1) {
@@ -48,7 +59,7 @@ async function load(page=1) {
       status:['completed','completed','pending','completed','completed','refunded','completed','failed'][i],
       created_at:new Date(Date.now()-i*86400000).toISOString()
     }))
-    pagination.value = {current_page:page,last_page:Math.ceil(22/perPage.value),total:22,per_page:perPage.value}
+    pagination.value = {current_page:page,last_page:Math.ceil(22/10),total:22,per_page:10}
     loading.value = false
   }, 400)
 }

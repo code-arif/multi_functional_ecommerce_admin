@@ -1,8 +1,6 @@
 <template>
-  <div class="max-w-4xl">
-    <PageHeader :title="'Transaction #' + (transaction?.id || route.params.id)" subtitle="Transaction details and payment information">
-      <button @click="$router.push('/transactions')" class="btn-ghost">← Transactions</button>
-    </PageHeader>
+  <div>
+    <Breadcrumb :items="breadcrumbItems" />
     <div v-if="!transaction" class="card p-12 text-center" :style="{ color: 'var(--text-muted)' }">
       <svg class="w-8 h-8 animate-spin mx-auto mb-3" :style="{ color: 'var(--color-primary)' }" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>Loading transaction...
     </div>
@@ -67,13 +65,20 @@
   </div>
 </template>
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import PageHeader from '@/components/common/PageHeader.vue'
+import Breadcrumb from '@/components/common/Breadcrumb.vue'
 import StatusBadge from '@/components/common/StatusBadge.vue'
-import { CreditCardIcon, UserIcon, ClockIcon } from '@heroicons/vue/24/outline'
+import { CreditCardIcon, UserIcon, ClockIcon, CurrencyDollarIcon } from '@heroicons/vue/24/outline'
 const route = useRoute()
 const transaction = ref(null)
+
+const breadcrumbItems = computed(() => [
+  { label: 'Transactions', to: '/transactions', icon: CurrencyDollarIcon },
+  { label: transaction.value ? '#TXN-' + String(transaction.value.id) : 'Loading...' }
+])
+
+
 const timeline = [
   {title:'Transaction Initiated',time:'2026-07-22 10:30 AM',completed:true},
   {title:'Payment Processed',time:'2026-07-22 10:31 AM',completed:true},
