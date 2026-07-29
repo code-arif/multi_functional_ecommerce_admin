@@ -53,8 +53,8 @@
 
 <script setup>
 import { Search } from 'lucide-vue-next'
-import SettingsCard from "@/components/common/SettingsCard.vue";
-import { useSettings } from "@/composables/useSettings.js";
+import SettingsCard from '@ecom/ui/components/SettingsCard.vue';
+import { useSettings } from '@ecom/ui/composables/useSettings.js';
 
 const keys = [
     'meta_title', 'meta_description', 'meta_keywords',

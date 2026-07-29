@@ -69,9 +69,9 @@
 
 <script setup>
 import { Store } from 'lucide-vue-next'
-import SettingsCard from "@/components/common/SettingsCard.vue";
-import SelectBox from "@/components/common/SelectBox.vue";
-import { useSettings } from "@/composables/useSettings.js";
+import SettingsCard from "@ecom/ui/components/SettingsCard.vue";
+import SelectBox from "@ecom/ui/components/SelectBox.vue";
+import { useSettings } from "@ecom/ui/composables/useSettings.js";
 
 const keys = [
     'store_name', 'store_email', 'store_phone', 'store_support_email',

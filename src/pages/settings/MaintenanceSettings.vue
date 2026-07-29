@@ -72,7 +72,7 @@ import {
     Wrench, Terminal, Loader2, Play, X,
     PowerOff, Trash2, Link, RefreshCw, Database, ShieldCheck
 } from 'lucide-vue-next'
-import SettingsCard from "@/components/common/SettingsCard.vue";
+import SettingsCard from "@ecom/ui/components/SettingsCard.vue";
 // import { maintenanceApi } from '@/api'
 
 const toast = useToast()

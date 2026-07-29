@@ -39,9 +39,9 @@
 <script setup>
 import { CreditCard, Lock, Eye, EyeOff, Zap, Banknote, Wallet } from 'lucide-vue-next'
 import { reactive } from 'vue'
-import SettingsCard from "@/components/common/SettingsCard.vue";
-import SelectBox from "@/components/common/SelectBox.vue";
-import { useSettings } from "@/composables/useSettings.js";
+import SettingsCard from "@ecom/ui/components/SettingsCard.vue";
+import SelectBox from "@ecom/ui/components/SelectBox.vue";
+import { useSettings } from "@ecom/ui/composables/useSettings.js";
 
 const visibleSecrets = reactive({})
 function toggleSecret(key) { visibleSecrets[key] = !visibleSecrets[key] }

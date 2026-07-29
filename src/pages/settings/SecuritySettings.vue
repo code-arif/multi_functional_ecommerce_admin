@@ -62,8 +62,8 @@
 
 <script setup>
 import { Shield } from 'lucide-vue-next'
-import SettingsCard from "@/components/common/SettingsCard.vue";
-import { useSettings } from "@/composables/useSettings.js";
+import SettingsCard from "@ecom/ui/components/SettingsCard.vue";
+import { useSettings } from "@ecom/ui/composables/useSettings.js";
 
 const authToggles = [
     { key: 'two_factor_enabled', label: 'Two-Factor Authentication', desc: 'Require 2FA for admin login' },
