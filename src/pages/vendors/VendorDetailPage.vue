@@ -302,8 +302,8 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useToast } from 'vue-toastification'
-import Breadcrumb from '@/components/common/Breadcrumb.vue'
-import StatusBadge from '@/components/common/StatusBadge.vue'
+import Breadcrumb from '@ecom/ui/components/Breadcrumb.vue'
+import StatusBadge from '@ecom/ui/components/StatusBadge.vue'
 import { vendorApi } from '@/api/vendor'
 import {
     BuildingStorefrontIcon,

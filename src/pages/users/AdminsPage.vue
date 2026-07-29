@@ -136,12 +136,12 @@
 import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import { useToast } from 'vue-toastification'
 import { computed } from 'vue'
-import DataTable from '@/components/common/DataTable.vue'
-import SelectBox from '@/components/common/SelectBox.vue'
-import ConfirmModal from '@/components/common/ConfirmModal.vue'
-import Tooltip from '@/components/common/Tooltip.vue'
-import StatCard from '@/components/common/StatCard.vue'
-import Breadcrumb from '@/components/common/Breadcrumb.vue'
+import DataTable from '@ecom/ui/components/DataTable.vue'
+import SelectBox from '@ecom/ui/components/SelectBox.vue'
+import ConfirmModal from '@ecom/ui/components/ConfirmModal.vue'
+import Tooltip from '@ecom/ui/components/Tooltip.vue'
+import StatCard from '@ecom/ui/components/StatCard.vue'
+import Breadcrumb from '@ecom/ui/components/Breadcrumb.vue'
 import { PencilIcon, TrashIcon, EyeIcon, EyeSlashIcon, ChevronDownIcon, UserGroupIcon, ShieldCheckIcon, UserCircleIcon, UserIcon } from '@heroicons/vue/24/outline'
 
 const toast = useToast()

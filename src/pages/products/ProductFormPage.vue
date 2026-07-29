@@ -366,12 +366,12 @@ import { useRoute, useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
 import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css'
-import Breadcrumb from '@/components/common/Breadcrumb.vue'
-import SelectBox from '@/components/common/SelectBox.vue'
+import Breadcrumb from '@ecom/ui/components/Breadcrumb.vue'
+import SelectBox from '@ecom/ui/components/SelectBox.vue'
 import { productApi, categoryApi, brandApi } from '@/api'
 import { TrashIcon, PhotoIcon, CubeIcon } from '@heroicons/vue/24/outline'
 import { Star, Trash2, ImagePlus } from 'lucide-vue-next'
-import ToggleSwitch from '@/components/common/ToggleSwitch.vue'
+import ToggleSwitch from '@ecom/ui/components/ToggleSwitch.vue'
 
 const route = useRoute()
 const router = useRouter()

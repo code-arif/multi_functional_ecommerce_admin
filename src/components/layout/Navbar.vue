@@ -174,7 +174,7 @@ import {
     ArrowRightOnRectangleIcon,
     CalendarDaysIcon
 } from '@heroicons/vue/24/outline'
-import NotificationModal from '@/components/common/NotificationModal.vue'
+import NotificationModal from '@ecom/ui/components/NotificationModal.vue'
 
 defineProps({
     unreadCount: { type: Number, default: 0 },

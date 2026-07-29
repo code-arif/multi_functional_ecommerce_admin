@@ -105,10 +105,10 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import PageHeader from '@/components/common/PageHeader.vue'
-import SelectBox from '@/components/common/SelectBox.vue'
-import DatePicker from '@/components/common/DatePicker.vue'
-import Pagination from '@/components/common/Pagination.vue'
+import PageHeader from '@ecom/ui/components/PageHeader.vue'
+import SelectBox from '@ecom/ui/components/SelectBox.vue'
+import DatePicker from '@ecom/ui/components/DatePicker.vue'
+import Pagination from '@ecom/ui/components/Pagination.vue'
 import {
   ClipboardDocumentListIcon,
   UserPlusIcon,

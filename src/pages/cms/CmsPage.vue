@@ -85,12 +85,12 @@ VUEEOF
 <script setup>
 import { ref, reactive, onMounted, onUnmounted, computed } from 'vue'
 import { useToast } from 'vue-toastification'
-import DataTable from '@/components/common/DataTable.vue'
-import SelectBox from '@/components/common/SelectBox.vue'
-import ConfirmModal from '@/components/common/ConfirmModal.vue'
-import Breadcrumb from '@/components/common/Breadcrumb.vue'
+import DataTable from '@ecom/ui/components/DataTable.vue'
+import SelectBox from '@ecom/ui/components/SelectBox.vue'
+import ConfirmModal from '@ecom/ui/components/ConfirmModal.vue'
+import Breadcrumb from '@ecom/ui/components/Breadcrumb.vue'
 import { cmsApi } from '@/api'
-import Tooltip from '@/components/common/Tooltip.vue'
+import Tooltip from '@ecom/ui/components/Tooltip.vue'
 import { PencilIcon, TrashIcon, DocumentTextIcon, ChevronDownIcon } from '@heroicons/vue/24/outline'
 
 const toast = useToast()

@@ -66,15 +66,15 @@
 <script setup>
 import { ref, reactive, onMounted, computed } from 'vue'
 import { useToast } from 'vue-toastification'
-import Breadcrumb from '@/components/common/Breadcrumb.vue'
-import DataTable from '@/components/common/DataTable.vue'
-import ConfirmModal from '@/components/common/ConfirmModal.vue'
-import Tooltip from '@/components/common/Tooltip.vue'
+import Breadcrumb from '@ecom/ui/components/Breadcrumb.vue'
+import DataTable from '@ecom/ui/components/DataTable.vue'
+import ConfirmModal from '@ecom/ui/components/ConfirmModal.vue'
+import Tooltip from '@ecom/ui/components/Tooltip.vue'
 import { couponApi } from '@/api'
 import { PencilIcon, TrashIcon, TagIcon } from '@heroicons/vue/24/outline'
-import SelectBox from '@/components/common/SelectBox.vue'
-import DatePicker from '@/components/common/DatePicker.vue'
-import ToggleSwitch from '@/components/common/ToggleSwitch.vue'
+import SelectBox from '@ecom/ui/components/SelectBox.vue'
+import DatePicker from '@ecom/ui/components/DatePicker.vue'
+import ToggleSwitch from '@ecom/ui/components/ToggleSwitch.vue'
 const toast=useToast()
 const coupons=ref([]), pagination=ref(null), loading=ref(true), showForm=ref(false), saving=ref(false), search=ref('')
 

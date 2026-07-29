@@ -36,8 +36,8 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { startOfYear } from 'date-fns'
-import DatePicker from '@/components/common/DatePicker.vue'
-import Breadcrumb from '@/components/common/Breadcrumb.vue'
+import DatePicker from '@ecom/ui/components/DatePicker.vue'
+import Breadcrumb from '@ecom/ui/components/Breadcrumb.vue'
 import { Printer } from 'lucide-vue-next'
 import { StarIcon, CheckCircleIcon, ClockIcon, XCircleIcon, ChartBarSquareIcon } from '@heroicons/vue/24/outline'
 const breadcrumbItems = computed(() => [

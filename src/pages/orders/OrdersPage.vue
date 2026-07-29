@@ -141,14 +141,14 @@
 import { ref, onMounted, computed } from 'vue'
 import { startOfYear } from 'date-fns'
 import { useToast } from 'vue-toastification'
-import Breadcrumb from '@/components/common/Breadcrumb.vue'
-import DataTable from '@/components/common/DataTable.vue'
-import StatusBadge from '@/components/common/StatusBadge.vue'
-import SelectBox from '@/components/common/SelectBox.vue'
-import DatePicker from '@/components/common/DatePicker.vue'
-import Tooltip from '@/components/common/Tooltip.vue'
+import Breadcrumb from '@ecom/ui/components/Breadcrumb.vue'
+import DataTable from '@ecom/ui/components/DataTable.vue'
+import StatusBadge from '@ecom/ui/components/StatusBadge.vue'
+import SelectBox from '@ecom/ui/components/SelectBox.vue'
+import DatePicker from '@ecom/ui/components/DatePicker.vue'
+import Tooltip from '@ecom/ui/components/Tooltip.vue'
 import { orderApi } from '@/api'
-import { useCsvExport } from '@/composables/useCsvExport'
+import { useCsvExport } from '@ecom/ui/composables/useCsvExport'
 
 import {
     Eye,

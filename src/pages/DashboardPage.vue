@@ -379,8 +379,8 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { Chart, registerables } from 'chart.js'
-import SelectBox from '@/components/common/SelectBox.vue'
-import StatusBadge from '@/components/common/StatusBadge.vue'
+import SelectBox from '@ecom/ui/components/SelectBox.vue'
+import StatusBadge from '@ecom/ui/components/StatusBadge.vue'
 import { dashboardApi, reportApi, orderApi } from '@/api'
 import { useAuthStore } from '@/stores/auth'
 import { useThemeStore } from '@/stores/theme'

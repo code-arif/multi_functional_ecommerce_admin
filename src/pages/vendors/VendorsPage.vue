@@ -291,10 +291,10 @@
 import { ref, reactive, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useToast } from 'vue-toastification'
-import Breadcrumb from '@/components/common/Breadcrumb.vue'
-import StatusBadge from '@/components/common/StatusBadge.vue'
-import DatePicker from '@/components/common/DatePicker.vue'
-import SelectBox from '@/components/common/SelectBox.vue'
+import Breadcrumb from '@ecom/ui/components/Breadcrumb.vue'
+import StatusBadge from '@ecom/ui/components/StatusBadge.vue'
+import DatePicker from '@ecom/ui/components/DatePicker.vue'
+import SelectBox from '@ecom/ui/components/SelectBox.vue'
 import { vendorApi } from '@/api/vendor'
 import {
     BuildingStorefrontIcon,

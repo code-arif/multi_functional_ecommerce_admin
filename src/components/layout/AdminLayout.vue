@@ -32,7 +32,7 @@
 import { ref, computed, watch } from 'vue'
 import Sidebar from '@/components/layout/Sidebar.vue'
 import Navbar from '@/components/layout/Navbar.vue'
-import ProfileModal from '@/components/common/ProfileModal.vue'
+import ProfileModal from '@ecom/ui/components/ProfileModal.vue'
 
 const SIDEBAR_STATE_KEY = 'sidebar_open_state'
 const sidebarOpen = ref(localStorage.getItem(SIDEBAR_STATE_KEY) !== 'false')

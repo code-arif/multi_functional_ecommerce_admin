@@ -86,7 +86,7 @@
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
-import Breadcrumb from '@/components/common/Breadcrumb.vue'
+import Breadcrumb from '@ecom/ui/components/Breadcrumb.vue'
 import { IdentificationIcon } from '@heroicons/vue/24/outline'
 
 const route = useRoute()

@@ -257,8 +257,8 @@
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { Chart, registerables } from 'chart.js'
-import Breadcrumb from '@/components/common/Breadcrumb.vue'
-import StatCard from '@/components/common/StatCard.vue'
+import Breadcrumb from '@ecom/ui/components/Breadcrumb.vue'
+import StatCard from '@ecom/ui/components/StatCard.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useThemeStore } from '@/stores/theme'
 import {
@@ -269,8 +269,8 @@ import {
   TrashIcon
 } from '@heroicons/vue/24/outline'
 import { ChartBarSquareIcon } from '@heroicons/vue/24/outline'
-import SelectBox from '@/components/common/SelectBox.vue'
-import Tooltip from '@/components/common/Tooltip.vue'
+import SelectBox from '@ecom/ui/components/SelectBox.vue'
+import Tooltip from '@ecom/ui/components/Tooltip.vue'
 
 Chart.register(...registerables)
 

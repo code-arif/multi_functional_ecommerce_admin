@@ -43,7 +43,7 @@
 </template>
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import PageHeader from '@/components/common/PageHeader.vue'
+import PageHeader from '@ecom/ui/components/PageHeader.vue'
 import NotificationsSkeleton from '@/components/skeletons/NotificationsSkeleton.vue'
 import { BellIcon, CheckIcon, ShoppingBagIcon, StarIcon, TicketIcon, UserIcon, ExclamationTriangleIcon, MegaphoneIcon } from '@heroicons/vue/24/outline'
 

@@ -68,8 +68,8 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import StatusBadge from '@/components/common/StatusBadge.vue'
-import Breadcrumb from '@/components/common/Breadcrumb.vue'
+import StatusBadge from '@ecom/ui/components/StatusBadge.vue'
+import Breadcrumb from '@ecom/ui/components/Breadcrumb.vue'
 import { BuildingStorefrontIcon, ShoppingBagIcon, DocumentTextIcon } from '@heroicons/vue/24/outline'
 import { Pencil } from 'lucide-vue-next'
 const route = useRoute()

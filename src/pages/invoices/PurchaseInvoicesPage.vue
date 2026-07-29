@@ -41,12 +41,12 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { useToast } from 'vue-toastification'
-import DataTable from '@/components/common/DataTable.vue'
-import SelectBox from '@/components/common/SelectBox.vue'
-import StatusBadge from '@/components/common/StatusBadge.vue'
-import Tooltip from '@/components/common/Tooltip.vue'
-import Breadcrumb from '@/components/common/Breadcrumb.vue'
-import ConfirmModal from '@/components/common/ConfirmModal.vue'
+import DataTable from '@ecom/ui/components/DataTable.vue'
+import SelectBox from '@ecom/ui/components/SelectBox.vue'
+import StatusBadge from '@ecom/ui/components/StatusBadge.vue'
+import Tooltip from '@ecom/ui/components/Tooltip.vue'
+import Breadcrumb from '@ecom/ui/components/Breadcrumb.vue'
+import ConfirmModal from '@ecom/ui/components/ConfirmModal.vue'
 import { DocumentTextIcon, EyeIcon, PencilIcon, TrashIcon } from '@heroicons/vue/24/outline'
 
 const toast = useToast()

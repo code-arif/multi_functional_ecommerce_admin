@@ -281,12 +281,12 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useToast } from 'vue-toastification'
-import Breadcrumb from '@/components/common/Breadcrumb.vue'
-import SelectBox from '@/components/common/SelectBox.vue'
-import DatePicker from '@/components/common/DatePicker.vue'
-import Pagination from '@/components/common/Pagination.vue'
+import Breadcrumb from '@ecom/ui/components/Breadcrumb.vue'
+import SelectBox from '@ecom/ui/components/SelectBox.vue'
+import DatePicker from '@ecom/ui/components/DatePicker.vue'
+import Pagination from '@ecom/ui/components/Pagination.vue'
 import { vendorApi } from '@/api/vendor'
-import { useCsvExport } from '@/composables/useCsvExport'
+import { useCsvExport } from '@ecom/ui/composables/useCsvExport'
 import { Download as DownloadIcon } from 'lucide-vue-next'
 import {
   BanknotesIcon,

@@ -92,10 +92,10 @@
 </template>
 <script setup>
 import { ref, reactive, onMounted, computed } from 'vue'
-import Breadcrumb from '@/components/common/Breadcrumb.vue'
-import StatusBadge from '@/components/common/StatusBadge.vue'
-import DatePicker from '@/components/common/DatePicker.vue'
-import SelectBox from '@/components/common/SelectBox.vue'
+import Breadcrumb from '@ecom/ui/components/Breadcrumb.vue'
+import StatusBadge from '@ecom/ui/components/StatusBadge.vue'
+import DatePicker from '@ecom/ui/components/DatePicker.vue'
+import SelectBox from '@ecom/ui/components/SelectBox.vue'
 import { FunnelIcon, ChevronLeftIcon, ChevronRightIcon, EyeIcon, HomeModernIcon } from '@heroicons/vue/24/outline'
 const shops = ref([]), pagination = ref(null), loading = ref(true), showFilters = ref(true)
 

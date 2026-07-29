@@ -38,14 +38,15 @@
 <script setup>
 import { ref, watch } from 'vue'
 import { Palette, Check } from 'lucide-vue-next'
-import SettingsCard from '@/components/common/SettingsCard.vue'
-import { useSettings } from '@/composables/useSettings.js'
+import SettingsCard from '@ecom/ui/components/SettingsCard.vue'
+import { useSettings } from '@ecom/ui/composables/useSettings.js'
 import { useThemeStore } from '@/stores/theme'
+import { settingsApi } from '@/api'
 
 const themeStore = useThemeStore()
 
 const keys = ['theme_color']
-const { form, saving, save } = useSettings(keys, 'Theme')
+const { form, saving, save } = useSettings(keys, 'Theme', settingsApi)
 
 const themes = themeStore.themes
 

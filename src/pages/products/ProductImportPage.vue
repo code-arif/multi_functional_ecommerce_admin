@@ -360,7 +360,7 @@ import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
 import * as XLSX from 'xlsx'
-import Breadcrumb from '@/components/common/Breadcrumb.vue'
+import Breadcrumb from '@ecom/ui/components/Breadcrumb.vue'
 import { productApi } from '@/api'
 import {
   ArrowPathIcon,

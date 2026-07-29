@@ -168,14 +168,14 @@
 <script setup>
 import { ref, reactive, onMounted, computed } from 'vue'
 import { useToast } from 'vue-toastification'
-import DataTable from '@/components/common/DataTable.vue'
-import Breadcrumb from '@/components/common/Breadcrumb.vue'
-import ConfirmModal from '@/components/common/ConfirmModal.vue'
-import Tooltip from '@/components/common/Tooltip.vue'
+import DataTable from '@ecom/ui/components/DataTable.vue'
+import Breadcrumb from '@ecom/ui/components/Breadcrumb.vue'
+import ConfirmModal from '@ecom/ui/components/ConfirmModal.vue'
+import Tooltip from '@ecom/ui/components/Tooltip.vue'
 import { affiliateApi } from '@/api'
 import { PencilIcon, TrashIcon, PhotoIcon, LinkIcon } from '@heroicons/vue/24/outline'
 import { QuillEditor } from '@vueup/vue-quill'
-import ToggleSwitch from '@/components/common/ToggleSwitch.vue'
+import ToggleSwitch from '@ecom/ui/components/ToggleSwitch.vue'
 import '@vueup/vue-quill/dist/vue-quill.snow.css'
 
 const toast = useToast()

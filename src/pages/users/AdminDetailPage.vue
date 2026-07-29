@@ -56,9 +56,9 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useToast } from 'vue-toastification'
-import StatusBadge from '@/components/common/StatusBadge.vue'
-import Breadcrumb from '@/components/common/Breadcrumb.vue'
-import SelectBox from '@/components/common/SelectBox.vue'
+import StatusBadge from '@ecom/ui/components/StatusBadge.vue'
+import Breadcrumb from '@ecom/ui/components/Breadcrumb.vue'
+import SelectBox from '@ecom/ui/components/SelectBox.vue'
 import { UsersIcon } from '@heroicons/vue/24/outline'
 const route = useRoute(), toast = useToast()
 const admin = ref(null), newRole = ref('')

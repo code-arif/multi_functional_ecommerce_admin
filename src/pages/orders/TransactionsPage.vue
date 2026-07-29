@@ -31,11 +31,11 @@
 </template>
 <script setup>
 import { ref, onMounted, computed } from 'vue'
-import Breadcrumb from '@/components/common/Breadcrumb.vue'
-import DataTable from '@/components/common/DataTable.vue'
-import SelectBox from '@/components/common/SelectBox.vue'
-import Tooltip from '@/components/common/Tooltip.vue'
-import StatusBadge from '@/components/common/StatusBadge.vue'
+import Breadcrumb from '@ecom/ui/components/Breadcrumb.vue'
+import DataTable from '@ecom/ui/components/DataTable.vue'
+import SelectBox from '@ecom/ui/components/SelectBox.vue'
+import Tooltip from '@ecom/ui/components/Tooltip.vue'
+import StatusBadge from '@ecom/ui/components/StatusBadge.vue'
 import { CurrencyDollarIcon, EyeIcon } from '@heroicons/vue/24/outline'
 const transactions = ref([]), pagination = ref(null), loading = ref(true), search = ref(''), statusFilter = ref(''), methodFilter = ref('')
 

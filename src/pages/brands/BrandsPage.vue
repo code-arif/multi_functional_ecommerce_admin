@@ -74,15 +74,15 @@
 <script setup>
 import { ref, reactive, onMounted, computed } from 'vue'
 import { useToast } from 'vue-toastification'
-import Breadcrumb from '@/components/common/Breadcrumb.vue'
-import DataTable from '@/components/common/DataTable.vue'
-import ConfirmModal from '@/components/common/ConfirmModal.vue'
-import Tooltip from '@/components/common/Tooltip.vue'
+import Breadcrumb from '@ecom/ui/components/Breadcrumb.vue'
+import DataTable from '@ecom/ui/components/DataTable.vue'
+import ConfirmModal from '@ecom/ui/components/ConfirmModal.vue'
+import Tooltip from '@ecom/ui/components/Tooltip.vue'
 import { brandApi } from '@/api'
 import { PencilIcon, TrashIcon, BuildingStorefrontIcon } from '@heroicons/vue/24/outline'
 import { Factory } from 'lucide-vue-next'
-import ImagePicker from '@/components/common/ImagePicker.vue'
-import ToggleSwitch from '@/components/common/ToggleSwitch.vue'
+import ImagePicker from '@ecom/ui/components/ImagePicker.vue'
+import ToggleSwitch from '@ecom/ui/components/ToggleSwitch.vue'
 
 const toast = useToast()
 const brands = ref([]), loading = ref(true), showForm = ref(false), saving = ref(false), search = ref('')
