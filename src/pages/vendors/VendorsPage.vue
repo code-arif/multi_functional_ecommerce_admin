@@ -1,6 +1,12 @@
 <template>
     <div>
-        <Breadcrumb :items="breadcrumbItems" />
+        <div class="flex items-start justify-between mb-4">
+            <Breadcrumb :items="breadcrumbItems" />
+            <button @click="showAddModal = true" class="btn-primary text-sm shrink-0 mt-0.5">
+                <PlusIcon class="w-4 h-4" />
+                Add Vendor
+            </button>
+        </div>
 
         <!-- Stats Bar -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
@@ -285,6 +291,12 @@
         </div>
     </div>
 
+    <AddVendorModal
+        :show="showAddModal"
+        @close="showAddModal = false"
+        @save="handleAddVendor"
+    />
+
     <ConfirmModal
         :show="!!deleteTarget"
         title="Delete Vendor"
@@ -306,6 +318,7 @@ import DatePicker from '@ecom/ui/components/DatePicker.vue'
 import SelectBox from '@ecom/ui/components/SelectBox.vue'
 import Tooltip from '@ecom/ui/components/Tooltip.vue'
 import ConfirmModal from '@ecom/ui/components/ConfirmModal.vue'
+import AddVendorModal from '@/components/vendors/AddVendorModal.vue'
 import { vendorApi } from '@/api/vendor'
 import {
     BuildingStorefrontIcon,
@@ -314,6 +327,7 @@ import {
     CheckBadgeIcon,
     ClockIcon,
     NoSymbolIcon,
+    PlusIcon,
     StarIcon,
     EyeIcon,
     CheckIcon,
@@ -327,6 +341,7 @@ const toast = useToast()
 const vendors = ref([])
 const pagination = ref(null)
 const loading = ref(true)
+const showAddModal = ref(false)
 
 const breadcrumbItems = computed(() => [
   { label: 'Vendors', icon: BuildingStorefrontIcon }
@@ -490,6 +505,18 @@ async function doDelete() {
         toast.error('Failed to delete vendor')
     } finally {
         deleteLoading.value = false
+    }
+}
+
+async function handleAddVendor(data) {
+    try {
+        await vendorApi.create(data)
+        toast.success('Vendor created successfully')
+        showAddModal.value = false
+        load(1)
+    } catch (e) {
+        const msg = e.response?.data?.message || 'Failed to create vendor'
+        toast.error(msg)
     }
 }
 
