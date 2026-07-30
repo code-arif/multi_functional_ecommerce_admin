@@ -4,9 +4,9 @@
       <div class="dp-input" :class="{ 'dp-input--focused': isOpen, 'dp-input--range': range }">
         <CalendarIcon class="dp-input-icon" />
         <template v-if="range">
-          <span class="dp-range-part" :class="{ 'dp-range-part--active': rangeSelectionPhase === 'from' }">{{ displayFrom || (placeholder ? placeholder + ' (From)' : 'From') }}</span>
+          <span class="dp-range-part" :class="{ 'dp-range-part--active': rangeSelectionPhase === 'from' }">{{ displayFrom || (placeholder ? placeholder + ' (From)' : 'From date') }}</span>
           <span class="dp-range-sep">→</span>
-          <span class="dp-range-part" :class="{ 'dp-range-part--active': rangeSelectionPhase === 'to' }">{{ displayTo || (placeholder ? placeholder + ' (To)' : 'To') }}</span>
+          <span class="dp-range-part" :class="{ 'dp-range-part--active': rangeSelectionPhase === 'to' }">{{ displayTo || (placeholder ? placeholder + ' (To)' : 'To date') }}</span>
         </template>
         <span v-else class="dp-single-text" :class="{ 'dp-placeholder': !displayText }">{{ displayText || placeholder || 'Select date' }}</span>
         <ChevronDownIcon class="dp-chevron" :class="{ 'dp-chevron--open': isOpen }" />

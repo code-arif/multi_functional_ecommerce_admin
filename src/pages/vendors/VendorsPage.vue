@@ -101,7 +101,6 @@
                         v-model:to="filters.joinTo"
                         :presets="joinPresets"
                         range
-                        placeholder="Join date"
                         display-format="MMM dd, yyyy"
                     />
                 </div>
@@ -118,7 +117,10 @@
             </div>
             <div class="flex items-center gap-2 mt-3 pt-3 border-t"
                 :style="{ borderColor: 'var(--border)' }">
-                <button @click="resetFilters" class="btn-ghost text-xs">Reset Filters</button>
+                <button @click="resetFilters" class="reset-btn">
+                    <XMarkIcon class="w-3.5 h-3.5" />
+                    Reset Filters
+                </button>
                 <span class="text-xs" :style="{ color: 'var(--text-muted)' }">
                     {{ pagination?.from || 0 }}–{{ pagination?.to || 0 }} of {{ pagination?.total || 0 }}
                 </span>
@@ -225,23 +227,25 @@
                             </td>
                             <!-- Actions -->
                             <td class="list-td text-right">
-                                <div class="flex items-center justify-end gap-1" @click.stop>
-                                    <router-link :to="`/vendors/${v.id}`"
-                                        class="list-action-btn"
-                                        title="View details">
-                                        <EyeIcon class="w-3.5 h-3.5" />
-                                    </router-link>
-                                    <button v-if="v.status === 'pending'" @click="approveVendor(v.id)"
-                                        class="list-action-btn" :style="{ color: 'var(--success)' }"
-                                        title="Approve">
-                                        <CheckIcon class="w-3.5 h-3.5" />
-                                    </button>
-                                    <button v-if="v.status === 'pending' || v.status === 'active'"
-                                        @click="rejectVendor(v.id)"
-                                        class="list-action-btn" :style="{ color: 'var(--danger)' }"
-                                        title="Reject / Suspend">
-                                        <XMarkIcon class="w-3.5 h-3.5" />
-                                    </button>
+                                <div class="flex items-center justify-end gap-1 whitespace-nowrap" @click.stop>
+                                    <Tooltip text="View">
+                                        <router-link :to="`/vendors/${v.id}`"
+                                            class="p-1.5 rounded-lg border border-gray-300 hover:border-gray-400 text-gray-500 hover:text-gray-700 transition-all inline-flex items-center">
+                                            <EyeIcon class="w-4 h-4" />
+                                        </router-link>
+                                    </Tooltip>
+                                    <Tooltip v-if="v.status === 'pending'" text="Approve">
+                                        <button @click="approveVendor(v.id)"
+                                            class="p-1.5 rounded-lg border border-gray-300 hover:border-green-400 text-green-600 hover:text-green-700 hover:bg-green-50 transition-all inline-flex items-center">
+                                            <CheckIcon class="w-4 h-4" />
+                                        </button>
+                                    </Tooltip>
+                                    <Tooltip v-if="v.status === 'pending' || v.status === 'active'" text="Reject">
+                                        <button @click="rejectVendor(v.id)"
+                                            class="p-1.5 rounded-lg border border-gray-300 hover:border-red-400 text-red-400 hover:text-red-500 hover:bg-red-50 transition-all inline-flex items-center">
+                                            <XMarkIcon class="w-4 h-4" />
+                                        </button>
+                                    </Tooltip>
                                 </div>
                             </td>
                         </tr>
@@ -290,6 +294,7 @@ import Breadcrumb from '@ecom/ui/components/Breadcrumb.vue'
 import StatusBadge from '@ecom/ui/components/StatusBadge.vue'
 import DatePicker from '@ecom/ui/components/DatePicker.vue'
 import SelectBox from '@ecom/ui/components/SelectBox.vue'
+import Tooltip from '@ecom/ui/components/Tooltip.vue'
 import { vendorApi } from '@/api/vendor'
 import {
     BuildingStorefrontIcon,
@@ -466,5 +471,29 @@ onMounted(() => load())
 </script>
 
 <style scoped>
-/* All shared list styles moved to @layer components in main.css */
+/* Reset Filters Button */
+.reset-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+}
+.reset-btn:hover {
+    border-color: var(--danger);
+    color: var(--danger);
+    background-color: color-mix(in srgb, var(--danger) 8%, transparent);
+}
+.reset-btn:active {
+    transform: scale(0.96);
+}
 </style>
