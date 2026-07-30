@@ -240,10 +240,10 @@
                                             <CheckIcon class="w-4 h-4" />
                                         </button>
                                     </Tooltip>
-                                    <Tooltip v-if="v.status === 'pending' || v.status === 'active'" text="Reject">
-                                        <button @click="rejectVendor(v.id)"
+                                    <Tooltip text="Delete">
+                                        <button @click="confirmDelete(v)"
                                             class="p-1.5 rounded-lg border border-gray-300 hover:border-red-400 text-red-400 hover:text-red-500 hover:bg-red-50 transition-all inline-flex items-center">
-                                            <XMarkIcon class="w-4 h-4" />
+                                            <TrashIcon class="w-4 h-4" />
                                         </button>
                                     </Tooltip>
                                 </div>
@@ -284,6 +284,16 @@
             </div>
         </div>
     </div>
+
+    <ConfirmModal
+        :show="!!deleteTarget"
+        title="Delete Vendor"
+        :message="`Delete vendor '${deleteTarget?.shop_name || deleteTarget?.name}'? This will permanently remove the vendor and all associated data.`"
+        confirm-text="Delete"
+        :loading="deleteLoading"
+        @confirm="doDelete"
+        @cancel="deleteTarget = null"
+    />
 </template>
 
 <script setup>
@@ -295,6 +305,7 @@ import StatusBadge from '@ecom/ui/components/StatusBadge.vue'
 import DatePicker from '@ecom/ui/components/DatePicker.vue'
 import SelectBox from '@ecom/ui/components/SelectBox.vue'
 import Tooltip from '@ecom/ui/components/Tooltip.vue'
+import ConfirmModal from '@ecom/ui/components/ConfirmModal.vue'
 import { vendorApi } from '@/api/vendor'
 import {
     BuildingStorefrontIcon,
@@ -306,6 +317,7 @@ import {
     StarIcon,
     EyeIcon,
     CheckIcon,
+    TrashIcon,
     XMarkIcon
 } from '@heroicons/vue/24/outline'
 
@@ -459,12 +471,26 @@ async function approveVendor(id) {
     } catch { toast.error('Failed to approve vendor') }
 }
 
-async function rejectVendor(id) {
+const deleteTarget = ref(null)
+const deleteLoading = ref(false)
+
+function confirmDelete(vendor) {
+    deleteTarget.value = vendor
+}
+
+async function doDelete() {
+    if (!deleteTarget.value) return
+    deleteLoading.value = true
     try {
-        await vendorApi.reject(id)
-        toast.success('Vendor rejected')
+        await vendorApi.delete(deleteTarget.value.id)
+        toast.success('Vendor deleted successfully')
+        deleteTarget.value = null
         load(pagination.value?.current_page || 1)
-    } catch { toast.error('Failed to reject vendor') }
+    } catch {
+        toast.error('Failed to delete vendor')
+    } finally {
+        deleteLoading.value = false
+    }
 }
 
 onMounted(() => load())
