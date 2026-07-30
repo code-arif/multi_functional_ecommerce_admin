@@ -6,7 +6,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": resolve(__dirname, "src"),
-      "@ecom/ui": resolve(__dirname, "../packages/ui/src"),
+      "@ecom/ui": resolve(__dirname, "src/ecom-ui"),
     },
     dedupe: ["@heroicons/vue", "lucide-vue-next", "vue", "vue-toastification", "date-fns"],
   },

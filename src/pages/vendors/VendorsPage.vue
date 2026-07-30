@@ -2,90 +2,6 @@
     <div>
         <Breadcrumb :items="breadcrumbItems" />
 
-        <!-- Filter Panel -->
-        <transition name="panel-slide">
-            <div v-if="showFilters" class="card p-4 mb-4 relative">
-                <button @click="showFilters = false" class="absolute top-3 right-3 text-xs px-2 py-1 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-50 transition-colors">
-                    Hide Filters
-                </button>
-                <!-- Single row: All filters in one responsive line -->
-                <div class="flex flex-wrap items-end gap-3">
-                    <div class="list-filter-item">
-                        <label class="label">Status</label>
-                        <SelectBox
-                            v-model="filters.status"
-                            :options="statusOptions"
-                            placeholder="All Status"
-                            size="sm"
-                            full-width
-                            @change="load(1)"
-                        />
-                    </div>
-                    <div class="list-filter-item">
-                        <label class="label">Verified</label>
-                        <SelectBox
-                            v-model="filters.verified"
-                            :options="verifiedOptions"
-                            placeholder="All"
-                            size="sm"
-                            full-width
-                            @change="load(1)"
-                        />
-                    </div>
-                    <div class="list-filter-item">
-                        <label class="label">Products</label>
-                        <SelectBox
-                            v-model="filters.products"
-                            :options="productsOptions"
-                            placeholder="Any"
-                            size="sm"
-                            full-width
-                            @change="load(1)"
-                        />
-                    </div>
-                    <div class="list-filter-item">
-                        <label class="label">Rating</label>
-                        <SelectBox
-                            v-model="filters.rating"
-                            :options="ratingOptions"
-                            placeholder="Any"
-                            size="sm"
-                            full-width
-                            @change="load(1)"
-                        />
-                    </div>
-                    <div class="list-filter-item list-filter-item--wide">
-                        <label class="label">Join Date</label>
-                        <DatePicker
-                            v-model:from="filters.joinFrom"
-                            v-model:to="filters.joinTo"
-                            :presets="joinPresets"
-                            range
-                            placeholder="Join date"
-                            display-format="MMM dd, yyyy"
-                        />
-                    </div>
-                    <div class="list-filter-item">
-                        <label class="label">Sort By</label>
-                        <SelectBox
-                            v-model="filters.sort"
-                            :options="sortOptions"
-                            size="sm"
-                            full-width
-                            @change="load(1)"
-                        />
-                    </div>
-                </div>
-                <div class="flex items-center gap-2 mt-3 pt-3 border-t"
-                    :style="{ borderColor: 'var(--border)' }">
-                    <button @click="resetFilters" class="btn-ghost text-xs">Reset Filters</button>
-                    <span class="text-xs" :style="{ color: 'var(--text-muted)' }">
-                        {{ pagination?.from || 0 }}–{{ pagination?.to || 0 }} of {{ pagination?.total || 0 }}
-                    </span>
-                </div>
-            </div>
-        </transition>
-
         <!-- Stats Bar -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
             <div class="card p-3 flex items-center gap-3">
@@ -127,6 +43,85 @@
                     <p class="text-[10px] font-semibold uppercase tracking-wide" :style="{ color: 'var(--text-muted)' }">Suspended</p>
                     <p class="text-sm font-bold" :style="{ color: 'var(--text-primary)' }">{{ stats.suspended || 0 }}</p>
                 </div>
+            </div>
+        </div>
+
+        <!-- Filter Panel -->
+        <div class="card p-4 mb-4 relative">
+            <!-- Single row: All filters in one responsive line -->
+            <div class="flex flex-wrap items-end gap-3">
+                <div class="list-filter-item">
+                    <label class="label">Status</label>
+                    <SelectBox
+                        v-model="filters.status"
+                        :options="statusOptions"
+                        placeholder="All Status"
+                        size="sm"
+                        full-width
+                        @change="load(1)"
+                    />
+                </div>
+                <div class="list-filter-item">
+                    <label class="label">Verified</label>
+                    <SelectBox
+                        v-model="filters.verified"
+                        :options="verifiedOptions"
+                        placeholder="All"
+                        size="sm"
+                        full-width
+                        @change="load(1)"
+                    />
+                </div>
+                <div class="list-filter-item">
+                    <label class="label">Products</label>
+                    <SelectBox
+                        v-model="filters.products"
+                        :options="productsOptions"
+                        placeholder="Any"
+                        size="sm"
+                        full-width
+                        @change="load(1)"
+                    />
+                </div>
+                <div class="list-filter-item">
+                    <label class="label">Rating</label>
+                    <SelectBox
+                        v-model="filters.rating"
+                        :options="ratingOptions"
+                        placeholder="Any"
+                        size="sm"
+                        full-width
+                        @change="load(1)"
+                    />
+                </div>
+                <div class="list-filter-item list-filter-item--wide">
+                    <label class="label">Join Date</label>
+                    <DatePicker
+                        v-model:from="filters.joinFrom"
+                        v-model:to="filters.joinTo"
+                        :presets="joinPresets"
+                        range
+                        placeholder="Join date"
+                        display-format="MMM dd, yyyy"
+                    />
+                </div>
+                <div class="list-filter-item">
+                    <label class="label">Sort By</label>
+                    <SelectBox
+                        v-model="filters.sort"
+                        :options="sortOptions"
+                        size="sm"
+                        full-width
+                        @change="load(1)"
+                    />
+                </div>
+            </div>
+            <div class="flex items-center gap-2 mt-3 pt-3 border-t"
+                :style="{ borderColor: 'var(--border)' }">
+                <button @click="resetFilters" class="btn-ghost text-xs">Reset Filters</button>
+                <span class="text-xs" :style="{ color: 'var(--text-muted)' }">
+                    {{ pagination?.from || 0 }}–{{ pagination?.to || 0 }} of {{ pagination?.total || 0 }}
+                </span>
             </div>
         </div>
 
@@ -298,7 +293,6 @@ import SelectBox from '@ecom/ui/components/SelectBox.vue'
 import { vendorApi } from '@/api/vendor'
 import {
     BuildingStorefrontIcon,
-    FunnelIcon,
     ChevronLeftIcon,
     ChevronRightIcon,
     CheckBadgeIcon,
@@ -316,13 +310,10 @@ const toast = useToast()
 const vendors = ref([])
 const pagination = ref(null)
 const loading = ref(true)
-const showFilters = ref(true)
 
 const breadcrumbItems = computed(() => [
   { label: 'Vendors', icon: BuildingStorefrontIcon }
 ])
-
-
 
 const filters = reactive({
     status: '',
