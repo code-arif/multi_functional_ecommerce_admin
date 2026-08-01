@@ -1,11 +1,10 @@
 <template>
   <div class="w-full">
-    <div class="flex items-center justify-between mb-6">
-      <Breadcrumb :items="breadcrumbItems" />
+    <BreadcrumbHeader :items="breadcrumbItems">
       <router-link :to="`/products/${product?.id}/edit`" class="btn-primary text-sm" v-if="product">
         Edit Product
       </router-link>
-    </div>
+    </BreadcrumbHeader>
 
     <!-- Loading state -->
     <div v-if="loading" class="flex items-center justify-center py-24">
@@ -456,7 +455,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
-import Breadcrumb from '@ecom/ui/components/Breadcrumb.vue'
+import BreadcrumbHeader from '@ecom/ui/components/BreadcrumbHeader.vue'
 import StatusBadge from '@ecom/ui/components/StatusBadge.vue'
 import ConfirmModal from '@ecom/ui/components/ConfirmModal.vue'
 import { productApi } from '@/api'

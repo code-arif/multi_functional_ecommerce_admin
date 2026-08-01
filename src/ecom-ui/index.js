@@ -4,6 +4,7 @@
 // ═══════════════════════════════════════════
 
 export { default as Breadcrumb } from './components/Breadcrumb.vue'
+export { default as BreadcrumbHeader } from './components/BreadcrumbHeader.vue'
 export { default as StatusBadge } from './components/StatusBadge.vue'
 export { default as DataTable } from './components/DataTable.vue'
 export { default as Pagination } from './components/Pagination.vue'

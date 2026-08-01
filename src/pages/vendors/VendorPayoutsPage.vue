@@ -1,11 +1,10 @@
 <template>
   <div class="animate-in">
-    <div class="flex items-center justify-between mb-6">
-      <Breadcrumb :items="breadcrumbItems" />
+    <BreadcrumbHeader :items="breadcrumbItems">
       <button @click="showCreateModal = true" class="btn-primary text-sm">
         Create Payout
       </button>
-    </div>
+    </BreadcrumbHeader>
 
     <!-- Summary Stats -->
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
@@ -281,7 +280,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useToast } from 'vue-toastification'
-import Breadcrumb from '@ecom/ui/components/Breadcrumb.vue'
+import BreadcrumbHeader from '@ecom/ui/components/BreadcrumbHeader.vue'
 import SelectBox from '@ecom/ui/components/SelectBox.vue'
 import DatePicker from '@ecom/ui/components/DatePicker.vue'
 import Pagination from '@ecom/ui/components/Pagination.vue'

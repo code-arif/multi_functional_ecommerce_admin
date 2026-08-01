@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="w-full">
     <nav class="flex items-center gap-1 text-xs mb-3">
       <template v-for="(item, idx) in items" :key="idx">
         <ChevronRightIcon v-if="idx > 0" class="w-3.5 h-3.5 shrink-0" :style="{ color: 'var(--text-muted)' }" />

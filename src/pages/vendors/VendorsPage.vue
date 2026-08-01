@@ -1,12 +1,10 @@
 <template>
     <div>
-        <div class="flex items-start justify-between mb-4">
-            <Breadcrumb :items="breadcrumbItems" />
-            <button @click="showAddModal = true" class="btn-primary text-sm shrink-0 mt-0.5">
-                <PlusIcon class="w-4 h-4" />
+        <BreadcrumbHeader :items="breadcrumbItems">
+            <button @click="showAddModal = true" class="btn-primary text-sm">
                 Add Vendor
             </button>
-        </div>
+        </BreadcrumbHeader>
 
         <!-- Stats Bar -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
@@ -312,7 +310,7 @@
 import { ref, reactive, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useToast } from 'vue-toastification'
-import Breadcrumb from '@ecom/ui/components/Breadcrumb.vue'
+import BreadcrumbHeader from '@ecom/ui/components/BreadcrumbHeader.vue'
 import StatusBadge from '@ecom/ui/components/StatusBadge.vue'
 import DatePicker from '@ecom/ui/components/DatePicker.vue'
 import SelectBox from '@ecom/ui/components/SelectBox.vue'
@@ -327,7 +325,6 @@ import {
     CheckBadgeIcon,
     ClockIcon,
     NoSymbolIcon,
-    PlusIcon,
     StarIcon,
     EyeIcon,
     CheckIcon,
