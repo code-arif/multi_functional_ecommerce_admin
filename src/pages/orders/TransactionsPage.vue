@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Breadcrumb :items="breadcrumbItems" />
+    <BreadcrumbHeader :items="breadcrumbItems" />
     <DataTable :items="transactions" :columns="columns" :loading="loading" searchable :pagination="pagination"
       search-placeholder="Search by ID, customer..." empty-icon="💳" empty-text="No transactions found"
       @search="q => { search = q; load(1) }" @page="load">
@@ -31,7 +31,7 @@
 </template>
 <script setup>
 import { ref, onMounted, computed } from 'vue'
-import Breadcrumb from '@ecom/ui/components/Breadcrumb.vue'
+import BreadcrumbHeader from '@ecom/ui/components/BreadcrumbHeader.vue'
 import DataTable from '@ecom/ui/components/DataTable.vue'
 import SelectBox from '@ecom/ui/components/SelectBox.vue'
 import Tooltip from '@ecom/ui/components/Tooltip.vue'

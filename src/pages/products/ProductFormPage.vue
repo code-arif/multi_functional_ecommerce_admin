@@ -1,6 +1,6 @@
 <template>
   <div class="w-full">
-    <Breadcrumb :items="breadcrumbItems" />
+    <BreadcrumbHeader :items="breadcrumbItems" />
 
     <form @submit.prevent="save" class="space-y-6">
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 w-full">
@@ -366,7 +366,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
 import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css'
-import Breadcrumb from '@ecom/ui/components/Breadcrumb.vue'
+import BreadcrumbHeader from '@ecom/ui/components/BreadcrumbHeader.vue'
 import SelectBox from '@ecom/ui/components/SelectBox.vue'
 import { productApi, categoryApi, brandApi } from '@/api'
 import { TrashIcon, PhotoIcon, CubeIcon } from '@heroicons/vue/24/outline'

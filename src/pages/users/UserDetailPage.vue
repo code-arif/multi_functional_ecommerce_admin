@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Breadcrumb :items="breadcrumbItems" />
+    <BreadcrumbHeader :items="breadcrumbItems" />
     <div v-if="user" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div class="card p-5">
         <div class="flex flex-col items-center text-center mb-5">
@@ -53,7 +53,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useToast } from 'vue-toastification'
 import StatusBadge from '@ecom/ui/components/StatusBadge.vue'
-import Breadcrumb from '@ecom/ui/components/Breadcrumb.vue'
+import BreadcrumbHeader from '@ecom/ui/components/BreadcrumbHeader.vue'
 import SelectBox from '@ecom/ui/components/SelectBox.vue'
 import { UsersIcon } from '@heroicons/vue/24/outline'
 

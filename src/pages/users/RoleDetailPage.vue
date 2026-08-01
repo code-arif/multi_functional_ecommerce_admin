@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Breadcrumb :items="breadcrumbItems" />
+    <BreadcrumbHeader :items="breadcrumbItems" />
     <div v-if="!role" class="card p-12 text-center" :style="{ color: 'var(--text-muted)' }">
       <svg class="w-8 h-8 animate-spin mx-auto mb-3" :style="{ color: 'var(--color-primary)' }" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>Loading role...
     </div>
@@ -49,7 +49,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import StatusBadge from '@ecom/ui/components/StatusBadge.vue'
-import Breadcrumb from '@ecom/ui/components/Breadcrumb.vue'
+import BreadcrumbHeader from '@ecom/ui/components/BreadcrumbHeader.vue'
 import { IdentificationIcon, LockOpenIcon, CheckIcon, XMarkIcon } from '@heroicons/vue/24/outline'
 const route = useRoute()
 const role = ref(null)

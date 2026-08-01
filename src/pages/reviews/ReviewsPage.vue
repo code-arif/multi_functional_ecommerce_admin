@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Breadcrumb :items="breadcrumbItems" />
+    <BreadcrumbHeader :items="breadcrumbItems" />
     <DataTable :items="reviews" :columns="columns" :loading="loading" searchable
       search-placeholder="Search reviews..." empty-icon="⭐" empty-text="No reviews found"
       :pagination="pagination" @search="q => { search = q; load(1) }" @page="load">
@@ -62,7 +62,7 @@ import SelectBox from '@ecom/ui/components/SelectBox.vue'
 import StatusBadge from '@ecom/ui/components/StatusBadge.vue'
 import ConfirmModal from '@ecom/ui/components/ConfirmModal.vue'
 import Tooltip from '@ecom/ui/components/Tooltip.vue'
-import Breadcrumb from '@ecom/ui/components/Breadcrumb.vue'
+import BreadcrumbHeader from '@ecom/ui/components/BreadcrumbHeader.vue'
 import { reviewApi } from '@/api'
 import { StarIcon, TrashIcon, CheckIcon, XMarkIcon } from '@heroicons/vue/24/outline'
 

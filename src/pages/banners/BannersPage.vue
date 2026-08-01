@@ -1,6 +1,6 @@
 <template>
     <div>
-        <Breadcrumb :items="breadcrumbItems" />
+        <BreadcrumbHeader :items="breadcrumbItems" />
         <DataTable :items="banners" :columns="columns" :loading="loading" empty-icon="🖼️" empty-text="No banners yet">
             <template #actions>
                 <button @click="openForm()" class="btn-primary">
@@ -125,7 +125,7 @@ import { ref, reactive, onMounted, onUnmounted, computed } from 'vue'
 import { useToast } from 'vue-toastification'
 import DataTable from '@ecom/ui/components/DataTable.vue'
 import ConfirmModal from '@ecom/ui/components/ConfirmModal.vue'
-import Breadcrumb from '@ecom/ui/components/Breadcrumb.vue'
+import BreadcrumbHeader from '@ecom/ui/components/BreadcrumbHeader.vue'
 import { bannerApi } from '@/api'
 import Tooltip from '@ecom/ui/components/Tooltip.vue'
 import { PencilIcon, TrashIcon, ChevronDownIcon, PhotoIcon } from '@heroicons/vue/24/outline'

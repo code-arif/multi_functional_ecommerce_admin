@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Breadcrumb :items="breadcrumbItems" />
+    <BreadcrumbHeader :items="breadcrumbItems" />
     <div class="space-y-6">
 
     <!-- Step Indicator -->
@@ -360,7 +360,7 @@ import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
 import * as XLSX from 'xlsx'
-import Breadcrumb from '@ecom/ui/components/Breadcrumb.vue'
+import BreadcrumbHeader from '@ecom/ui/components/BreadcrumbHeader.vue'
 import { productApi } from '@/api'
 import {
   ArrowPathIcon,

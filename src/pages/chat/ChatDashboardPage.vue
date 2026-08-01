@@ -1,6 +1,6 @@
 <template>
   <div class="space-y-6">
-    <Breadcrumb :items="breadcrumbItems" />
+    <BreadcrumbHeader :items="breadcrumbItems" />
 
     <!-- Stat Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4">
@@ -257,7 +257,7 @@
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { Chart, registerables } from 'chart.js'
-import Breadcrumb from '@ecom/ui/components/Breadcrumb.vue'
+import BreadcrumbHeader from '@ecom/ui/components/BreadcrumbHeader.vue'
 import StatCard from '@ecom/ui/components/StatCard.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useThemeStore } from '@/stores/theme'

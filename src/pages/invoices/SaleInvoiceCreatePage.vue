@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Breadcrumb :items="breadcrumbItems" />
+    <BreadcrumbHeader :items="breadcrumbItems" />
     <div v-if="loading" class="card p-12 text-center" style="color:var(--text-muted)">
       <svg class="w-8 h-8 animate-spin mx-auto mb-3" :style="{color:'var(--color-primary)'}" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>Loading invoice data...
     </div>
@@ -187,7 +187,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
 import SelectBox from '@ecom/ui/components/SelectBox.vue'
 import DatePicker from '@ecom/ui/components/DatePicker.vue'
-import Breadcrumb from '@ecom/ui/components/Breadcrumb.vue'
+import BreadcrumbHeader from '@ecom/ui/components/BreadcrumbHeader.vue'
 import ProductSelectionModal from '@/components/invoices/ProductSelectionModal.vue'
 import { invoiceApi } from '@/api'
 import { User, Users, UserPlus, FileText, Calculator, ShoppingBag, Package, Plus, Trash2, Pencil, Percent, Printer, Check, Search } from 'lucide-vue-next'

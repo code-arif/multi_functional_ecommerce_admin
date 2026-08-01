@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Breadcrumb :items="breadcrumbItems" />
+    <BreadcrumbHeader :items="breadcrumbItems" />
     <!-- Role Stats -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
       <StatCard label="Total Admins" :value="roleStats.total" :icon="UserGroupIcon" icon-bg="bg-indigo-50" icon-color="text-indigo-600" />
@@ -141,7 +141,7 @@ import SelectBox from '@ecom/ui/components/SelectBox.vue'
 import ConfirmModal from '@ecom/ui/components/ConfirmModal.vue'
 import Tooltip from '@ecom/ui/components/Tooltip.vue'
 import StatCard from '@ecom/ui/components/StatCard.vue'
-import Breadcrumb from '@ecom/ui/components/Breadcrumb.vue'
+import BreadcrumbHeader from '@ecom/ui/components/BreadcrumbHeader.vue'
 import { PencilIcon, TrashIcon, EyeIcon, EyeSlashIcon, ChevronDownIcon, UserGroupIcon, ShieldCheckIcon, UserCircleIcon, UserIcon } from '@heroicons/vue/24/outline'
 
 const toast = useToast()

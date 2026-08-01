@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Breadcrumb :items="breadcrumbItems" />
+    <BreadcrumbHeader :items="breadcrumbItems" />
     <div class="card p-4 mb-6 flex flex-wrap items-center gap-4">
       <DatePicker v-model:from="filters.from" v-model:to="filters.to" :presets="presets" range placeholder="Date range" display-format="MMM dd, yyyy" />
       <button @click="loadAll" class="btn-primary text-sm py-1.5 px-4">Apply</button>
@@ -37,7 +37,7 @@
 import { ref, computed } from 'vue'
 import { startOfYear } from 'date-fns'
 import DatePicker from '@ecom/ui/components/DatePicker.vue'
-import Breadcrumb from '@ecom/ui/components/Breadcrumb.vue'
+import BreadcrumbHeader from '@ecom/ui/components/BreadcrumbHeader.vue'
 import { Printer, DollarSign } from 'lucide-vue-next'
 import { BuildingStorefrontIcon, ShieldCheckIcon, StarIcon, ChartBarSquareIcon } from '@heroicons/vue/24/outline'
 const breadcrumbItems = computed(() => [

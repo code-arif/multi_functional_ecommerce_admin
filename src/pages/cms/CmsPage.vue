@@ -1,7 +1,7 @@
 VUEEOF
 <template>
     <div>
-        <Breadcrumb :items="breadcrumbItems" />
+        <BreadcrumbHeader :items="breadcrumbItems" />
         <DataTable :items="pages" :columns="columns" :loading="loading" empty-icon="📄">
             <template #actions>
                 <button @click="openForm()" class="btn-primary">
@@ -88,7 +88,7 @@ import { useToast } from 'vue-toastification'
 import DataTable from '@ecom/ui/components/DataTable.vue'
 import SelectBox from '@ecom/ui/components/SelectBox.vue'
 import ConfirmModal from '@ecom/ui/components/ConfirmModal.vue'
-import Breadcrumb from '@ecom/ui/components/Breadcrumb.vue'
+import BreadcrumbHeader from '@ecom/ui/components/BreadcrumbHeader.vue'
 import { cmsApi } from '@/api'
 import Tooltip from '@ecom/ui/components/Tooltip.vue'
 import { PencilIcon, TrashIcon, DocumentTextIcon, ChevronDownIcon } from '@heroicons/vue/24/outline'

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Breadcrumb :items="breadcrumbItems" />
+    <BreadcrumbHeader :items="breadcrumbItems" />
     <DataTable :items="coupons" :columns="columns" :loading="loading" searchable :pagination="pagination" @search="q=>{search=q;load(1)}" @page="load" empty-icon="🎟️">
       <template #actions>
         <button @click="openForm()" class="btn-primary">Create Coupon</button>
@@ -66,7 +66,7 @@
 <script setup>
 import { ref, reactive, onMounted, computed } from 'vue'
 import { useToast } from 'vue-toastification'
-import Breadcrumb from '@ecom/ui/components/Breadcrumb.vue'
+import BreadcrumbHeader from '@ecom/ui/components/BreadcrumbHeader.vue'
 import DataTable from '@ecom/ui/components/DataTable.vue'
 import ConfirmModal from '@ecom/ui/components/ConfirmModal.vue'
 import Tooltip from '@ecom/ui/components/Tooltip.vue'

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Breadcrumb :items="breadcrumbItems" />
+    <BreadcrumbHeader :items="breadcrumbItems" />
     <DataTable :items="invoices" :columns="columns" :loading="loading" searchable
       search-placeholder="Search by invoice #, vendor..." empty-icon="📋" empty-text="No purchase invoices found"
       :pagination="pagination" @search="q => { search = q; load(1) }" @page="load">
@@ -45,7 +45,7 @@ import DataTable from '@ecom/ui/components/DataTable.vue'
 import SelectBox from '@ecom/ui/components/SelectBox.vue'
 import StatusBadge from '@ecom/ui/components/StatusBadge.vue'
 import Tooltip from '@ecom/ui/components/Tooltip.vue'
-import Breadcrumb from '@ecom/ui/components/Breadcrumb.vue'
+import BreadcrumbHeader from '@ecom/ui/components/BreadcrumbHeader.vue'
 import ConfirmModal from '@ecom/ui/components/ConfirmModal.vue'
 import { DocumentTextIcon, EyeIcon, PencilIcon, TrashIcon } from '@heroicons/vue/24/outline'
 

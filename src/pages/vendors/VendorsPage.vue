@@ -287,23 +287,22 @@
                 </div>
             </div>
         </div>
+        <AddVendorModal
+            :show="showAddModal"
+            @close="showAddModal = false"
+            @save="handleAddVendor"
+        />
+
+        <ConfirmModal
+            :show="!!deleteTarget"
+            title="Delete Vendor"
+            :message="`Delete vendor '${deleteTarget?.shop_name || deleteTarget?.name}'? This will permanently remove the vendor and all associated data.`"
+            confirm-text="Delete"
+            :loading="deleteLoading"
+            @confirm="doDelete"
+            @cancel="deleteTarget = null"
+        />
     </div>
-
-    <AddVendorModal
-        :show="showAddModal"
-        @close="showAddModal = false"
-        @save="handleAddVendor"
-    />
-
-    <ConfirmModal
-        :show="!!deleteTarget"
-        title="Delete Vendor"
-        :message="`Delete vendor '${deleteTarget?.shop_name || deleteTarget?.name}'? This will permanently remove the vendor and all associated data.`"
-        confirm-text="Delete"
-        :loading="deleteLoading"
-        @confirm="doDelete"
-        @cancel="deleteTarget = null"
-    />
 </template>
 
 <script setup>

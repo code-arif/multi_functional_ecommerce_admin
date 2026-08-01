@@ -1,6 +1,6 @@
 <template>
     <div>
-        <Breadcrumb :items="breadcrumbItems" />
+        <BreadcrumbHeader :items="breadcrumbItems" />
 
         <div v-if="loading" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div v-for="i in 4" :key="i" class="skeleton h-40 rounded-xl" />
@@ -191,7 +191,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useToast } from 'vue-toastification'
-import Breadcrumb from '@ecom/ui/components/Breadcrumb.vue'
+import BreadcrumbHeader from '@ecom/ui/components/BreadcrumbHeader.vue'
 import StatusBadge from '@ecom/ui/components/StatusBadge.vue'
 import SelectBox from '@ecom/ui/components/SelectBox.vue'
 import { orderApi } from '@/api'

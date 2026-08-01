@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Breadcrumb :items="breadcrumbItems" />
+    <BreadcrumbHeader :items="breadcrumbItems" />
 
     <!-- Date Range Filter -->
     <div class="card p-4 mb-6 flex flex-wrap items-center gap-4">
@@ -132,7 +132,7 @@ import { startOfYear } from 'date-fns'
 import { Chart, registerables } from 'chart.js'
 import DatePicker from '@ecom/ui/components/DatePicker.vue'
 import SelectBox from '@ecom/ui/components/SelectBox.vue'
-import Breadcrumb from '@ecom/ui/components/Breadcrumb.vue'
+import BreadcrumbHeader from '@ecom/ui/components/BreadcrumbHeader.vue'
 import { reportApi, productApi } from '@/api'
 import { useThemeStore } from '@/stores/theme'
 import { ShoppingBag, Package, DollarSign, TrendingUp, Printer } from 'lucide-vue-next'

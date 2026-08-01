@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Breadcrumb :items="breadcrumbItems" />
+    <BreadcrumbHeader :items="breadcrumbItems" />
 
     <div class="card overflow-hidden">
         <div class="p-5 border-b" :style="{ borderColor: 'var(--border)' }">
@@ -86,7 +86,7 @@
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
-import Breadcrumb from '@ecom/ui/components/Breadcrumb.vue'
+import BreadcrumbHeader from '@ecom/ui/components/BreadcrumbHeader.vue'
 import { IdentificationIcon } from '@heroicons/vue/24/outline'
 
 const route = useRoute()

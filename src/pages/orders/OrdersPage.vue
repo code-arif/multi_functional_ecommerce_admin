@@ -1,6 +1,6 @@
 <template>
     <div>
-        <Breadcrumb :items="breadcrumbItems" />
+        <BreadcrumbHeader :items="breadcrumbItems" />
 
         <!-- Bulk Action Bar -->
         <transition name="panel-slide">
@@ -141,7 +141,7 @@
 import { ref, onMounted, computed } from 'vue'
 import { startOfYear } from 'date-fns'
 import { useToast } from 'vue-toastification'
-import Breadcrumb from '@ecom/ui/components/Breadcrumb.vue'
+import BreadcrumbHeader from '@ecom/ui/components/BreadcrumbHeader.vue'
 import DataTable from '@ecom/ui/components/DataTable.vue'
 import StatusBadge from '@ecom/ui/components/StatusBadge.vue'
 import SelectBox from '@ecom/ui/components/SelectBox.vue'

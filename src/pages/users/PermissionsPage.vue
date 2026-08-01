@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Breadcrumb :items="breadcrumbItems" />
+    <BreadcrumbHeader :items="breadcrumbItems" />
     <DataTable :items="permissions" :columns="columns" :loading="loading" searchable
       search-placeholder="Search permissions..." empty-icon="🔑" empty-text="No permissions found"
       @search="q => { search = q; load(1) }">
@@ -116,7 +116,7 @@ import SelectBox from '@ecom/ui/components/SelectBox.vue'
 import Pagination from '@ecom/ui/components/Pagination.vue'
 import ConfirmModal from '@ecom/ui/components/ConfirmModal.vue'
 import Tooltip from '@ecom/ui/components/Tooltip.vue'
-import Breadcrumb from '@ecom/ui/components/Breadcrumb.vue'
+import BreadcrumbHeader from '@ecom/ui/components/BreadcrumbHeader.vue'
 import { PencilIcon, TrashIcon, LockOpenIcon } from '@heroicons/vue/24/outline'
 const breadcrumbItems = computed(() => [
   { label: 'Permissions', icon: LockOpenIcon }

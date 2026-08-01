@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Breadcrumb :items="breadcrumbItems" />
+    <BreadcrumbHeader :items="breadcrumbItems" />
     <DataTable :items="brands" :columns="columns" :loading="loading" searchable @search="q => { search = q; load() }"
       empty-icon="🏭">
       <template #default="{ item }">
@@ -74,7 +74,7 @@
 <script setup>
 import { ref, reactive, onMounted, computed } from 'vue'
 import { useToast } from 'vue-toastification'
-import Breadcrumb from '@ecom/ui/components/Breadcrumb.vue'
+import BreadcrumbHeader from '@ecom/ui/components/BreadcrumbHeader.vue'
 import DataTable from '@ecom/ui/components/DataTable.vue'
 import ConfirmModal from '@ecom/ui/components/ConfirmModal.vue'
 import Tooltip from '@ecom/ui/components/Tooltip.vue'

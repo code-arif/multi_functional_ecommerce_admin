@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Breadcrumb :items="breadcrumbItems" />
+    <BreadcrumbHeader :items="breadcrumbItems" />
 
     <DataTable :items="products" :columns="columns" :loading="loading" searchable :pagination="pagination"
       search-placeholder="Search products..." empty-icon="📦" empty-text="No products found"
@@ -132,7 +132,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useToast } from 'vue-toastification'
-import Breadcrumb from '@ecom/ui/components/Breadcrumb.vue'
+import BreadcrumbHeader from '@ecom/ui/components/BreadcrumbHeader.vue'
 import DataTable from '@ecom/ui/components/DataTable.vue'
 import StatusBadge from '@ecom/ui/components/StatusBadge.vue'
 import ConfirmModal from '@ecom/ui/components/ConfirmModal.vue'

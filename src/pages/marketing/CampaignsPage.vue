@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Breadcrumb :items="breadcrumbItems" />
+    <BreadcrumbHeader :items="breadcrumbItems" />
     <DataTable :items="campaigns" :columns="columns" :loading="loading" searchable
       search-placeholder="Search campaigns..." empty-icon="📢" empty-text="No campaigns yet"
       @search="q => { search = q; load(1) }">
@@ -96,7 +96,7 @@ import DatePicker from '@ecom/ui/components/DatePicker.vue'
 import SelectBox from '@ecom/ui/components/SelectBox.vue'
 import Tooltip from '@ecom/ui/components/Tooltip.vue'
 import ConfirmModal from '@ecom/ui/components/ConfirmModal.vue'
-import Breadcrumb from '@ecom/ui/components/Breadcrumb.vue'
+import BreadcrumbHeader from '@ecom/ui/components/BreadcrumbHeader.vue'
 import { MegaphoneIcon, PencilIcon, TrashIcon, EyeIcon } from '@heroicons/vue/24/outline'
 
 const toast = useToast()

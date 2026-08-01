@@ -1,6 +1,6 @@
 <template>
     <div>
-        <Breadcrumb :items="breadcrumbItems" />
+        <BreadcrumbHeader :items="breadcrumbItems" />
 
         <!-- Loading -->
         <div v-if="!vendor" class="card p-12 text-center" :style="{ color: 'var(--text-muted)' }">
@@ -302,7 +302,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useToast } from 'vue-toastification'
-import Breadcrumb from '@ecom/ui/components/Breadcrumb.vue'
+import BreadcrumbHeader from '@ecom/ui/components/BreadcrumbHeader.vue'
 import StatusBadge from '@ecom/ui/components/StatusBadge.vue'
 import { vendorApi } from '@/api/vendor'
 import {

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Breadcrumb :items="breadcrumbItems" />
+    <BreadcrumbHeader :items="breadcrumbItems" />
     <DataTable :items="categories" :columns="columns" :loading="loading" empty-icon="🏷️"
       empty-text="No categories yet">
       <template #actions>
@@ -107,7 +107,7 @@
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useToast } from 'vue-toastification'
-import Breadcrumb from '@ecom/ui/components/Breadcrumb.vue'
+import BreadcrumbHeader from '@ecom/ui/components/BreadcrumbHeader.vue'
 import DataTable from '@ecom/ui/components/DataTable.vue'
 import ConfirmModal from '@ecom/ui/components/ConfirmModal.vue'
 import SelectBox from '@ecom/ui/components/SelectBox.vue'

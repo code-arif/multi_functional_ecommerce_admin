@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Breadcrumb :items="breadcrumbItems" />
+    <BreadcrumbHeader :items="breadcrumbItems" />
     <transition name="panel-slide">
       <div v-if="showFilters" class="card p-4 mb-4 relative">
         <button @click="showFilters = false" class="absolute top-3 right-3 text-xs px-2 py-1 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-50 transition-colors">Hide Filters</button>
@@ -92,7 +92,7 @@
 </template>
 <script setup>
 import { ref, reactive, onMounted, computed } from 'vue'
-import Breadcrumb from '@ecom/ui/components/Breadcrumb.vue'
+import BreadcrumbHeader from '@ecom/ui/components/BreadcrumbHeader.vue'
 import StatusBadge from '@ecom/ui/components/StatusBadge.vue'
 import DatePicker from '@ecom/ui/components/DatePicker.vue'
 import SelectBox from '@ecom/ui/components/SelectBox.vue'
