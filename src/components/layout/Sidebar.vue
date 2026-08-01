@@ -193,7 +193,6 @@ const navGroups = [
         name: 'Marketplace', icon: BuildingStorefrontIcon,
         items: [
             { name: 'All Vendors', to: '/vendors', icon: BuildingStorefrontIcon },
-            { name: 'Pending Approval Vendors', to: '/vendors/pending', icon: ClipboardDocumentListIcon },
             { name: 'Vendor Payouts', to: '/vendor-payouts', icon: BanknotesIcon },
             { name: 'All Shops', to: '/shops', icon: HomeModernIcon },
             { name: 'Pending Approval Shops', to: '/shops/pending', icon: ClipboardDocumentListIcon }

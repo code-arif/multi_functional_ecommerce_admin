@@ -96,7 +96,7 @@
 
                     <!-- Footer -->
                     <div class="flex items-center justify-end gap-3 pt-4 border-t" :style="{ borderColor: 'var(--border)' }">
-                        <button type="button" @click="$emit('close')" class="btn-ghost text-sm">Cancel</button>
+                        <button type="button" @click="$emit('close')" class="px-4 py-[7px] rounded-lg border border-gray-300 text-gray-600 text-sm font-medium hover:bg-gray-50 transition-colors">Cancel</button>
                         <button type="submit" :disabled="saving" class="btn-primary text-sm">
                             <svg v-if="saving" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
