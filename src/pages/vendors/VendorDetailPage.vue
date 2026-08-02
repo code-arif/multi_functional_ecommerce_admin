@@ -14,12 +14,11 @@
 
         <template v-if="vendor">
             <!-- Shop Header / Banner -->
-            <div class="card overflow-hidden mb-6">
-                <div class="h-32 md:h-40 relative"
+            <div class="card mb-6">
+                <div class="h-24 md:h-28 relative overflow-hidden rounded-t-lg"
                     :style="{
-                        background: vendor.cover_image
-                            ? `url(${vendor.cover_image}) center/cover`
-                            : 'linear-gradient(135deg, var(--color-primary-dark), var(--color-primary))'
+                        background: `url(${vendor.cover_image || DEFAULT_COVER_IMAGE}) center/cover`,
+                        backgroundColor: 'var(--border-light)'
                     }">
                     <div class="absolute inset-0"
                         :style="{ background: 'linear-gradient(to top, rgba(0,0,0,0.6), transparent)' }"></div>
@@ -48,14 +47,9 @@
                                 <span>Joined {{ formatDate(vendor.created_at) }}</span>
                             </div>
                         </div>
-                        <div class="flex gap-2 shrink-0">
-                            <select v-model="newStatus" @change="updateStatus"
-                                class="input-sm w-32 text-xs">
-                                <option value="active">Active</option>
-                                <option value="pending">Pending</option>
-                                <option value="suspended">Suspend</option>
-                                <option value="banned">Banned</option>
-                            </select>
+                        <div class="shrink-0">
+                            <SelectBox v-model="newStatus" :options="statusOptions" size="sm"
+                                class="w-32" @change="updateStatus" />
                         </div>
                     </div>
 
@@ -303,6 +297,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useToast } from 'vue-toastification'
 import BreadcrumbHeader from '@ecom/ui/components/BreadcrumbHeader.vue'
+import SelectBox from '@ecom/ui/components/SelectBox.vue'
 import StatusBadge from '@ecom/ui/components/StatusBadge.vue'
 import { vendorApi } from '@/api/vendor'
 import {
@@ -319,6 +314,16 @@ const route = useRoute()
 const toast = useToast()
 const vendor = ref(null)
 const newStatus = ref('')
+
+const statusOptions = [
+    { value: 'active', label: 'Active' },
+    { value: 'pending', label: 'Pending' },
+    { value: 'suspended', label: 'Suspended' },
+    { value: 'banned', label: 'Banned' },
+]
+
+// Default shop cover banner (Unsplash)
+const DEFAULT_COVER_IMAGE = 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1600&q=80'
 
 const breadcrumbItems = computed(() => [
   { label: 'Vendors', to: '/vendors', icon: BuildingStorefrontIcon },
