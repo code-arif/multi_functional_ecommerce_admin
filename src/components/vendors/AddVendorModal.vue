@@ -96,7 +96,7 @@
 
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <div class="flex items-center justify-between mb-1">
+                            <div class="flex items-center justify-between mb-1 h-5">
                                 <label class="label mb-0" :style="{ color: 'var(--text-muted)' }">Password</label>
                                 <button type="button" @click="generatePassword" 
                                     class="text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 hover:opacity-80 transition-colors"
@@ -123,7 +123,9 @@
                             <p v-if="errors.password" class="text-xs mt-1" :style="{ color: 'var(--danger)' }">{{ errors.password }}</p>
                         </div>
                         <div>
-                            <label class="label mb-1 block" :style="{ color: 'var(--text-muted)' }">Confirm Password</label>
+                            <div class="flex items-center justify-between mb-1 h-5">
+                                <label class="label mb-0" :style="{ color: 'var(--text-muted)' }">Confirm Password</label>
+                            </div>
                             <div class="relative">
                                 <input
                                     v-model="form.password_confirmation"
