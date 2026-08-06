@@ -289,11 +289,56 @@
                 </div>
             </div>
         </template>
+        <!-- Reject/Suspend Reason Modal -->
+        <Teleport to="body">
+            <div v-if="reasonModal.show" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" @click="closeReasonModal" />
+                <div class="relative bg-white rounded-2xl w-full max-w-md animate-in overflow-hidden shadow-2xl animate-fade-in"
+                    :style="{ boxShadow: '0 20px 60px rgba(0,0,0,0.15)' }">
+                    <div class="flex items-center justify-between px-6 py-4 border-b" :style="{ borderColor: 'var(--border)' }">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-lg flex items-center justify-center"
+                                :style="{ backgroundColor: 'color-mix(in srgb, var(--danger) 15%, transparent)' }">
+                                <NoSymbolIcon v-if="reasonModal.action === 'suspend'" class="w-5 h-5" :style="{ color: 'var(--danger)' }" />
+                                <XMarkIcon v-else class="w-5 h-5" :style="{ color: 'var(--danger)' }" />
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-bold" :style="{ color: 'var(--text-primary)' }">
+                                    {{ reasonModal.action === 'suspend' ? 'Suspend Vendor' : 'Reject Vendor' }}
+                                </h3>
+                                <p class="text-xs" :style="{ color: 'var(--text-muted)' }">
+                                    Please provide a reason for this action
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <form @submit.prevent="submitReasonAction" class="p-6 space-y-4">
+                        <div>
+                            <label class="label mb-2 block text-xs font-bold" :style="{ color: 'var(--text-muted)' }">Reason</label>
+                            <textarea
+                                v-model="reasonModal.reason"
+                                rows="4"
+                                required
+                                placeholder="Enter reason here..."
+                                class="w-full p-3 border rounded-lg bg-white text-xs outline-none focus:border-primary"
+                                :style="{ borderColor: 'var(--border)', color: 'var(--text-primary)' }"
+                            ></textarea>
+                        </div>
+                        <div class="flex items-center justify-end gap-3 pt-4 border-t" :style="{ borderColor: 'var(--border)' }">
+                            <button type="button" @click="closeReasonModal" class="px-4 py-[7px] rounded-lg border border-gray-300 text-gray-600 text-sm font-medium hover:bg-gray-50 transition-colors">Cancel</button>
+                            <button type="submit" :disabled="reasonModal.submitting" class="btn-primary text-sm">
+                                {{ reasonModal.submitting ? 'Processing...' : 'Submit' }}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </Teleport>
     </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useToast } from 'vue-toastification'
 import BreadcrumbHeader from '@ecom/ui/components/BreadcrumbHeader.vue'
@@ -307,7 +352,9 @@ import {
     ChartBarIcon,
     ShoppingBagIcon,
     ClipboardDocumentListIcon,
-    StarIcon
+    StarIcon,
+    XMarkIcon,
+    NoSymbolIcon
 } from '@heroicons/vue/24/outline'
 
 const route = useRoute()
@@ -337,13 +384,75 @@ function formatDate(d) {
     return new Date(d).toLocaleDateString('en-BD', { day: '2-digit', month: 'short', year: 'numeric' })
 }
 
-async function updateStatus() {
+const reasonModal = reactive({
+    show: false,
+    action: 'reject', // 'reject' or 'suspend'
+    reason: '',
+    submitting: false,
+})
+
+function closeReasonModal() {
+    reasonModal.show = false
+    reasonModal.reason = ''
+    reasonModal.submitting = false
+    // Reset select box back to current vendor status
+    newStatus.value = vendor.value.status
+}
+
+async function submitReasonAction() {
+    if (!reasonModal.reason.trim()) return
+    reasonModal.submitting = true
     try {
-        await vendorApi.updateStatus(route.params.id, newStatus.value)
-        toast.success('Status updated')
-        vendor.value.status = newStatus.value
-    } catch {
-        toast.error('Failed to update status')
+        if (reasonModal.action === 'suspend') {
+            await vendorApi.suspend(route.params.id, reasonModal.reason)
+            toast.success('Vendor suspended successfully')
+            vendor.value.status = 'suspended'
+        } else {
+            await vendorApi.reject(route.params.id, reasonModal.reason)
+            toast.success('Vendor rejected successfully')
+            vendor.value.status = 'rejected'
+        }
+        newStatus.value = vendor.value.status
+        reasonModal.show = false
+    } catch (e) {
+        const msg = e.response?.data?.message || `Failed to ${reasonModal.action} vendor`
+        toast.error(msg)
+    } finally {
+        reasonModal.submitting = false
+    }
+}
+
+async function updateStatus() {
+    const status = newStatus.value
+    if (status === vendor.value.status) return
+
+    if (status === 'active') {
+        try {
+            await vendorApi.approve(route.params.id)
+            toast.success('Vendor approved successfully')
+            vendor.value.status = 'active'
+        } catch {
+            toast.error('Failed to approve vendor')
+            newStatus.value = vendor.value.status
+        }
+    } else if (status === 'rejected') {
+        reasonModal.action = 'reject'
+        reasonModal.reason = ''
+        reasonModal.show = true
+    } else if (status === 'suspended') {
+        reasonModal.action = 'suspend'
+        reasonModal.reason = ''
+        reasonModal.show = true
+    } else {
+        // Fallback for other statuses if any
+        try {
+            await vendorApi.updateStatus(route.params.id, status)
+            toast.success('Status updated')
+            vendor.value.status = status
+        } catch {
+            toast.error('Failed to update status')
+            newStatus.value = vendor.value.status
+        }
     }
 }
 

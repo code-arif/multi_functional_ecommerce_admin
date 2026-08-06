@@ -244,6 +244,18 @@
                                             <CheckIcon class="w-4 h-4" />
                                         </button>
                                     </Tooltip>
+                                    <Tooltip v-if="v.status === 'pending'" text="Reject">
+                                        <button @click="openRejectModal(v)"
+                                            class="p-1.5 rounded-lg border border-gray-300 hover:border-red-400 text-red-600 hover:text-red-700 hover:bg-red-50 transition-all inline-flex items-center">
+                                            <XMarkIcon class="w-4 h-4" />
+                                        </button>
+                                    </Tooltip>
+                                    <Tooltip v-if="v.status === 'active'" text="Suspend">
+                                        <button @click="openSuspendModal(v)"
+                                            class="p-1.5 rounded-lg border border-gray-300 hover:border-orange-400 text-orange-600 hover:text-orange-700 hover:bg-orange-50 transition-all inline-flex items-center">
+                                            <NoSymbolIcon class="w-4 h-4" />
+                                        </button>
+                                    </Tooltip>
                                     <Tooltip text="Delete">
                                         <button @click="confirmDelete(v)"
                                             class="p-1.5 rounded-lg border border-gray-300 hover:border-red-400 text-red-400 hover:text-red-500 hover:bg-red-50 transition-all inline-flex items-center">
@@ -302,6 +314,52 @@
             @confirm="doDelete"
             @cancel="deleteTarget = null"
         />
+
+        <!-- Reject/Suspend Reason Modal -->
+        <Teleport to="body">
+            <div v-if="reasonModal.show" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" @click="closeReasonModal" />
+                <div class="relative bg-white rounded-2xl w-full max-w-md animate-in overflow-hidden shadow-2xl animate-fade-in"
+                    :style="{ boxShadow: '0 20px 60px rgba(0,0,0,0.15)' }">
+                    <div class="flex items-center justify-between px-6 py-4 border-b" :style="{ borderColor: 'var(--border)' }">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-lg flex items-center justify-center"
+                                :style="{ backgroundColor: 'color-mix(in srgb, var(--danger) 15%, transparent)' }">
+                                <NoSymbolIcon v-if="reasonModal.action === 'suspend'" class="w-5 h-5" :style="{ color: 'var(--danger)' }" />
+                                <XMarkIcon v-else class="w-5 h-5" :style="{ color: 'var(--danger)' }" />
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-bold" :style="{ color: 'var(--text-primary)' }">
+                                    {{ reasonModal.action === 'suspend' ? 'Suspend Vendor' : 'Reject Vendor' }}
+                                </h3>
+                                <p class="text-xs" :style="{ color: 'var(--text-muted)' }">
+                                    Please provide a reason for this action
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <form @submit.prevent="submitReasonAction" class="p-6 space-y-4">
+                        <div>
+                            <label class="label mb-2 block text-xs font-bold" :style="{ color: 'var(--text-muted)' }">Reason</label>
+                            <textarea
+                                v-model="reasonModal.reason"
+                                rows="4"
+                                required
+                                placeholder="Enter reason here..."
+                                class="w-full p-3 border rounded-lg bg-white text-xs outline-none focus:border-primary"
+                                :style="{ borderColor: 'var(--border)', color: 'var(--text-primary)' }"
+                            ></textarea>
+                        </div>
+                        <div class="flex items-center justify-end gap-3 pt-4 border-t" :style="{ borderColor: 'var(--border)' }">
+                            <button type="button" @click="closeReasonModal" class="px-4 py-[7px] rounded-lg border border-gray-300 text-gray-600 text-sm font-medium hover:bg-gray-50 transition-colors">Cancel</button>
+                            <button type="submit" :disabled="reasonModal.submitting" class="btn-primary text-sm">
+                                {{ reasonModal.submitting ? 'Processing...' : 'Submit' }}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </Teleport>
     </div>
 </template>
 
@@ -460,7 +518,12 @@ async function load(page = 1) {
             res = await vendorApi.list(params)
         }
 
-        vendors.value = res.data.data || []
+        vendors.value = (res.data.data || []).map(v => ({
+            ...v,
+            id: v.uuid,
+            shop_logo: v.logo_url,
+            name: v.user?.name || v.shop_name || 'Vendor',
+        }))
         pagination.value = res.data.pagination || null
         stats.total = pagination.value?.total || 0
         // Extract stats from response if available
@@ -493,7 +556,7 @@ async function doDelete() {
     if (!deleteTarget.value) return
     deleteLoading.value = true
     try {
-        await vendorApi.delete(deleteTarget.value.id)
+        await vendorApi.destroy(deleteTarget.value.id)
         toast.success('Vendor deleted successfully')
         deleteTarget.value = null
         load(pagination.value?.current_page || 1)
@@ -506,13 +569,72 @@ async function doDelete() {
 
 async function handleAddVendor(data) {
     try {
-        await vendorApi.create(data)
+        const payload = {
+            name: `${data.first_name} ${data.last_name}`,
+            email: data.email,
+            password: data.password,
+            password_confirmation: data.password_confirmation,
+            phone: data.phone || undefined,
+            shop_name: data.shop_name || undefined,
+        }
+        await vendorApi.create(payload)
         toast.success('Vendor created successfully')
         showAddModal.value = false
         load(1)
     } catch (e) {
         const msg = e.response?.data?.message || 'Failed to create vendor'
         toast.error(msg)
+    }
+}
+
+const reasonModal = reactive({
+    show: false,
+    action: 'reject', // 'reject' or 'suspend'
+    vendor: null,
+    reason: '',
+    submitting: false,
+})
+
+function openRejectModal(vendor) {
+    reasonModal.action = 'reject'
+    reasonModal.vendor = vendor
+    reasonModal.reason = ''
+    reasonModal.show = true
+}
+
+function openSuspendModal(vendor) {
+    reasonModal.action = 'suspend'
+    reasonModal.vendor = vendor
+    reasonModal.reason = ''
+    reasonModal.show = true
+}
+
+function closeReasonModal() {
+    reasonModal.show = false
+    reasonModal.vendor = null
+    reasonModal.reason = ''
+    reasonModal.submitting = false
+}
+
+async function submitReasonAction() {
+    if (!reasonModal.reason.trim() || !reasonModal.vendor) return
+    reasonModal.submitting = true
+    try {
+        const id = reasonModal.vendor.id
+        if (reasonModal.action === 'suspend') {
+            await vendorApi.suspend(id, reasonModal.reason)
+            toast.success('Vendor suspended successfully')
+        } else {
+            await vendorApi.reject(id, reasonModal.reason)
+            toast.success('Vendor rejected successfully')
+        }
+        closeReasonModal()
+        load(pagination.value?.current_page || 1)
+    } catch (e) {
+        const msg = e.response?.data?.message || `Failed to ${reasonModal.action} vendor`
+        toast.error(msg)
+    } finally {
+        reasonModal.submitting = false
     }
 }
 

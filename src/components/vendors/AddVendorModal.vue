@@ -69,6 +69,33 @@
 
                     <div class="grid grid-cols-2 gap-4">
                         <div>
+                            <label class="label" :style="{ color: 'var(--text-muted)' }">Shop Name</label>
+                            <input
+                                v-model="form.shop_name"
+                                type="text"
+                                placeholder="My Shop"
+                                class="input"
+                                :class="{ 'input-error': errors.shop_name }"
+                                @input="errors.shop_name = ''"
+                            />
+                            <p v-if="errors.shop_name" class="text-xs mt-1" :style="{ color: 'var(--danger)' }">{{ errors.shop_name }}</p>
+                        </div>
+                        <div>
+                            <label class="label" :style="{ color: 'var(--text-muted)' }">Phone</label>
+                            <input
+                                v-model="form.phone"
+                                type="text"
+                                placeholder="017xxxxxxxx"
+                                class="input"
+                                :class="{ 'input-error': errors.phone }"
+                                @input="errors.phone = ''"
+                            />
+                            <p v-if="errors.phone" class="text-xs mt-1" :style="{ color: 'var(--danger)' }">{{ errors.phone }}</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
                             <label class="label" :style="{ color: 'var(--text-muted)' }">Password</label>
                             <input
                                 v-model="form.password"
@@ -129,6 +156,8 @@ const form = reactive({
     email: '',
     password: '',
     password_confirmation: '',
+    shop_name: '',
+    phone: '',
 })
 
 const errors = reactive({
@@ -137,6 +166,8 @@ const errors = reactive({
     email: '',
     password: '',
     password_confirmation: '',
+    shop_name: '',
+    phone: '',
 })
 
 watch(() => props.show, (val) => {
@@ -147,11 +178,15 @@ watch(() => props.show, (val) => {
         form.email = ''
         form.password = ''
         form.password_confirmation = ''
+        form.shop_name = ''
+        form.phone = ''
         errors.first_name = ''
         errors.last_name = ''
         errors.email = ''
         errors.password = ''
         errors.password_confirmation = ''
+        errors.shop_name = ''
+        errors.phone = ''
         saving.value = false
     }
 })
