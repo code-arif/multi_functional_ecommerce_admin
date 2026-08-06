@@ -9,6 +9,7 @@ export const vendorApi = {
   approve:      id     => client.post(`/admin/vendors/${id}/approve`),
   reject:       (id,reason) => client.post(`/admin/vendors/${id}/reject`, { reason }),
   suspend:      (id,reason) => client.post(`/admin/vendors/${id}/suspend`, { reason }),
+  makePending:  id     => client.post(`/admin/vendors/${id}/pending`),
   update:       (id,d) => client.post(`/admin/vendors/${id}?_method=PUT`, d, { headers: { 'Content-Type': 'multipart/form-data' } }),
   destroy:      id     => client.delete(`/admin/vendors/${id}`),
   // Payouts

@@ -445,8 +445,16 @@ async function updateStatus() {
         reasonModal.action = 'suspend'
         reasonModal.reason = ''
         reasonModal.show = true
+    } else if (status === 'pending') {
+        try {
+            await vendorApi.makePending(route.params.id)
+            toast.success('Vendor status set to pending successfully')
+            vendor.value.status = 'pending'
+        } catch {
+            toast.error('Failed to set vendor status to pending')
+            newStatus.value = vendor.value.status
+        }
     } else {
-        // Revert any other changes (like manual change to pending)
         newStatus.value = vendor.value.status
     }
 }

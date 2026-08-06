@@ -364,7 +364,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, computed } from 'vue'
+import { ref, reactive, onMounted, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useToast } from 'vue-toastification'
 import BreadcrumbHeader from '@ecom/ui/components/BreadcrumbHeader.vue'
@@ -639,6 +639,10 @@ async function submitReasonAction() {
 }
 
 onMounted(() => load())
+
+watch(() => route.path, () => {
+    load(1)
+})
 </script>
 
 <style scoped>
