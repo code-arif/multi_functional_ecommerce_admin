@@ -96,27 +96,49 @@
 
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="label" :style="{ color: 'var(--text-muted)' }">Password</label>
-                            <input
-                                v-model="form.password"
-                                type="password"
-                                placeholder="••••••••"
-                                class="input"
-                                :class="{ 'input-error': errors.password }"
-                                @input="errors.password = ''"
-                            />
+                            <div class="flex items-center justify-between mb-1">
+                                <label class="label mb-0" :style="{ color: 'var(--text-muted)' }">Password</label>
+                                <button type="button" @click="generatePassword" 
+                                    class="text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 hover:opacity-80 transition-colors"
+                                    :style="{ color: 'var(--color-primary)' }">
+                                    <KeyIcon class="w-3.5 h-3.5" />
+                                    Generate
+                                </button>
+                            </div>
+                            <div class="relative">
+                                <input
+                                    v-model="form.password"
+                                    :type="showPassword ? 'text' : 'password'"
+                                    placeholder="••••••••"
+                                    class="input pr-9"
+                                    :class="{ 'input-error': errors.password }"
+                                    @input="errors.password = ''"
+                                />
+                                <button type="button" @click="showPassword = !showPassword" 
+                                    class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
+                                    <EyeIcon v-if="!showPassword" class="w-4 h-4" />
+                                    <EyeSlashIcon v-else class="w-4 h-4" />
+                                </button>
+                            </div>
                             <p v-if="errors.password" class="text-xs mt-1" :style="{ color: 'var(--danger)' }">{{ errors.password }}</p>
                         </div>
                         <div>
-                            <label class="label" :style="{ color: 'var(--text-muted)' }">Confirm Password</label>
-                            <input
-                                v-model="form.password_confirmation"
-                                type="password"
-                                placeholder="••••••••"
-                                class="input"
-                                :class="{ 'input-error': errors.password_confirmation }"
-                                @input="errors.password_confirmation = ''"
-                            />
+                            <label class="label mb-1 block" :style="{ color: 'var(--text-muted)' }">Confirm Password</label>
+                            <div class="relative">
+                                <input
+                                    v-model="form.password_confirmation"
+                                    :type="showPassword ? 'text' : 'password'"
+                                    placeholder="••••••••"
+                                    class="input pr-9"
+                                    :class="{ 'input-error': errors.password_confirmation }"
+                                    @input="errors.password_confirmation = ''"
+                                />
+                                <button type="button" @click="showPassword = !showPassword" 
+                                    class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
+                                    <EyeIcon v-if="!showPassword" class="w-4 h-4" />
+                                    <EyeSlashIcon v-else class="w-4 h-4" />
+                                </button>
+                            </div>
                             <p v-if="errors.password_confirmation" class="text-xs mt-1" :style="{ color: 'var(--danger)' }">{{ errors.password_confirmation }}</p>
                         </div>
                     </div>
@@ -140,7 +162,7 @@
 
 <script setup>
 import { ref, reactive, watch } from 'vue'
-import { UserPlusIcon, XMarkIcon } from '@heroicons/vue/24/outline'
+import { UserPlusIcon, XMarkIcon, EyeIcon, EyeSlashIcon, KeyIcon } from '@heroicons/vue/24/outline'
 
 const props = defineProps({
     show: { type: Boolean, default: false }
@@ -188,8 +210,24 @@ watch(() => props.show, (val) => {
         errors.shop_name = ''
         errors.phone = ''
         saving.value = false
+        showPassword.value = false
     }
 })
+
+const showPassword = ref(false)
+
+function generatePassword() {
+    const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%'
+    let pass = ''
+    for (let i = 0; i < 10; i++) {
+        pass += chars.charAt(Math.floor(Math.random() * chars.length))
+    }
+    form.password = pass
+    form.password_confirmation = pass
+    errors.password = ''
+    errors.password_confirmation = ''
+    showPassword.value = true
+}
 
 function validate() {
     let valid = true
