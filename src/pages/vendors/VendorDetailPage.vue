@@ -20,12 +20,13 @@
                         background: `url(${vendor.cover_image || DEFAULT_COVER_IMAGE}) center/cover`,
                         backgroundColor: 'var(--border-light)'
                     }">
+                    <div class="absolute inset-0 bg-black/40"></div>
                     <div class="absolute inset-0"
                         :style="{ background: 'linear-gradient(to top, rgba(0,0,0,0.6), transparent)' }"></div>
                 </div>
                 <div class="px-6 pb-5 relative">
-                    <div class="flex flex-col sm:flex-row items-start sm:items-end gap-4 -mt-10 relative z-10">
-                        <div class="w-20 h-20 rounded-xl overflow-hidden border-4 shrink-0"
+                    <div class="flex flex-col sm:flex-row items-start sm:items-end gap-4 relative z-10">
+                        <div class="-mt-10 w-20 h-20 rounded-xl overflow-hidden border-4 shrink-0"
                             :style="{ borderColor: 'var(--surface)', boxShadow: 'var(--shadow-card)' }">
                             <img v-if="vendor.shop_logo" :src="vendor.shop_logo" :alt="vendor.shop_name"
                                 class="w-full h-full object-cover" />
@@ -34,7 +35,7 @@
                                 {{ (vendor.shop_name || vendor.name)?.charAt(0)?.toUpperCase() || 'V' }}
                             </div>
                         </div>
-                        <div class="flex-1 min-w-0 pt-2 sm:pt-0">
+                        <div class="flex-1 min-w-0 pt-2 sm:pt-0 sm:pl-2">
                             <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
                                 <h2 class="text-xl font-black truncate" :style="{ color: 'var(--text-primary)' }">
                                     {{ vendor.shop_name || vendor.name }}
