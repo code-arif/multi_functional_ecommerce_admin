@@ -354,7 +354,8 @@ import {
     ClipboardDocumentListIcon,
     StarIcon,
     XMarkIcon,
-    NoSymbolIcon
+    NoSymbolIcon,
+    CheckIcon
 } from '@heroicons/vue/24/outline'
 
 const route = useRoute()
@@ -366,7 +367,7 @@ const statusOptions = [
     { value: 'active', label: 'Active' },
     { value: 'pending', label: 'Pending' },
     { value: 'suspended', label: 'Suspended' },
-    { value: 'banned', label: 'Banned' },
+    { value: 'rejected', label: 'Rejected' },
 ]
 
 // Default shop cover banner (Unsplash)
@@ -417,6 +418,7 @@ async function submitReasonAction() {
     } catch (e) {
         const msg = e.response?.data?.message || `Failed to ${reasonModal.action} vendor`
         toast.error(msg)
+        newStatus.value = vendor.value.status
     } finally {
         reasonModal.submitting = false
     }
@@ -444,15 +446,8 @@ async function updateStatus() {
         reasonModal.reason = ''
         reasonModal.show = true
     } else {
-        // Fallback for other statuses if any
-        try {
-            await vendorApi.updateStatus(route.params.id, status)
-            toast.success('Status updated')
-            vendor.value.status = status
-        } catch {
-            toast.error('Failed to update status')
-            newStatus.value = vendor.value.status
-        }
+        // Revert any other changes (like manual change to pending)
+        newStatus.value = vendor.value.status
     }
 }
 
