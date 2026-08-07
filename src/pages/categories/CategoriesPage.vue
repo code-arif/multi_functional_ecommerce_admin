@@ -35,6 +35,11 @@
         </td>
         <td class="table-cell text-right">
           <div class="flex items-center justify-end gap-1 whitespace-nowrap">
+            <Tooltip text="View">
+              <router-link :to="`/categories/${item.id}`" class="p-1.5 rounded-lg border border-gray-300 hover:border-gray-400 text-gray-500 hover:text-gray-700 transition-all">
+                <EyeIcon class="w-4 h-4" />
+              </router-link>
+            </Tooltip>
             <Tooltip text="Edit">
               <button @click="openForm(item)" class="p-1.5 rounded-lg border border-gray-300 hover:border-blue-400 text-blue-500 hover:bg-blue-50 transition-all">
                 <PencilIcon class="w-4 h-4" />
@@ -66,7 +71,7 @@ import StatusBadge from '@ecom/ui/components/StatusBadge.vue'
 import ConfirmModal from '@ecom/ui/components/ConfirmModal.vue'
 import Tooltip from '@ecom/ui/components/Tooltip.vue'
 import { categoryApi } from '@/api'
-import { PencilIcon, TrashIcon, TagIcon } from '@heroicons/vue/24/outline'
+import { PencilIcon, TrashIcon, TagIcon, EyeIcon } from '@heroicons/vue/24/outline'
 import { Tag } from 'lucide-vue-next'
 import CategoryFormModal from './CategoryFormModal.vue'
 

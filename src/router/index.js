@@ -129,6 +129,11 @@ const routes = [
                 name: "categories",
                 component: () => import("@/pages/categories/CategoriesPage.vue"),
             },
+            {
+                path: "categories/:id",
+                name: "category-detail",
+                component: () => import("@/pages/categories/CategoryDetailPage.vue"),
+            },
 
             // Brands
             {
