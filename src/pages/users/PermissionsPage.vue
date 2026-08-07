@@ -13,10 +13,9 @@
         <SelectBox v-model="groupFilter" :options="groupOptions" placeholder="All Groups" @change="load(1)" />
       </template>
       <template #default="{ item }">
-        <td class="table-cell font-semibold" style="color:var(--text-primary)">{{ item.name }}</td>
-        <td class="table-cell text-sm" style="color:var(--text-secondary)">{{ item.slug }}</td>
+        <td class="table-cell font-semibold" style="color:var(--text-primary)">{{ item.display_name || item.name }}</td>
+        <td class="table-cell text-sm" style="color:var(--text-secondary)">{{ item.name }}</td>
         <td class="table-cell"><span class="badge badge-purple">{{ item.group }}</span></td>
-        <td class="table-cell text-xs" style="color:var(--text-muted)">{{ item.description }}</td>
         <td class="table-cell text-right">
           <div class="flex items-center justify-end gap-1 whitespace-nowrap">
             <Tooltip text="Edit">
@@ -77,11 +76,6 @@
               </transition>
             </div>
 
-            <div>
-              <label class="label">Description</label>
-              <textarea v-model="form.description" rows="2" class="input" placeholder="What can this permission do?" />
-            </div>
-
             <div class="flex gap-3 pt-2">
               <button type="submit" :disabled="saving" class="btn-primary flex-1 justify-center">{{
                 saving ? 'Saving...' : editing ? 'Update Permission' : 'Create Permission'
@@ -118,6 +112,8 @@ import ConfirmModal from '@ecom/ui/components/ConfirmModal.vue'
 import Tooltip from '@ecom/ui/components/Tooltip.vue'
 import BreadcrumbHeader from '@ecom/ui/components/BreadcrumbHeader.vue'
 import { PencilIcon, TrashIcon, LockOpenIcon } from '@heroicons/vue/24/outline'
+import { permissionApi } from '@/api/permission'
+
 const breadcrumbItems = computed(() => [
   { label: 'Permissions', icon: LockOpenIcon }
 ])
@@ -125,22 +121,16 @@ const breadcrumbItems = computed(() => [
 const permissions = ref([]), loading = ref(true), search = ref(''), groupFilter = ref('')
 const showForm = ref(false), saving = ref(false), editing = ref(null), deleteTarget = ref(null), deleting = ref(false)
 const confirmDuplicate = ref(false)
-const form = reactive({ name: '', slug: '', group: '', description: '' })
+const form = reactive({ name: '', slug: '', group: '' })
 const selectedGroup = ref('')
 const showCustomGroup = ref(false)
 const customGroupInput = ref('')
-const formGroupSelectOptions = [
-  { value: 'Products', label: 'Products' },
-  { value: 'Orders', label: 'Orders' },
-  { value: 'Users', label: 'Users' },
-  { value: 'Settings', label: 'Settings' },
-  { value: '__custom__', label: 'Custom…' },
-]
+const formGroupSelectOptions = ref([])
 const errors = ref({})
-const groupOptions = [{value:'',label:'All'},{value:'Products',label:'Products'},{value:'Orders',label:'Orders'},{value:'Users',label:'Users'},{value:'Settings',label:'Settings'}]
+const groupOptions = ref([{ value: '', label: 'All Groups' }])
 const columns = [
   {key:'name',label:'Permission'},{key:'slug',label:'Slug',class:'w-40'},{key:'group',label:'Group',class:'w-24'},
-  {key:'description',label:'Description'},{key:'actions',label:'Action',class:'w-24 text-right'}
+  {key:'actions',label:'Action',class:'w-24 text-right'}
 ]
 
 const perPage = ref(10)
@@ -175,7 +165,7 @@ const slugWarning = ref('')
 watch(() => form.slug, (val) => {
   if (!val || !permissions.value.length) { slugWarning.value = ''; return }
   const duplicate = permissions.value.find(
-    p => p.slug === val && (!editing.value || p.id !== editing.value.id)
+    p => p.name === val && (!editing.value || p.id !== editing.value.id)
   )
   slugWarning.value = duplicate ? `Slug "${val}" already exists in ${duplicate.group}` : ''
 })
@@ -195,22 +185,21 @@ function openForm(item = null) {
   showCustomGroup.value = false
   if (item) {
     Object.assign(form, {
-      name: item.name,
-      slug: item.slug,
-      group: item.group,
-      description: item.description || ''
+      name: item.display_name || item.name,
+      slug: item.name,
+      group: item.group || ''
     })
-    const isCustom = !['Products', 'Orders', 'Users', 'Settings'].includes(item.group)
-    if (isCustom) {
+    const isCustom = !formGroupSelectOptions.value.some(opt => opt.value === item.group && opt.value !== '__custom__')
+    if (isCustom && item.group) {
       showCustomGroup.value = true
       selectedGroup.value = '__custom__'
       customGroupInput.value = item.group
     } else {
-      selectedGroup.value = item.group
+      selectedGroup.value = item.group || ''
     }
     slugAutoGen = false
   } else {
-    Object.assign(form, { name: '', slug: '', group: '', description: '' })
+    Object.assign(form, { name: '', slug: '', group: '' })
     selectedGroup.value = ''
     customGroupInput.value = ''
     slugAutoGen = true
@@ -223,7 +212,7 @@ function openForm(item = null) {
 
 function doSave() {
   const duplicate = permissions.value.find(
-    p => p.slug === form.slug && (!editing.value || p.id !== editing.value.id)
+    p => p.name === form.slug && (!editing.value || p.id !== editing.value.id)
   )
   if (duplicate && !confirmDuplicate.value) {
     confirmDuplicate.value = true
@@ -233,34 +222,31 @@ function doSave() {
 }
 
 async function performSave() {
-  // Sync custom group value before save
   if (showCustomGroup.value) {
     form.group = customGroupInput.value || ''
   }
 
   saving.value = true
   try {
-    await new Promise(r => setTimeout(r, 400))
+    const payload = {
+      name: form.slug,
+      display_name: form.name,
+      group: form.group,
+      guard_name: 'api'
+    }
 
     if (editing.value) {
-      const idx = permissions.value.findIndex(p => p.id === editing.value.id)
-      if (idx !== -1) {
-        permissions.value[idx] = { ...permissions.value[idx], ...form }
-      }
-      toast.success('Permission updated.')
+      await permissionApi.update(editing.value.id, payload)
+      toast.success('Permission updated successfully.')
     } else {
-      const newPerm = {
-        id: permissions.value.length + 1,
-        ...form
-      }
-      permissions.value.unshift(newPerm)
-      pagination.value.total = permissions.value.length
-      pagination.value.last_page = Math.ceil(permissions.value.length / perPage.value)
-      toast.success('Permission created.')
+      await permissionApi.store(payload)
+      toast.success('Permission created successfully.')
     }
 
     showForm.value = false
     confirmDuplicate.value = false
+    await fetchGroups()
+    await load(pagination.value.current_page)
   } catch (e) {
     errors.value = e.response?.data?.errors || {}
     toast.error(e.response?.data?.message || 'Save failed.')
@@ -278,14 +264,17 @@ function confirmDelete(item) {
 }
 
 async function doDelete() {
+  if (!deleteTarget.value) return
   deleting.value = true
   try {
-    await new Promise(r => setTimeout(r, 300))
-    permissions.value = permissions.value.filter(p => p.id !== deleteTarget.value.id)
-    pagination.value.total = permissions.value.length
-    pagination.value.last_page = Math.ceil(permissions.value.length / perPage.value)
-    toast.success('Permission deleted.')
+    await permissionApi.destroy(deleteTarget.value.id)
+    toast.success('Permission deleted successfully.')
     deleteTarget.value = null
+    await fetchGroups()
+    await load(1)
+  } catch (e) {
+    const msg = e.response?.data?.message || 'Delete failed.'
+    toast.error(msg)
   } finally {
     deleting.value = false
   }
@@ -293,22 +282,49 @@ async function doDelete() {
 
 async function load(page = 1) {
   loading.value = true
-  pagination.value.current_page = page
-  setTimeout(() => {
-    const groups = ['Products','Orders','Users','Settings']
-    const actions = ['create','read','update','delete']
-    const all = groups.flatMap((g,i) => actions.map((a,j)=>({
-      id:i*4+j+1,name:`${g} ${a.charAt(0).toUpperCase()+a.slice(1)}`,slug:`${g.toLowerCase()}.${a}`,
-      group:g,description:`Can ${a} ${g.toLowerCase()}`
-    })))
-    permissions.value = all
-    pagination.value.per_page = perPage.value
-    pagination.value.total = all.length
-    pagination.value.last_page = Math.ceil(all.length / perPage.value)
+  try {
+    const res = await permissionApi.list({
+      page,
+      per_page: perPage.value,
+      search: search.value,
+      group: groupFilter.value
+    })
+    permissions.value = res.data.data || []
+    pagination.value = res.data.pagination || {
+      total: 0,
+      per_page: perPage.value,
+      current_page: page,
+      last_page: 1
+    }
+  } catch (e) {
+    console.error('Failed to load permissions:', e)
+    toast.error('Failed to load permissions.')
+  } finally {
     loading.value = false
-  }, 300)
+  }
 }
-onMounted(()=>load())
+
+async function fetchGroups() {
+  try {
+    const res = await permissionApi.groups()
+    const groups = res.data.data || []
+    groupOptions.value = [
+      { value: '', label: 'All Groups' },
+      ...groups.map(g => ({ value: g, label: g }))
+    ]
+    formGroupSelectOptions.value = [
+      ...groups.map(g => ({ value: g, label: g })),
+      { value: '__custom__', label: 'Custom…' }
+    ]
+  } catch (e) {
+    console.error('Failed to fetch groups:', e)
+  }
+}
+
+onMounted(async () => {
+  await fetchGroups()
+  await load()
+})
 </script>
 
 <style scoped>
