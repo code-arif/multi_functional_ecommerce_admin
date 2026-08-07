@@ -245,7 +245,7 @@ import { useRoute } from 'vue-router'
 import { format } from 'date-fns'
 import BreadcrumbHeader from '@ecom/ui/components/BreadcrumbHeader.vue'
 import StatusBadge from '@ecom/ui/components/StatusBadge.vue'
-import { categoryApi } from '@/api'
+import { categoryApi } from '@/api/category'
 import { 
   PencilIcon, 
   TagIcon, 
@@ -272,7 +272,7 @@ async function load() {
   loading.value = true
   error.value = null
   try {
-    const res = await categoryApi.show(route.params.id)
+    const res = await categoryApi.show(route.params.uuid)
     category.value = res.data.data
   } catch (e) {
     error.value = e.response?.data?.message || 'Failed to fetch category details.'

@@ -36,7 +36,7 @@
         <td class="table-cell text-right">
           <div class="flex items-center justify-end gap-1 whitespace-nowrap">
             <Tooltip text="View">
-              <router-link :to="`/categories/${item.id}`" class="p-1.5 rounded-lg border border-gray-300 hover:border-gray-400 text-gray-500 hover:text-gray-700 transition-all">
+              <router-link :to="`/categories/${item.uuid}`" class="p-1.5 rounded-lg border border-gray-300 hover:border-gray-400 text-gray-500 hover:text-gray-700 transition-all">
                 <EyeIcon class="w-4 h-4" />
               </router-link>
             </Tooltip>
@@ -70,7 +70,7 @@ import DataTable from '@ecom/ui/components/DataTable.vue'
 import StatusBadge from '@ecom/ui/components/StatusBadge.vue'
 import ConfirmModal from '@ecom/ui/components/ConfirmModal.vue'
 import Tooltip from '@ecom/ui/components/Tooltip.vue'
-import { categoryApi } from '@/api'
+import { categoryApi } from '@/api/category'
 import { PencilIcon, TrashIcon, TagIcon, EyeIcon } from '@heroicons/vue/24/outline'
 import { Tag } from 'lucide-vue-next'
 import CategoryFormModal from './CategoryFormModal.vue'
@@ -121,7 +121,7 @@ function confirmDelete(item) {
 async function doDelete() {
   deleting.value = true
   try {
-    await categoryApi.destroy(deleteTarget.value.id);
+    await categoryApi.destroy(deleteTarget.value.uuid);
     toast.success('Deleted.');
     deleteTarget.value = null;
     load()

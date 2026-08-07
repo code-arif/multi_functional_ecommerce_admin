@@ -22,7 +22,7 @@
               <!-- Parent Category -->
               <div class="col-span-2 sm:col-span-1">
                 <label class="label">Parent Category</label>
-                <SelectBox v-model="form.parent_id" :options="parentOptions" placeholder="None (Root Category)" size="lg" full-width />
+                <SelectBox v-model="form.parent_uuid" :options="parentOptions" placeholder="None (Root Category)" size="lg" full-width />
               </div>
 
               <!-- Description -->
@@ -99,7 +99,7 @@ import { useToast } from 'vue-toastification'
 import SelectBox from '@ecom/ui/components/SelectBox.vue'
 import ImagePicker from '@ecom/ui/components/ImagePicker.vue'
 import ToggleSwitch from '@ecom/ui/components/ToggleSwitch.vue'
-import { categoryApi } from '@/api'
+import { categoryApi } from '@/api/category'
 
 const props = defineProps({
   show: { type: Boolean, required: true },
@@ -116,7 +116,7 @@ const errors = ref({})
 
 const form = reactive({
   name: '',
-  parent_id: null,
+  parent_uuid: null,
   description: '',
   sort_order: 0,
   is_active: true,
@@ -138,7 +138,7 @@ const flatCategories = computed(() => {
 
 const parentOptions = computed(() => [
   { value: null, label: 'None (Root Category)' },
-  ...flatCategories.value.map(c => ({ value: c.id, label: c.name }))
+  ...flatCategories.value.map(c => ({ value: c.uuid, label: c.name }))
 ])
 
 watch(() => props.show, (newVal) => {
@@ -148,7 +148,7 @@ watch(() => props.show, (newVal) => {
     if (props.category) {
       Object.assign(form, {
         name: props.category.name,
-        parent_id: props.category.parent_id,
+        parent_uuid: props.category.parent?.uuid || null,
         description: props.category.description || '',
         sort_order: props.category.sort_order || 0,
         is_active: !!props.category.is_active,
@@ -159,7 +159,7 @@ watch(() => props.show, (newVal) => {
     } else {
       Object.assign(form, {
         name: '',
-        parent_id: null,
+        parent_uuid: null,
         description: '',
         sort_order: 0,
         is_active: true,
@@ -189,7 +189,7 @@ async function save() {
     if (imageFile.value) fd.append('image', imageFile.value)
 
     if (props.category) {
-      await categoryApi.update(props.category.id, fd)
+      await categoryApi.update(props.category.uuid, fd)
     } else {
       await categoryApi.store(fd)
     }

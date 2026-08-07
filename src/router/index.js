@@ -130,7 +130,7 @@ const routes = [
                 component: () => import("@/pages/categories/CategoriesPage.vue"),
             },
             {
-                path: "categories/:id",
+                path: "categories/:uuid",
                 name: "category-detail",
                 component: () => import("@/pages/categories/CategoryDetailPage.vue"),
             },

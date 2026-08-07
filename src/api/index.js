@@ -40,13 +40,7 @@ export const productApi = {
 }
 
 // Categories
-export const categoryApi = {
-  list:    p  => client.get('/admin/categories', { params: p }),
-  show:    id => client.get(`/admin/categories/${id}`),
-  store:   d  => client.post('/admin/categories/store', d, { headers: { 'Content-Type': 'multipart/form-data' } }),
-  update:  (id,d) => client.post(`/admin/categories/${id}/update?_method=PUT`, d, { headers: { 'Content-Type': 'multipart/form-data' } }),
-  destroy: id => client.delete(`/admin/categories/${id}/delete`),
-}
+export { categoryApi } from './category'
 
 // Brands
 export const brandApi = {
