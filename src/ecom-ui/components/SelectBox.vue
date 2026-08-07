@@ -51,6 +51,7 @@ onUnmounted(() => { document.removeEventListener('click', handleClickOutside); d
 .sb-root--full { width: 100%; }
 .sb-label { font-size: 0.6875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted, #94A3B8); cursor: pointer; }
 .sb-trigger { display: flex; align-items: center; gap: 8px; width: 100%; border: 1px solid var(--border, #E2E8F0); border-radius: 8px; background: var(--surface, #fff); color: var(--text-primary, #1E293B); font-family: inherit; font-weight: 500; cursor: pointer; text-align: left; transition: border-color 0.15s, box-shadow 0.15s; white-space: nowrap; padding: 7px 8px 7px 10px; min-height: 36px; font-size: 0.8125rem; }
+.sb--lg .sb-trigger { padding: 9px 10px 9px 12px; min-height: 42px; font-size: 0.875rem; }
 .sb-trigger:hover:not(:disabled) { border-color: var(--color-primary-light, #4CAF50); }
 .sb-trigger--open { border-color: var(--color-primary, #2E7D32); box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary-light, #4CAF50) 20%, transparent); }
 .sb-trigger--placeholder { color: var(--text-muted, #94A3B8); font-weight: 400; }
