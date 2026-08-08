@@ -232,7 +232,7 @@ async function performSave() {
       name: form.slug,
       display_name: form.name,
       group: form.group,
-      guard_name: 'api'
+      guard_name: 'web'
     }
 
     if (editing.value) {
