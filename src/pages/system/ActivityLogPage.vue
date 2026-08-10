@@ -23,7 +23,7 @@
         />
       </div>
       <button @click="applyFilters" class="btn-primary text-sm py-1.5 px-4">Apply</button>
-      <button @click="resetFilters" class="btn-ghost text-xs">Reset</button>
+      <button @click="resetFilters" class="btn-ghost text-xs bg-slate-100 hover:bg-slate-200">Reset</button>
       <button @click="exportCSV" class="btn-secondary text-sm py-1.5 px-4 ml-auto flex items-center gap-1.5">
         <DownloadIcon class="w-4 h-4" />
         Export CSV
@@ -226,7 +226,7 @@ function generateMockData() {
   const logs = []
   for (let i = 1; i <= 200; i++) {
     const action = actions[Math.floor(Math.random() * actions.length)]
-    const descs = descriptions[action]
+    const descs = descriptions[action] || descriptions.login
     const date = new Date()
     date.setHours(date.getHours() - Math.floor(Math.random() * 720))
     date.setMinutes(Math.floor(Math.random() * 60))

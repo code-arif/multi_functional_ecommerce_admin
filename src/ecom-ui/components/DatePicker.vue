@@ -4,9 +4,9 @@
       <div class="dp-input" :class="{ 'dp-input--focused': isOpen, 'dp-input--range': range }">
         <CalendarIcon class="dp-input-icon" />
         <template v-if="range">
-          <span class="dp-range-part" :class="{ 'dp-range-part--active': rangeSelectionPhase === 'from' }">{{ displayFrom || (placeholder ? placeholder + ' (From)' : 'From date') }}</span>
+          <span class="dp-range-part" :class="{ 'dp-range-part--active': rangeSelectionPhase === 'from' }">{{ displayFrom || 'From date' }}</span>
           <span class="dp-range-sep">→</span>
-          <span class="dp-range-part" :class="{ 'dp-range-part--active': rangeSelectionPhase === 'to' }">{{ displayTo || (placeholder ? placeholder + ' (To)' : 'To date') }}</span>
+          <span class="dp-range-part" :class="{ 'dp-range-part--active': rangeSelectionPhase === 'to' }">{{ displayTo || 'To date' }}</span>
         </template>
         <span v-else class="dp-single-text" :class="{ 'dp-placeholder': !displayText }">{{ displayText || placeholder || 'Select date' }}</span>
         <ChevronDownIcon class="dp-chevron" :class="{ 'dp-chevron--open': isOpen }" />
@@ -85,15 +85,15 @@ function onDayMouseEnter(day) { if (props.range && fromDate.value && !toDate.val
 <style scoped>
 .dp-root { position: relative; display: block; min-width: 120px; width: 100%; font-family: inherit; user-select: none; }
 .dp-trigger { cursor: pointer; }
-.dp-input { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border: 1px solid var(--border, #E2E8F0); border-radius: 8px; background: var(--surface, #fff); color: var(--text-primary, #1E293B); font-family: inherit; font-weight: 500; cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s; min-height: 36px; white-space: nowrap; }
+.dp-input { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border: 1px solid var(--border, #E2E8F0); border-radius: 8px; background: var(--surface, #fff); color: var(--text-primary, #1E293B); font-family: inherit; font-weight: 500; cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s; min-height: 36px; white-space: nowrap; min-width: 0; }
 .dp-input:hover { border-color: var(--color-primary-light, #4CAF50); }
 .dp-input--focused { border-color: var(--color-primary, #2E7D32); box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary-light, #4CAF50) 20%, transparent); }
 .dp-input-icon { width: 14px; height: 14px; color: var(--text-muted, #94A3B8); flex-shrink: 0; }
 .dp-chevron { width: 14px; height: 14px; color: var(--text-muted, #94A3B8); margin-left: auto; flex-shrink: 0; transition: transform 0.2s ease; }
 .dp-chevron--open { transform: rotate(180deg); }
 .dp-single-text { font-size: 0.8125rem; color: var(--text-primary, #1E293B); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.dp-range-part { font-size: 0.8125rem; color: var(--text-primary, #1E293B); white-space: nowrap; }
-.dp-range-sep { font-size: 0.75rem; color: var(--text-muted, #94A3B8); margin: 0 2px; }
+.dp-range-part { font-size: 0.8125rem; color: var(--text-primary, #1E293B); white-space: nowrap; flex: 1 1 0; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.dp-range-sep { font-size: 0.75rem; color: var(--text-muted, #94A3B8); margin: 0 2px; flex-shrink: 0; }
 .dp-placeholder { color: var(--text-muted, #94A3B8) !important; }
 .dp-dropdown { position: absolute; top: calc(100% + 6px); left: 0; z-index: 1000; width: 300px; background: var(--surface, #fff); border: 1px solid var(--border, #E2E8F0); border-radius: 12px; box-shadow: var(--shadow-modal, 0 20px 60px rgba(0,0,0,0.15)); padding: 16px; animation: dpFadeIn 0.15s ease-out; }
 @keyframes dpFadeIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
