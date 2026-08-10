@@ -18,6 +18,9 @@
         <td class="table-cell"><span class="badge badge-purple">{{ item.group }}</span></td>
         <td class="table-cell text-right">
           <div class="flex items-center justify-end gap-1 whitespace-nowrap">
+            <Tooltip text="View">
+              <button @click="viewPermissionDetails(item)" class="p-1.5 rounded-lg border border-gray-300 hover:border-slate-400 text-slate-600 hover:text-slate-700 transition-all"><EyeIcon class="w-4 h-4" /></button>
+            </Tooltip>
             <Tooltip text="Edit">
               <button @click="openForm(item)" class="p-1.5 rounded-lg border border-gray-300 hover:border-blue-400 text-blue-500 hover:text-blue-600 transition-all"><PencilIcon class="w-4 h-4" /></button>
             </Tooltip>
@@ -90,6 +93,50 @@
       </div>
     </Teleport>
 
+    <Teleport to="body">
+      <div v-if="showDetails" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" @click="showDetails = false" />
+        <div class="relative bg-white rounded-2xl p-6 w-full max-w-lg animate-in" style="box-shadow:0 20px 60px rgba(0,0,0,0.15)">
+          <div class="flex items-start justify-between gap-4 mb-4">
+            <div>
+              <h2 class="font-bold text-gray-900 text-lg">Permission Details</h2>
+              <p class="text-sm text-gray-500">Associated roles for this permission.</p>
+            </div>
+            <button type="button" @click="showDetails = false" class="text-slate-400 hover:text-slate-600">
+              <svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+              </svg>
+            </button>
+          </div>
+
+          <div class="space-y-4">
+            <div>
+              <p class="text-sm font-semibold text-gray-700">Permission</p>
+              <p class="text-sm text-gray-500">{{ permissionDetails?.display_name || permissionDetails?.name }}</p>
+            </div>
+            <div>
+              <p class="text-sm font-semibold text-gray-700">Slug</p>
+              <p class="text-sm text-gray-500">{{ permissionDetails?.name }}</p>
+            </div>
+            <div>
+              <p class="text-sm font-semibold text-gray-700 mb-2">Roles</p>
+              <div v-if="detailsLoading" class="text-sm text-gray-500">Loading roles...</div>
+              <div v-else-if="!permissionDetails?.roles?.length" class="text-sm text-gray-500">No roles assigned to this permission.</div>
+              <div v-else class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <span v-for="role in permissionDetails.roles" :key="role.id || role.name || role" class="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-100 text-sm text-slate-700">
+                  {{ role.display_name || role.name || role }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-6 flex justify-end">
+            <button type="button" @click="showDetails = false" class="btn-secondary">Close</button>
+          </div>
+        </div>
+      </div>
+    </Teleport>
+
     <ConfirmModal :show="!!deleteTarget" title="Delete Permission" :message="`Delete permission '${deleteTarget?.name}'?`"
       :loading="deleting" @confirm="doDelete" @cancel="deleteTarget = null" />
 
@@ -111,7 +158,7 @@ import Pagination from '@ecom/ui/components/Pagination.vue'
 import ConfirmModal from '@ecom/ui/components/ConfirmModal.vue'
 import Tooltip from '@ecom/ui/components/Tooltip.vue'
 import BreadcrumbHeader from '@ecom/ui/components/BreadcrumbHeader.vue'
-import { PencilIcon, TrashIcon, LockOpenIcon } from '@heroicons/vue/24/outline'
+import { PencilIcon, TrashIcon, EyeIcon, LockOpenIcon } from '@heroicons/vue/24/outline'
 import { permissionApi } from '@/api/permission'
 
 const breadcrumbItems = computed(() => [
@@ -127,6 +174,9 @@ const showCustomGroup = ref(false)
 const customGroupInput = ref('')
 const formGroupSelectOptions = ref([])
 const errors = ref({})
+const showDetails = ref(false)
+const detailsLoading = ref(false)
+const permissionDetails = ref(null)
 const groupOptions = ref([{ value: '', label: 'All Groups' }])
 const columns = [
   {key:'name',label:'Permission'},{key:'slug',label:'Slug',class:'w-40'},{key:'group',label:'Group',class:'w-24'},
@@ -208,6 +258,21 @@ function openForm(item = null) {
   slugWarning.value = ''
   confirmDuplicate.value = false
   showForm.value = true
+}
+
+async function viewPermissionDetails(item) {
+  showDetails.value = true
+  detailsLoading.value = true
+  permissionDetails.value = null
+  try {
+    const res = await permissionApi.show(item.id)
+    permissionDetails.value = res.data?.data || res.data || item
+  } catch (e) {
+    toast.error('Failed to load permission details.')
+    showDetails.value = false
+  } finally {
+    detailsLoading.value = false
+  }
 }
 
 function doSave() {
