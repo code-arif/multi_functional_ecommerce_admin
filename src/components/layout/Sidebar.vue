@@ -205,72 +205,72 @@ const navGroups = [
             { name: 'Categories', to: '/categories', icon: TagIcon },
             { name: 'Brands', to: '/brands', icon: StarIcon },
             { name: 'Coupons', to: '/coupons', icon: TicketIcon },
-            { name: 'Affiliate', to: '/affiliate', icon: LinkIcon },
+            // { name: 'Affiliate', to: '/affiliate', icon: LinkIcon },
         ]
     },
-    {
-        name: 'Orders', icon: ClipboardDocumentListIcon,
-        items: [
-            { name: 'All Orders', to: '/orders', icon: ClipboardDocumentListIcon },
-            { name: 'Transactions', to: '/transactions', icon: BanknotesIcon },
-        ]
-    },
-    {
-        name: 'Invoices', icon: InvoiceIcon,
-        items: [
-            { name: 'Sale Invoices', to: '/invoices/sales', icon: BanknotesIcon },
-            { name: 'Purchase Invoices', to: '/invoices/purchases', icon: ShoppingBagIcon },
-        ]
-    },
-    {
-        name: 'Marketing', icon: MegaphoneIcon,
-        items: [
-            { name: 'Campaigns', to: '/campaigns', icon: MegaphoneIcon },
-            { name: 'Reviews', to: '/reviews', icon: StarIcon }
-        ]
-    },
-    {
-        name: 'Users', icon: UsersIcon,
-        items: [
-            { name: 'Customers', to: '/users', icon: UsersIcon },
-            { name: 'Admins', to: '/admins', icon: UserGroupIcon },
-            { name: 'Roles', to: '/roles', icon: IdentificationIcon },
-            { name: 'Permissions', to: '/permissions', icon: LockOpenIcon },
-        ]
-    },
-    {
-        name: 'Content', icon: DocumentTextIcon,
-        items: [
-            { name: 'CMS Pages', to: '/cms', icon: DocumentTextIcon },
-            { name: 'Banners', to: '/banners', icon: PhotoIcon },
-        ]
-    },
-    {
-        name: 'Reports', icon: ChartBarIcon,
-        items: [
-            { name: 'Sales Reports', to: '/reports', icon: ChartBarIcon },
-            { name: 'Customer Reports', to: '/reports/customer', icon: UsersIcon },
-            { name: 'Product Reports', to: '/reports/product', icon: ShoppingBagIcon },
-            { name: 'Vendor Reports', to: '/reports/vendor', icon: BuildingStorefrontIcon },
-            { name: 'Shop Reports', to: '/reports/shop', icon: HomeModernIcon },
-            { name: 'Affiliate Reports', to: '/reports/affiliate', icon: LinkIcon },
-            { name: 'Coupon Reports', to: '/reports/coupon', icon: TicketIcon },
-            { name: 'Campaign Reports', to: '/reports/campaign', icon: MegaphoneIcon },
-            { name: 'Review Reports', to: '/reports/review', icon: StarIcon },
-            { name: 'Notification Reports', to: '/reports/notification', icon: BellIcon },
-            { name: 'Email Reports', to: '/reports/email', icon: EnvelopeIcon },
-            { name: 'System Reports', to: '/reports/system', icon: Cog6ToothIcon },
-        ]
-    },
-    {
-        name: 'Messages', icon: ChatBubbleLeftRightIcon,
-        items: [
-            { name: 'Chat Dashboard', to: '/chat-dashboard', icon: ChartBarIcon },
-            { name: 'Chat', to: '/messages', icon: ChatBubbleLeftRightIcon },
-            { name: 'Notifications', to: '/notifications', icon: BellIcon },
-            { name: 'Emails', to: '/emails', icon: EnvelopeIcon },
-        ]
-    },
+    // {
+    //     name: 'Orders', icon: ClipboardDocumentListIcon,
+    //     items: [
+    //         { name: 'All Orders', to: '/orders', icon: ClipboardDocumentListIcon },
+    //         { name: 'Transactions', to: '/transactions', icon: BanknotesIcon },
+    //     ]
+    // },
+    // {
+    //     name: 'Invoices', icon: InvoiceIcon,
+    //     items: [
+    //         { name: 'Sale Invoices', to: '/invoices/sales', icon: BanknotesIcon },
+    //         { name: 'Purchase Invoices', to: '/invoices/purchases', icon: ShoppingBagIcon },
+    //     ]
+    // },
+    // {
+    //     name: 'Marketing', icon: MegaphoneIcon,
+    //     items: [
+    //         { name: 'Campaigns', to: '/campaigns', icon: MegaphoneIcon },
+    //         { name: 'Reviews', to: '/reviews', icon: StarIcon }
+    //     ]
+    // },
+    // {
+    //     name: 'Users', icon: UsersIcon,
+    //     items: [
+    //         { name: 'Customers', to: '/users', icon: UsersIcon },
+    //         { name: 'Admins', to: '/admins', icon: UserGroupIcon },
+    //         { name: 'Roles', to: '/roles', icon: IdentificationIcon },
+    //         { name: 'Permissions', to: '/permissions', icon: LockOpenIcon },
+    //     ]
+    // },
+    // {
+    //     name: 'Content', icon: DocumentTextIcon,
+    //     items: [
+    //         { name: 'CMS Pages', to: '/cms', icon: DocumentTextIcon },
+    //         { name: 'Banners', to: '/banners', icon: PhotoIcon },
+    //     ]
+    // },
+    // {
+    //     name: 'Reports', icon: ChartBarIcon,
+    //     items: [
+    //         { name: 'Sales Reports', to: '/reports', icon: ChartBarIcon },
+    //         { name: 'Customer Reports', to: '/reports/customer', icon: UsersIcon },
+    //         { name: 'Product Reports', to: '/reports/product', icon: ShoppingBagIcon },
+    //         { name: 'Vendor Reports', to: '/reports/vendor', icon: BuildingStorefrontIcon },
+    //         { name: 'Shop Reports', to: '/reports/shop', icon: HomeModernIcon },
+    //         { name: 'Affiliate Reports', to: '/reports/affiliate', icon: LinkIcon },
+    //         { name: 'Coupon Reports', to: '/reports/coupon', icon: TicketIcon },
+    //         { name: 'Campaign Reports', to: '/reports/campaign', icon: MegaphoneIcon },
+    //         { name: 'Review Reports', to: '/reports/review', icon: StarIcon },
+    //         { name: 'Notification Reports', to: '/reports/notification', icon: BellIcon },
+    //         { name: 'Email Reports', to: '/reports/email', icon: EnvelopeIcon },
+    //         { name: 'System Reports', to: '/reports/system', icon: Cog6ToothIcon },
+    //     ]
+    // },
+    // {
+    //     name: 'Messages', icon: ChatBubbleLeftRightIcon,
+    //     items: [
+    //         { name: 'Chat Dashboard', to: '/chat-dashboard', icon: ChartBarIcon },
+    //         { name: 'Chat', to: '/messages', icon: ChatBubbleLeftRightIcon },
+    //         { name: 'Notifications', to: '/notifications', icon: BellIcon },
+    //         { name: 'Emails', to: '/emails', icon: EnvelopeIcon },
+    //     ]
+    // },
     {
         name: 'System', icon: Cog6ToothIcon,
         items: [

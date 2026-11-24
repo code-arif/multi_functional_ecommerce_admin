@@ -12,6 +12,9 @@ export const vendorApi = {
   makePending:  id     => client.post(`/admin/vendors/${id}/pending`),
   update:       (id,d) => client.post(`/admin/vendors/${id}?_method=PUT`, d, { headers: { 'Content-Type': 'multipart/form-data' } }),
   destroy:      id     => client.delete(`/admin/vendors/${id}`),
+  // Documents
+  verifyDocument: docId       => client.post(`/admin/vendors/documents/${docId}/verify`),
+  rejectDocument: (docId, reason) => client.post(`/admin/vendors/documents/${docId}/reject`, { reason }),
   // Payouts
   payouts:      p      => client.get('/admin/vendor-payouts', { params: p }),
   payoutCreate: d      => client.post('/admin/vendor-payouts', d),
