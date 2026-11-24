@@ -10,7 +10,7 @@
             </div>
 
             <div v-if="sidebarOpen" class="min-w-0 flex-1">
-                <p class="sidebar-brand font-black text-lg leading-none">EcoAdmin</p>
+                <p class="sidebar-brand font-black text-lg leading-none">Z-Shop</p>
                 <p class="sidebar-subtitle text-[11px]">Super Admin</p>
             </div>
 

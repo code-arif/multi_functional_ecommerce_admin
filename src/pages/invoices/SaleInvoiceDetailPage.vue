@@ -12,9 +12,9 @@
               <p class="text-sm mt-1" style="color:var(--text-muted)">#INV-{{ String(invoice.id).padStart(5, '0') }}</p>
             </div>
             <div class="text-right">
-              <p class="font-black text-lg" style="color:var(--color-primary)">EcoAdmin</p>
+              <p class="font-black text-lg" style="color:var(--color-primary)">Z-Shop</p>
               <p class="text-xs" style="color:var(--text-muted)">123 Business Avenue, Dhaka</p>
-              <p class="text-xs" style="color:var(--text-muted)">admin@ecoadmin.com</p>
+              <p class="text-xs" style="color:var(--text-muted)">admin@zshop.com</p>
             </div>
           </div>
           <!-- Status & Actions -->
