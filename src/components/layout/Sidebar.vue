@@ -171,6 +171,7 @@ import {
     ShieldCheckIcon,
     WrenchScrewdriverIcon,
     RadioIcon,
+    TrashIcon,
     DocumentTextIcon as InvoiceIcon
 } from '@heroicons/vue/24/outline'
 
@@ -195,6 +196,7 @@ const navGroups = [
             { name: 'All Vendors', to: '/vendors', icon: BuildingStorefrontIcon },
             { name: 'Pending Applications', to: '/vendors/pending', icon: ClipboardDocumentListIcon },
             { name: 'KYC Documents Queue', to: '/vendors/documents', icon: IdentificationIcon },
+            { name: 'Deleted Vendors', to: '/vendors/deleted', icon: TrashIcon },
            // { name: 'Vendor Payouts', to: '/vendor-payouts', icon: BanknotesIcon },
         ]
     },

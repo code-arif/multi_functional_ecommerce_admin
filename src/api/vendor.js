@@ -4,6 +4,7 @@ export const vendorApi = {
   list:             p           => client.get('/admin/vendors', { params: p }),
   stats:            ()          => client.get('/admin/vendors/stats'),
   pending:          p           => client.get('/admin/vendors/pending', { params: p }),
+  trashed:          p           => client.get('/admin/vendors/trashed', { params: p }),
   show:             id          => client.get(`/admin/vendors/${id}`),
   create:           d           => client.post('/admin/vendors/store', d),
   updateStatus:     (id, s)     => client.patch(`/admin/vendors/${id}/status`, { status: s }),
@@ -14,6 +15,8 @@ export const vendorApi = {
   makePending:      id          => client.post(`/admin/vendors/${id}/pending`),
   update:           (id, d)     => client.post(`/admin/vendors/${id}?_method=PUT`, d, { headers: { 'Content-Type': 'multipart/form-data' } }),
   destroy:          id          => client.delete(`/admin/vendors/${id}`),
+  restore:          id          => client.post(`/admin/vendors/${id}/restore`),
+  forceDelete:      id          => client.delete(`/admin/vendors/${id}/force`),
   // Documents (KYC Queue & Single Vendor)
   documents:        p           => client.get('/admin/vendors/documents', { params: p }),
   verifyDocument:   docId       => client.post(`/admin/vendors/documents/${docId}/verify`),

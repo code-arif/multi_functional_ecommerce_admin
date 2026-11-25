@@ -1,9 +1,18 @@
 <template>
     <div>
         <BreadcrumbHeader :items="breadcrumbItems">
-            <button @click="showAddModal = true" class="btn-primary text-sm">
-                Add Vendor
-            </button>
+            <div class="flex items-center gap-2">
+                <router-link
+                    to="/vendors/deleted"
+                    class="px-3 py-1.5 rounded-lg border border-red-200 bg-red-50/70 hover:bg-red-100 text-red-700 text-xs font-semibold transition-colors inline-flex items-center gap-1.5"
+                >
+                    <TrashIcon class="w-3.5 h-3.5" />
+                    <span>Deleted Vendors{{ stats.trashed ? ` (${stats.trashed})` : '' }}</span>
+                </router-link>
+                <button @click="showAddModal = true" class="btn-primary text-sm">
+                    Add Vendor
+                </button>
+            </div>
         </BreadcrumbHeader>
 
         <!-- Stats Bar -->
@@ -318,9 +327,12 @@
 
         <ConfirmModal
             :show="!!deleteTarget"
-            title="Delete Vendor"
-            :message="`Delete vendor '${deleteTarget?.shop_name || deleteTarget?.name}'? This will permanently remove the vendor and all associated data.`"
-            confirm-text="Delete"
+            type="danger"
+            title="Move Vendor to Trash"
+            danger-warning="Deleting this vendor will immediately disable their storefront and move the shop to Deleted Vendors. You can restore it later from Deleted Vendors."
+            :message="`Are you sure you want to delete '${deleteTarget?.shop_name || deleteTarget?.name}'?`"
+            :confirm-match="deleteTarget?.shop_name || deleteTarget?.name || ''"
+            confirm-text="I understand, delete this vendor"
             :loading="deleteLoading"
             @confirm="doDelete"
             @cancel="deleteTarget = null"
