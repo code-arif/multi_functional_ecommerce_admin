@@ -239,7 +239,7 @@
                                         </router-link>
                                     </Tooltip>
                                     <Tooltip v-if="v.status === 'pending'" text="Approve">
-                                        <button @click="approveVendor(v.id)"
+                                        <button @click="confirmApprove(v)"
                                             class="p-1.5 rounded-lg border border-gray-300 hover:border-green-400 text-green-600 hover:text-green-700 hover:bg-green-50 transition-all inline-flex items-center">
                                             <CheckIcon class="w-4 h-4" />
                                         </button>
@@ -303,6 +303,17 @@
             :show="showAddModal"
             @close="showAddModal = false"
             @save="handleAddVendor"
+        />
+
+        <ConfirmModal
+            :show="!!approveTarget"
+            type="success"
+            title="Approve Vendor"
+            :message="`Are you sure you want to approve '${approveTarget?.shop_name || approveTarget?.name}'? They will be activated and notified via email.`"
+            confirm-text="Yes, Approve"
+            :loading="approveLoading"
+            @confirm="doApprove"
+            @cancel="approveTarget = null"
         />
 
         <ConfirmModal
@@ -537,12 +548,26 @@ async function load(page = 1) {
     }
 }
 
-async function approveVendor(id) {
+const approveTarget = ref(null)
+const approveLoading = ref(false)
+
+function confirmApprove(vendor) {
+    approveTarget.value = vendor
+}
+
+async function doApprove() {
+    if (!approveTarget.value) return
+    approveLoading.value = true
     try {
-        await vendorApi.approve(id)
+        await vendorApi.approve(approveTarget.value.id)
         toast.success('Vendor approved successfully')
+        approveTarget.value = null
         load(pagination.value?.current_page || 1)
-    } catch { toast.error('Failed to approve vendor') }
+    } catch {
+        toast.error('Failed to approve vendor')
+    } finally {
+        approveLoading.value = false
+    }
 }
 
 const deleteTarget = ref(null)
