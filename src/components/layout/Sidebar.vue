@@ -193,9 +193,9 @@ const navGroups = [
         name: 'Marketplace', icon: BuildingStorefrontIcon,
         items: [
             { name: 'All Vendors', to: '/vendors', icon: BuildingStorefrontIcon },
-            // { name: 'Vendor Payouts', to: '/vendor-payouts', icon: BanknotesIcon },
-            { name: 'All Shops', to: '/shops', icon: HomeModernIcon },
-            { name: 'Pending Approval Shops', to: '/shops/pending', icon: ClipboardDocumentListIcon }
+            { name: 'Pending Applications', to: '/vendors/pending', icon: ClipboardDocumentListIcon },
+            { name: 'KYC Documents Queue', to: '/vendors/documents', icon: IdentificationIcon },
+           // { name: 'Vendor Payouts', to: '/vendor-payouts', icon: BanknotesIcon },
         ]
     },
     {

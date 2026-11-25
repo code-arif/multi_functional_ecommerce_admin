@@ -177,14 +177,22 @@
                                 ৳{{ Number(vendor.total_withdrawn || 0).toLocaleString() }}
                             </p>
                         </div>
-                        <div class="p-3 rounded-xl bg-gray-50/80 border border-gray-100 text-center">
+                        <div class="p-3 rounded-xl bg-gray-50/80 border border-gray-100 text-center relative group">
                             <p class="text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1 flex items-center justify-center gap-1">
                                 <ScaleIcon class="w-3.5 h-3.5 text-amber-600" /> Commission
                             </p>
                             <p class="text-lg md:text-xl font-black" :style="{ color: 'var(--color-primary)' }">
                                 {{ vendor.commission_rate ?? 0 }}%
                             </p>
-                            <span class="text-[10px] text-gray-400 capitalize">{{ vendor.commission_type || 'percentage' }}</span>
+                            <div class="flex items-center justify-center gap-1.5 mt-0.5">
+                                <span class="text-[10px] text-gray-400 capitalize">{{ vendor.commission_type || 'percentage' }}</span>
+                                <button
+                                    @click="openCommissionModal"
+                                    class="text-[10px] font-semibold text-emerald-700 hover:underline"
+                                >
+                                    Edit
+                                </button>
+                            </div>
                         </div>
                         <div class="p-3 rounded-xl bg-gray-50/80 border border-gray-100 text-center col-span-2 sm:col-span-1">
                             <p class="text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1 flex items-center justify-center gap-1">
@@ -675,6 +683,55 @@
                 </div>
             </div>
         </Teleport>
+
+        <!-- Edit Commission Modal -->
+        <Teleport to="body">
+            <div v-if="commissionModal.show" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" @click="commissionModal.show = false" />
+                <div class="relative bg-white rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl animate-fade-in">
+                    <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-8 h-8 rounded-lg flex items-center justify-center bg-amber-50 text-amber-600">
+                                <ScaleIcon class="w-4 h-4" />
+                            </div>
+                            <h3 class="text-sm font-bold text-gray-900">Edit Vendor Commission</h3>
+                        </div>
+                        <button @click="commissionModal.show = false" class="text-gray-400 hover:text-gray-600">
+                            <XMarkIcon class="w-5 h-5" />
+                        </button>
+                    </div>
+                    <form @submit.prevent="submitCommission" class="p-6 space-y-4">
+                        <div>
+                            <label class="label mb-1.5 block text-xs font-bold text-gray-700">Commission Type</label>
+                            <SelectBox
+                                v-model="commissionModal.type"
+                                :options="[{ value: 'percentage', label: 'Percentage (%)' }, { value: 'fixed', label: 'Fixed (৳)' }]"
+                                size="sm"
+                                full-width
+                            />
+                        </div>
+                        <div>
+                            <label class="label mb-1.5 block text-xs font-bold text-gray-700">Commission Rate *</label>
+                            <input
+                                v-model.number="commissionModal.rate"
+                                type="number"
+                                min="0"
+                                max="100"
+                                step="0.01"
+                                required
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none focus:border-emerald-600"
+                            />
+                        </div>
+                        <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-200">
+                            <button type="button" @click="commissionModal.show = false" class="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 text-xs font-semibold hover:bg-gray-50 transition">Cancel</button>
+                            <button type="submit" :disabled="commissionModal.submitting" class="btn-primary text-xs px-4 py-2">
+                                {{ commissionModal.submitting ? 'Saving...' : 'Save Commission' }}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </Teleport>
     </div>
 </template>
 
@@ -902,6 +959,39 @@ async function submitDocReject() {
         toast.error(e.response?.data?.message || 'Failed to reject document')
     } finally {
         docRejectModal.submitting = false
+    }
+}
+
+const commissionModal = reactive({
+    show: false,
+    rate: 10,
+    type: 'percentage',
+    submitting: false,
+})
+
+function openCommissionModal() {
+    commissionModal.rate = Number(vendor.value?.commission_rate ?? 10)
+    commissionModal.type = vendor.value?.commission_type || 'percentage'
+    commissionModal.show = true
+}
+
+async function submitCommission() {
+    commissionModal.submitting = true
+    try {
+        await vendorApi.updateCommission(route.params.id, {
+            commission_rate: commissionModal.rate,
+            commission_type: commissionModal.type,
+        })
+        if (vendor.value) {
+            vendor.value.commission_rate = commissionModal.rate
+            vendor.value.commission_type = commissionModal.type
+        }
+        toast.success('Commission rate updated successfully')
+        commissionModal.show = false
+    } catch (e) {
+        toast.error(e.response?.data?.message || 'Failed to update commission')
+    } finally {
+        commissionModal.submitting = false
     }
 }
 

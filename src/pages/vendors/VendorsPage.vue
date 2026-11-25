@@ -409,7 +409,7 @@ const loading = ref(true)
 const showAddModal = ref(false)
 
 const breadcrumbItems = computed(() => [
-  { label: 'Vendors', icon: BuildingStorefrontIcon }
+  { label: route.path.includes('/pending') ? 'Pending Applications' : 'Vendors', icon: BuildingStorefrontIcon }
 ])
 
 const filters = reactive({
@@ -504,6 +504,17 @@ function formatRelative(d) {
     return `${Math.floor(days / 365)}y ago`
 }
 
+async function loadStats() {
+    try {
+        const res = await vendorApi.stats()
+        if (res.data?.data) {
+            Object.assign(stats, res.data.data)
+        }
+    } catch {
+        // non-fatal
+    }
+}
+
 async function load(page = 1) {
     loading.value = true
     try {
@@ -536,11 +547,7 @@ async function load(page = 1) {
             name: v.owner_name || v.user?.name || v.shop_name || 'Vendor',
         }))
         pagination.value = res.data.pagination || null
-        stats.total = pagination.value?.total || 0
-        // Extract stats from response if available
-        if (res.data.stats) {
-            Object.assign(stats, res.data.stats)
-        }
+        loadStats()
     } catch (e) {
         toast.error('Failed to load vendors')
     } finally {
