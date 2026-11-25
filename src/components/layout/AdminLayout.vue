@@ -13,6 +13,7 @@
                 @mark-as-read="markAsRead"
                 @mark-all-as-read="markAllAsRead"
                 @delete-notification="deleteNotification"
+                @navigate="handleNotificationNavigate"
             />
 
             <main class="flex-1 overflow-y-auto p-4 lg:p-6">
@@ -29,10 +30,14 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, watch, onMounted, onUnmounted } from 'vue'
+import { useRouter } from 'vue-router'
 import Sidebar from '@/components/layout/Sidebar.vue'
 import Navbar from '@/components/layout/Navbar.vue'
 import ProfileModal from '@ecom/ui/components/ProfileModal.vue'
+import { notificationApi } from '@/api/notification'
+
+const router = useRouter()
 
 const SIDEBAR_STATE_KEY = 'sidebar_open_state'
 const sidebarOpen = ref(localStorage.getItem(SIDEBAR_STATE_KEY) !== 'false')
@@ -41,33 +46,101 @@ watch(sidebarOpen, val => {
     localStorage.setItem(SIDEBAR_STATE_KEY, val)
 })
 
-/* ---------- Notifications ---------- */
+/* ---------- Notifications State & Sync ---------- */
 const isProfileModalOpen = ref(false)
+const notifications = ref([])
+const unreadCount = ref(0)
+const loadingNotifications = ref(false)
+let pollInterval = null
 
-const notifications = ref([
-    { id: 1, type: 'order', title: 'New order received', message: 'Order #ORD-1234 has been placed.', isRead: false },
-    { id: 2, type: 'inventory', title: 'Low stock alert', message: 'Only 5 products left.', isRead: false },
-    { id: 3, type: 'user', title: 'New customer registered', message: 'Sarah Johnson created an account.', isRead: true },
-    { id: 4, type: 'review', title: 'New 5-star review', message: 'Product "Wireless Headphones" received a 5-star review.', isRead: false },
-    { id: 5, type: 'affiliate', title: 'Affiliate commission earned', message: 'You earned $24.50 from affiliate sales this week.', isRead: false },
-])
+async function fetchNotifications() {
+    try {
+        loadingNotifications.value = true
+        const res = await notificationApi.list({ per_page: 30 })
+        if (res.data && res.data.success) {
+            notifications.value = res.data.data || []
+            unreadCount.value = typeof res.data.unread === 'number'
+                ? res.data.unread
+                : notifications.value.filter(n => !n.is_read).length
+        }
+    } catch (err) {
+        console.warn('Could not fetch notifications:', err)
+    } finally {
+        loadingNotifications.value = false
+    }
+}
 
-const unreadCount = computed(() =>
-    notifications.value.filter(n => !n.isRead).length
-)
-
-const markAsRead = id => {
+async function markAsRead(id) {
     const item = notifications.value.find(n => n.id === id)
-    if (item) item.isRead = true
+    if (item && !item.is_read) {
+        item.is_read = true
+        if (unreadCount.value > 0) unreadCount.value--
+    }
+
+    try {
+        await notificationApi.markAsRead(id)
+    } catch (err) {
+        console.warn('Failed to mark notification as read:', err)
+    }
 }
 
-const markAllAsRead = () => {
-    notifications.value.forEach(n => (n.isRead = true))
+async function markAllAsRead() {
+    notifications.value.forEach(n => (n.is_read = true))
+    unreadCount.value = 0
+
+    try {
+        await notificationApi.markAllAsRead()
+    } catch (err) {
+        console.warn('Failed to mark all notifications as read:', err)
+    }
 }
 
-const deleteNotification = id => {
+async function deleteNotification(id) {
+    const item = notifications.value.find(n => n.id === id)
+    if (item && !item.is_read && unreadCount.value > 0) {
+        unreadCount.value--
+    }
     notifications.value = notifications.value.filter(n => n.id !== id)
+
+    try {
+        await notificationApi.destroy(id)
+    } catch (err) {
+        console.warn('Failed to delete notification:', err)
+    }
 }
+
+function handleNotificationNavigate(notif) {
+    if (!notif) return
+
+    if (!notif.is_read) {
+        markAsRead(notif.id)
+    }
+
+    if (notif.action_url) {
+        // Normalize admin route paths (e.g. /admin/vendors/7 -> /vendors/7)
+        let target = notif.action_url.trim()
+        if (target.startsWith('/admin/')) {
+            target = target.replace(/^\/admin/, '')
+        }
+        router.push(target)
+    }
+}
+
+function handleWindowFocus() {
+    fetchNotifications()
+}
+
+onMounted(() => {
+    fetchNotifications()
+    // Poll every 45 seconds for new background notifications
+    pollInterval = setInterval(fetchNotifications, 45000)
+    window.addEventListener('focus', handleWindowFocus)
+})
+
+onUnmounted(() => {
+    if (pollInterval) clearInterval(pollInterval)
+    window.removeEventListener('focus', handleWindowFocus)
+})
 </script>
 
 <style scoped>

@@ -1,8 +1,13 @@
 <template>
   <div>
-    <PageHeader title="Notifications" subtitle="System and user notifications">
-      <button class="btn-ghost text-sm gap-1.5" @click="markAllRead"><CheckIcon class="w-4 h-4" />Mark All Read</button>
+    <PageHeader title="Notifications" subtitle="System and user activity alerts">
+      <div class="flex items-center gap-2">
+        <button v-if="hasUnread" class="btn-ghost text-sm gap-1.5 text-emerald-600 hover:bg-emerald-50" @click="markAllRead">
+          <CheckIcon class="w-4 h-4" />Mark All Read
+        </button>
+      </div>
     </PageHeader>
+
     <transition name="skeleton-fade" mode="out-in">
       <!-- Skeleton -->
       <div v-if="loading" key="skeleton">
@@ -12,98 +17,242 @@
       <!-- Real Content -->
       <div v-else key="content" class="space-y-2">
         <div v-for="(group, gIdx) in groupedNotifications" :key="gIdx" class="mb-6">
-          <p class="text-xs font-semibold uppercase tracking-wide mb-3 px-1" :style="{ color: 'var(--text-muted)' }">{{ group.date }}</p>
-          <div v-for="(notif, i) in group.items" :key="i" class="card p-4 flex items-start gap-4 transition hover:shadow-md cursor-pointer" :class="notif.read ? 'opacity-70' : ''" :style="{ borderLeft: notif.read ? '' : '3px solid var(--color-primary)' }" @click="notif.read = true">
-            <div class="w-10 h-10 rounded-xl shrink-0 flex items-center justify-center" :style="{ backgroundColor: notifIconBg(notif.type), color: notifIconColor(notif.type) }">
-              <component :is="notifIcon(notif.type)" class="w-5 h-5" />
-            </div>
-            <div class="flex-1 min-w-0">
-              <div class="flex items-start justify-between gap-3">
-                <div>
-                  <p class="text-sm font-semibold" :style="{ color: 'var(--text-primary)' }">{{ notif.title }}</p>
-                  <p class="text-sm mt-0.5" :style="{ color: 'var(--text-secondary)' }">{{ notif.message }}</p>
-                </div>
-                <span class="text-[10px] shrink-0" :style="{ color: 'var(--text-muted)' }">{{ notif.time }}</span>
+          <p class="text-xs font-bold uppercase tracking-wider mb-3 px-1 text-slate-500">{{ group.date }}</p>
+          <div class="space-y-2.5">
+            <div v-for="notif in group.items" :key="notif.id"
+              class="card p-4 flex items-start gap-4 transition hover:shadow-md cursor-pointer border-l-4"
+              :class="isItemRead(notif) ? 'opacity-75 border-l-transparent' : 'border-l-emerald-500 bg-emerald-50/20'"
+              @click="handleNotificationClick(notif)">
+              
+              <div class="w-10 h-10 rounded-xl shrink-0 flex items-center justify-center"
+                :style="{ backgroundColor: notifIconBg(notif.type), color: notifIconColor(notif.type) }">
+                <component :is="notifIcon(notif.type)" class="w-5 h-5" />
               </div>
-              <div class="flex items-center gap-3 mt-2">
-                <span class="text-[10px] font-medium px-2 py-0.5 rounded-full" :style="{ backgroundColor: notifTypeBg(notif.type), color: notifTypeColor(notif.type) }">{{ notif.type }}</span>
-                <span v-if="!notif.read" class="w-2 h-2 rounded-full" :style="{ backgroundColor: 'var(--color-primary)' }"></span>
+
+              <div class="flex-1 min-w-0">
+                <div class="flex items-start justify-between gap-3">
+                  <div>
+                    <p class="text-sm font-bold" :style="{ color: 'var(--text-primary)' }">{{ notif.title || 'Notification' }}</p>
+                    <p class="text-xs text-slate-600 mt-0.5 leading-relaxed">{{ notif.message }}</p>
+                  </div>
+                  <span class="text-[11px] shrink-0 text-slate-400 font-medium">{{ formatTime(notif.created_at) }}</span>
+                </div>
+
+                <div class="flex items-center gap-3 mt-2.5">
+                  <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider"
+                    :style="{ backgroundColor: notifTypeBg(notif.type), color: notifTypeColor(notif.type) }">
+                    {{ notif.type }}
+                  </span>
+                  <span v-if="!isItemRead(notif)" class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                  <span v-if="notif.action_url" class="text-[11px] font-semibold text-emerald-600 hover:underline inline-flex items-center gap-0.5">
+                    Open page &rarr;
+                  </span>
+                </div>
               </div>
             </div>
           </div>
         </div>
-        <div v-if="!notifications.length" class="text-center py-16" :style="{ color: 'var(--text-muted)' }">
-          <BellIcon class="w-12 h-12 mx-auto mb-3" />
-          <p class="font-semibold text-lg" :style="{ color: 'var(--text-primary)' }">No notifications</p>
-          <p class="text-sm mt-1">You're all caught up!</p>
+
+        <div v-if="!notifications.length" class="text-center py-16 card" :style="{ color: 'var(--text-muted)' }">
+          <BellIcon class="w-12 h-12 mx-auto mb-3 text-slate-300" />
+          <p class="font-bold text-lg" :style="{ color: 'var(--text-primary)' }">No notifications yet</p>
+          <p class="text-xs text-slate-500 mt-1">When system, order, or vendor events occur, they will appear here.</p>
         </div>
       </div>
     </transition>
   </div>
 </template>
+
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import PageHeader from '@ecom/ui/components/PageHeader.vue'
 import NotificationsSkeleton from '@/components/skeletons/NotificationsSkeleton.vue'
-import { BellIcon, CheckIcon, ShoppingBagIcon, StarIcon, TicketIcon, UserIcon, ExclamationTriangleIcon, MegaphoneIcon } from '@heroicons/vue/24/outline'
+import { notificationApi } from '@/api/notification'
+import {
+  BellIcon,
+  CheckIcon,
+  ShoppingBagIcon,
+  StarIcon,
+  TicketIcon,
+  UserIcon,
+  ExclamationTriangleIcon,
+  MegaphoneIcon,
+  BuildingStorefrontIcon,
+} from '@heroicons/vue/24/outline'
 
+const router = useRouter()
 const loading = ref(true)
+const notifications = ref([])
 
-const notifications = ref([
-  {id:1,type:'order',title:'New Order Received',message:'Order #1024 has been placed by Sarah Johnson - ৳2,450',time:'5m ago',read:false,date:'Today'},
-  {id:2,type:'review',title:'New Product Review',message:'Mike Chen left a 5-star review on Wireless Headphones',time:'12m ago',read:false,date:'Today'},
-  {id:3,type:'coupon',title:'Coupon Expiring Soon',message:'Coupon code SUMMER20 expires in 2 days',time:'1h ago',read:false,date:'Today'},
-  {id:4,type:'user',title:'New User Registered',message:'Emily Davis has created a new account',time:'2h ago',read:true,date:'Today'},
-  {id:5,type:'alert',title:'Low Stock Alert',message:'Product "Ergonomic Mouse" has only 3 units left',time:'3h ago',read:false,date:'Today'},
-  {id:6,type:'order',title:'Order Shipped',message:'Order #1018 has been shipped successfully',time:'5h ago',read:true,date:'Yesterday'},
-  {id:7,type:'promo',title:'Campaign Ended',message:'Flash Sale campaign has ended - 156 orders placed',time:'1d ago',read:true,date:'Yesterday'},
-  {id:8,type:'review',title:'Low Rating Alert',message:'Product "Tablet Stand" received a 2-star review',time:'1d ago',read:false,date:'Yesterday'},
-  {id:9,type:'alert',title:'Payment Failed',message:'Transaction #T-8921 failed due to insufficient balance',time:'2d ago',read:true,date:'Earlier'},
-  {id:10,type:'user',title:'Vendor Approved',message:'Vendor "TechGadgets" has been approved successfully',time:'3d ago',read:true,date:'Earlier'},
-])
+const isItemRead = (n) => {
+  if (typeof n.is_read === 'boolean') return n.is_read
+  if (typeof n.isRead === 'boolean') return n.isRead
+  return n.read_at !== null && n.read_at !== undefined
+}
+
+const hasUnread = computed(() => notifications.value.some(n => !isItemRead(n)))
+
+async function fetchNotifications() {
+  try {
+    loading.value = true
+    const res = await notificationApi.list({ per_page: 50 })
+    if (res.data && res.data.success) {
+      notifications.value = res.data.data || []
+    }
+  } catch (err) {
+    console.warn('Failed to fetch notifications list:', err)
+  } finally {
+    loading.value = false
+  }
+}
 
 const groupedNotifications = computed(() => {
   const groups = {}
+  const now = new Date()
+  const todayStr = now.toDateString()
+  const yesterday = new Date(now)
+  yesterday.setDate(yesterday.getDate() - 1)
+  const yesterdayStr = yesterday.toDateString()
+
   notifications.value.forEach(n => {
-    if (!groups[n.date]) groups[n.date] = { date: n.date, items: [] }
-    groups[n.date].items.push(n)
+    let groupKey = 'Earlier'
+    if (n.created_at) {
+      const itemDate = new Date(n.created_at).toDateString()
+      if (itemDate === todayStr) groupKey = 'Today'
+      else if (itemDate === yesterdayStr) groupKey = 'Yesterday'
+    }
+
+    if (!groups[groupKey]) {
+      groups[groupKey] = { date: groupKey, items: [] }
+    }
+    groups[groupKey].items.push(n)
   })
-  return Object.values(groups)
+
+  // Preferred order: Today, Yesterday, Earlier
+  const ordered = []
+  if (groups['Today']) ordered.push(groups['Today'])
+  if (groups['Yesterday']) ordered.push(groups['Yesterday'])
+  if (groups['Earlier']) ordered.push(groups['Earlier'])
+  return ordered
 })
 
-function markAllRead() {
-  notifications.value.forEach(n => n.read = true)
+async function markAllRead() {
+  notifications.value.forEach(n => {
+    n.is_read = true
+    n.read_at = new Date().toISOString()
+  })
+  try {
+    await notificationApi.markAllAsRead()
+  } catch (err) {
+    console.warn('Error marking all as read:', err)
+  }
+}
+
+async function handleNotificationClick(notif) {
+  if (!isItemRead(notif)) {
+    notif.is_read = true
+    notif.read_at = new Date().toISOString()
+    try {
+      await notificationApi.markAsRead(notif.id)
+    } catch (err) {
+      console.warn('Error marking as read:', err)
+    }
+  }
+
+  if (notif.action_url) {
+    let target = notif.action_url.trim()
+    if (target.startsWith('/admin/')) {
+      target = target.replace(/^\/admin/, '')
+    }
+    router.push(target)
+  }
+}
+
+function formatTime(date) {
+  if (!date) return ''
+  const diffMs = Date.now() - new Date(date).getTime()
+  const m = Math.floor(diffMs / 60000)
+  if (m < 1) return 'Just now'
+  if (m < 60) return `${m}m ago`
+  const h = Math.floor(m / 60)
+  if (h < 24) return `${h}h ago`
+  const d = Math.floor(h / 24)
+  return d < 7 ? `${d}d ago` : new Date(date).toLocaleDateString('en-BD', { month: 'short', day: 'numeric', year: 'numeric' })
 }
 
 function notifIcon(type) {
-  const icons = { order: ShoppingBagIcon, review: StarIcon, coupon: TicketIcon, user: UserIcon, alert: ExclamationTriangleIcon, promo: MegaphoneIcon }
-  return icons[type] || BellIcon
+  const icons = {
+    vendor: BuildingStorefrontIcon,
+    order: ShoppingBagIcon,
+    review: StarIcon,
+    coupon: TicketIcon,
+    user: UserIcon,
+    alert: ExclamationTriangleIcon,
+    inventory: ExclamationTriangleIcon,
+    promo: MegaphoneIcon,
+  }
+  return icons[(type || '').toLowerCase()] || BellIcon
 }
 
 function notifIconBg(type) {
-  const colors = { order: '#2E7D32', review: '#7C3AED', coupon: '#D97706', user: '#2563EB', alert: '#DC2626', promo: '#0D9488' }
-  return `color-mix(in srgb, ${colors[type] || '#64748B'} 15%, transparent)`
+  const colors = {
+    vendor: '#059669',
+    order: '#2563EB',
+    review: '#7C3AED',
+    coupon: '#D97706',
+    user: '#0284C7',
+    alert: '#DC2626',
+    inventory: '#D97706',
+    promo: '#0D9488',
+  }
+  return `color-mix(in srgb, ${colors[(type || '').toLowerCase()] || '#64748B'} 15%, transparent)`
 }
 
 function notifIconColor(type) {
-  const colors = { order: '#2E7D32', review: '#7C3AED', coupon: '#D97706', user: '#2563EB', alert: '#DC2626', promo: '#0D9488' }
-  return colors[type] || '#64748B'
+  const colors = {
+    vendor: '#059669',
+    order: '#2563EB',
+    review: '#7C3AED',
+    coupon: '#D97706',
+    user: '#0284C7',
+    alert: '#DC2626',
+    inventory: '#D97706',
+    promo: '#0D9488',
+  }
+  return colors[(type || '').toLowerCase()] || '#64748B'
 }
 
 function notifTypeBg(type) {
-  const colors = { order: '#2E7D32', review: '#7C3AED', coupon: '#D97706', user: '#2563EB', alert: '#DC2626', promo: '#0D9488' }
-  return `color-mix(in srgb, ${colors[type] || '#64748B'} 12%, transparent)`
+  const colors = {
+    vendor: '#059669',
+    order: '#2563EB',
+    review: '#7C3AED',
+    coupon: '#D97706',
+    user: '#0284C7',
+    alert: '#DC2626',
+    inventory: '#D97706',
+    promo: '#0D9488',
+  }
+  return `color-mix(in srgb, ${colors[(type || '').toLowerCase()] || '#64748B'} 12%, transparent)`
 }
 
 function notifTypeColor(type) {
-  const colors = { order: '#2E7D32', review: '#7C3AED', coupon: '#D97706', user: '#2563EB', alert: '#DC2626', promo: '#0D9488' }
-  return colors[type] || '#64748B'
+  const colors = {
+    vendor: '#059669',
+    order: '#2563EB',
+    review: '#7C3AED',
+    coupon: '#D97706',
+    user: '#0284C7',
+    alert: '#DC2626',
+    inventory: '#D97706',
+    promo: '#0D9488',
+  }
+  return colors[(type || '').toLowerCase()] || '#64748B'
 }
 
 onMounted(() => {
-  setTimeout(() => {
-    loading.value = false
-  }, 1200)
+  fetchNotifications()
 })
 </script>
 

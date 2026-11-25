@@ -87,9 +87,11 @@
                 <NotificationModal
                     v-model:isOpen="isNotificationOpen"
                     :notifications="notifications"
+                    :unreadCount="unreadCount"
                     @mark-as-read="id => emit('markAsRead', id)"
                     @mark-all-as-read="emit('markAllAsRead')"
                     @delete="id => emit('deleteNotification', id)"
+                    @navigate="notif => emit('navigate', notif)"
                 />
             </div>
 
@@ -181,7 +183,7 @@ defineProps({
     notifications: { type: Array, default: () => [] }
 })
 
-const emit = defineEmits(['toggle-sidebar', 'open-notification', 'open-profile', 'markAsRead', 'markAllAsRead', 'deleteNotification'])
+const emit = defineEmits(['toggle-sidebar', 'open-notification', 'open-profile', 'markAsRead', 'markAllAsRead', 'deleteNotification', 'navigate'])
 
 const route = useRoute()
 const auth = useAuthStore()

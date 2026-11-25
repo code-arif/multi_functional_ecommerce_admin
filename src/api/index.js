@@ -139,3 +139,6 @@ export const chatApi = {
   send:        (id,d)  => client.post(`/admin/chat/room/${id}/messages`, d),
   close:       id      => client.post(`/admin/chat/room/${id}/close`),
 }
+
+// Notifications
+export { notificationApi } from './notification'
