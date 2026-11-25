@@ -100,18 +100,21 @@
 
             <!-- Shop Header / Banner -->
             <div class="card overflow-hidden">
-                <div class="h-28 md:h-36 relative overflow-hidden bg-gray-200"
-                    :style="{
-                        background: `url(${vendor.banner_url || vendor.cover_image || DEFAULT_COVER_IMAGE}) center/cover no-repeat`,
-                    }">
-                    <div class="absolute inset-0 bg-black/40"></div>
-                    <div class="absolute inset-0"
-                        :style="{ background: 'linear-gradient(to top, rgba(0,0,0,0.65), transparent)' }"></div>
+                <div class="h-32 md:h-40 relative overflow-hidden bg-slate-100">
+                    <img
+                        :src="vendor.banner_url || vendor.cover_image || defaultVendorBanner"
+                        :alt="`${vendor.shop_name || 'Vendor'} banner`"
+                        class="w-full h-full object-cover object-center"
+                    />
+                    <div
+                        class="absolute inset-0 pointer-events-none"
+                        :style="{ background: 'linear-gradient(to top, rgba(15, 23, 42, 0.14), transparent 55%)' }"
+                    ></div>
                 </div>
-                <div class="px-6 pb-6 relative">
-                    <div class="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4 relative z-10 -mt-12 mb-4">
-                        <div class="flex items-end gap-4">
-                            <div class="w-20 h-20 md:w-24 md:h-24 rounded-2xl overflow-hidden border-4 bg-white shrink-0 shadow-lg"
+                <div class="px-6 pt-4 pb-6 relative bg-white">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
+                        <div class="flex flex-col sm:flex-row sm:items-center gap-4 min-w-0">
+                            <div class="w-20 h-20 md:w-24 md:h-24 -mt-14 sm:-mt-16 relative z-10 rounded-2xl overflow-hidden border-4 bg-white shrink-0 shadow-lg"
                                 :style="{ borderColor: 'var(--surface)' }">
                                 <img v-if="vendor.logo_url || vendor.shop_logo"
                                     :src="vendor.logo_url || vendor.shop_logo"
@@ -122,7 +125,7 @@
                                     {{ (vendor.shop_name || vendor.name)?.charAt(0)?.toUpperCase() || 'V' }}
                                 </div>
                             </div>
-                            <div class="pt-2">
+                            <div class="min-w-0">
                                 <div class="flex flex-wrap items-center gap-2.5">
                                     <h2 class="text-xl md:text-2xl font-black" :style="{ color: 'var(--text-primary)' }">
                                         {{ vendor.shop_name || vendor.name }}
@@ -144,7 +147,7 @@
                         </div>
 
                         <!-- Status Selector Box -->
-                        <div class="flex items-center gap-2 self-start sm:self-auto shrink-0">
+                        <div class="flex items-center gap-2 self-start sm:self-center shrink-0">
                             <span class="text-xs font-semibold text-gray-500">Status:</span>
                             <SelectBox v-model="newStatus" :options="statusOptions" size="sm" class="w-36" @change="updateStatus" />
                         </div>
@@ -743,6 +746,7 @@ import BreadcrumbHeader from '@ecom/ui/components/BreadcrumbHeader.vue'
 import SelectBox from '@ecom/ui/components/SelectBox.vue'
 import StatusBadge from '@ecom/ui/components/StatusBadge.vue'
 import { vendorApi } from '@/api/vendor'
+import defaultVendorBanner from '@/assets/default-vendor-banner.jpg'
 import {
     BuildingStorefrontIcon,
     EnvelopeIcon,
@@ -784,9 +788,6 @@ const statusOptions = [
     { value: 'suspended', label: 'Suspended' },
     { value: 'rejected', label: 'Rejected' },
 ]
-
-// Default shop cover banner
-const DEFAULT_COVER_IMAGE = 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1600&q=80'
 
 const breadcrumbItems = computed(() => [
   { label: 'Vendors', to: '/vendors', icon: BuildingStorefrontIcon },
