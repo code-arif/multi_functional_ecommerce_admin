@@ -522,7 +522,7 @@ async function load(page = 1) {
             ...v,
             id: v.uuid,
             shop_logo: v.logo_url,
-            name: v.user?.name || v.shop_name || 'Vendor',
+            name: v.owner_name || v.user?.name || v.shop_name || 'Vendor',
         }))
         pagination.value = res.data.pagination || null
         stats.total = pagination.value?.total || 0

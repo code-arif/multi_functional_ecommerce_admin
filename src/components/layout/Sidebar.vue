@@ -193,7 +193,7 @@ const navGroups = [
         name: 'Marketplace', icon: BuildingStorefrontIcon,
         items: [
             { name: 'All Vendors', to: '/vendors', icon: BuildingStorefrontIcon },
-            { name: 'Vendor Payouts', to: '/vendor-payouts', icon: BanknotesIcon },
+            // { name: 'Vendor Payouts', to: '/vendor-payouts', icon: BanknotesIcon },
             { name: 'All Shops', to: '/shops', icon: HomeModernIcon },
             { name: 'Pending Approval Shops', to: '/shops/pending', icon: ClipboardDocumentListIcon }
         ]
@@ -229,22 +229,22 @@ const navGroups = [
     //         { name: 'Reviews', to: '/reviews', icon: StarIcon }
     //     ]
     // },
-    // {
-    //     name: 'Users', icon: UsersIcon,
-    //     items: [
-    //         { name: 'Customers', to: '/users', icon: UsersIcon },
-    //         { name: 'Admins', to: '/admins', icon: UserGroupIcon },
-    //         { name: 'Roles', to: '/roles', icon: IdentificationIcon },
-    //         { name: 'Permissions', to: '/permissions', icon: LockOpenIcon },
-    //     ]
-    // },
-    // {
-    //     name: 'Content', icon: DocumentTextIcon,
-    //     items: [
-    //         { name: 'CMS Pages', to: '/cms', icon: DocumentTextIcon },
-    //         { name: 'Banners', to: '/banners', icon: PhotoIcon },
-    //     ]
-    // },
+    {
+        name: 'Users', icon: UsersIcon,
+        items: [
+            { name: 'Customers', to: '/users', icon: UsersIcon },
+            { name: 'Admins', to: '/admins', icon: UserGroupIcon },
+            { name: 'Roles', to: '/roles', icon: IdentificationIcon },
+            { name: 'Permissions', to: '/permissions', icon: LockOpenIcon },
+        ]
+    },
+    {
+        name: 'Content', icon: DocumentTextIcon,
+        items: [
+            { name: 'CMS Pages', to: '/cms', icon: DocumentTextIcon },
+            // { name: 'Banners', to: '/banners', icon: PhotoIcon },
+        ]
+    },
     // {
     //     name: 'Reports', icon: ChartBarIcon,
     //     items: [
