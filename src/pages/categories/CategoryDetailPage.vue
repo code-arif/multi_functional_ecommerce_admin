@@ -1,9 +1,27 @@
 <template>
   <div class="w-full">
     <BreadcrumbHeader :items="breadcrumbItems">
-      <router-link to="/categories" class="px-4 py-2 border border-gray-300 rounded-xl text-sm hover:bg-gray-50 transition-colors mr-2">
-        Back to List
-      </router-link>
+      <div class="flex items-center gap-2">
+        <button
+          v-if="category && category.status !== 'approved'"
+          @click="confirmStatusAction('approve')"
+          class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold transition-colors inline-flex items-center gap-1.5"
+        >
+          <CheckCircleIcon class="w-4 h-4" />
+          Approve
+        </button>
+        <button
+          v-if="category && category.status !== 'rejected'"
+          @click="confirmStatusAction('reject')"
+          class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-sm font-semibold transition-colors inline-flex items-center gap-1.5"
+        >
+          <XCircleIcon class="w-4 h-4" />
+          Reject
+        </button>
+        <router-link to="/categories" class="px-4 py-2 border border-gray-300 rounded-xl text-sm hover:bg-gray-50 transition-colors">
+          Back to List
+        </router-link>
+      </div>
     </BreadcrumbHeader>
 
     <!-- Loading state -->
@@ -148,6 +166,10 @@
                   <span class="flex items-center gap-1"><UserIcon class="w-3.5 h-3.5" /> Updated By:</span>
                   <span class="font-semibold">{{ category.updater?.name }}</span>
                 </div>
+                <div class="flex items-center justify-between text-xs text-gray-500">
+                  <span class="flex items-center gap-1"><CalendarIcon class="w-3.5 h-3.5" /> Updated At:</span>
+                  <span>{{ formatDate(category.updated_at) }}</span>
+                </div>
               </div>
             </div>
           </div>
@@ -236,14 +258,29 @@
       </div>
 
     </div>
+
+    <ConfirmModal
+      :show="confirmModal.show"
+      :title="confirmModal.action === 'approve' ? 'Approve Category' : 'Reject Category'"
+      :message="confirmModal.action === 'approve'
+        ? `Approve '${category?.name}' and notify the vendor?`
+        : `Reject '${category?.name}' and notify the vendor?`"
+      :confirm-text="confirmModal.action === 'approve' ? 'Approve' : 'Reject'"
+      :type="confirmModal.action === 'approve' ? 'success' : 'danger'"
+      :loading="updatingStatus"
+      @confirm="doStatusAction"
+      @cancel="confirmModal.show = false"
+    />
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
+import { useToast } from 'vue-toastification'
 import { format } from 'date-fns'
 import BreadcrumbHeader from '@ecom/ui/components/BreadcrumbHeader.vue'
+import ConfirmModal from '@ecom/ui/components/ConfirmModal.vue'
 import StatusBadge from '@ecom/ui/components/StatusBadge.vue'
 import { categoryApi } from '@/api/category'
 import { 
@@ -251,6 +288,8 @@ import {
   TagIcon, 
   FolderIcon, 
   CheckBadgeIcon, 
+  CheckCircleIcon,
+  XCircleIcon,
   PowerIcon, 
   UserIcon, 
   CalendarIcon, 
@@ -259,9 +298,12 @@ import {
 import { Tag, Package, Folder, PackageIcon, Percent } from 'lucide-vue-next'
 
 const route = useRoute()
+const toast = useToast()
 const loading = ref(true)
+const updatingStatus = ref(false)
 const category = ref(null)
 const error = ref(null)
+const confirmModal = reactive({ show: false, action: 'approve' })
 
 const breadcrumbItems = computed(() => [
   { label: 'Categories', to: '/categories', icon: TagIcon },
@@ -278,6 +320,28 @@ async function load() {
     error.value = e.response?.data?.message || 'Failed to fetch category details.'
   } finally {
     loading.value = false
+  }
+}
+
+function confirmStatusAction(action) {
+  confirmModal.action = action
+  confirmModal.show = true
+}
+
+async function doStatusAction() {
+  if (!category.value) return
+  updatingStatus.value = true
+  try {
+    const res = confirmModal.action === 'approve'
+      ? await categoryApi.approve(category.value.uuid)
+      : await categoryApi.reject(category.value.uuid)
+    category.value = res.data.data
+    toast.success(confirmModal.action === 'approve' ? 'Category approved.' : 'Category rejected.')
+    confirmModal.show = false
+  } catch (e) {
+    toast.error(e.response?.data?.message || `Failed to ${confirmModal.action} category.`)
+  } finally {
+    updatingStatus.value = false
   }
 }
 

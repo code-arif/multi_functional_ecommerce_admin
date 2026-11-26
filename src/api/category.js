@@ -5,5 +5,7 @@ export const categoryApi = {
   show:    uuid => client.get(`/admin/categories/${uuid}`),
   store:   d  => client.post('/admin/categories/store', d, { headers: { 'Content-Type': 'multipart/form-data' } }),
   update:  (uuid,d) => client.post(`/admin/categories/${uuid}/update?_method=PUT`, d, { headers: { 'Content-Type': 'multipart/form-data' } }),
+  approve: uuid => client.post(`/admin/categories/${uuid}/approve`),
+  reject:  (uuid, d = {}) => client.post(`/admin/categories/${uuid}/reject`, d),
   destroy: uuid => client.delete(`/admin/categories/${uuid}/delete`),
 }
