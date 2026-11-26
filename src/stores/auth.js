@@ -14,10 +14,13 @@ export const useAuthStore = defineStore("auth", () => {
   const isLoggedIn = computed(() => !!token.value);
   const userName = computed(() => user.value?.name || "Admin");
   const userEmail = computed(() => user.value?.email || "");
-  const isAdmin = computed(() => user.value?.roles?.includes("admin"));
+  const isSuperAdmin = computed(() => user.value?.roles?.includes("super-admin"));
+  const isAdmin = computed(
+    () => isSuperAdmin.value || user.value?.roles?.includes("admin"),
+  );
 
   function can(permission) {
-    return isAdmin.value || permissions.value.includes(permission);
+    return isSuperAdmin.value || permissions.value.includes(permission);
   }
 
   async function login(credentials) {
@@ -49,9 +52,20 @@ export const useAuthStore = defineStore("auth", () => {
   async function fetchMe() {
     if (!token.value) return;
     try {
-      const res = await authApi.me();
-      user.value = res.data.data;
+      const [meRes, permRes] = await Promise.all([
+        authApi.me(),
+        authApi.myPermissions().catch(() => null),
+      ]);
+      user.value = meRes.data.data;
       localStorage.setItem("admin_user", JSON.stringify(user.value));
+
+      if (permRes?.data?.data?.permissions) {
+        permissions.value = permRes.data.data.permissions;
+        localStorage.setItem(
+          "admin_permissions",
+          JSON.stringify(permissions.value),
+        );
+      }
     } catch {
       logout();
     }
@@ -64,6 +78,7 @@ export const useAuthStore = defineStore("auth", () => {
     isLoggedIn,
     userName,
     userEmail,
+    isSuperAdmin,
     isAdmin,
     can,
     login,

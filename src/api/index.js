@@ -20,9 +20,10 @@ client.interceptors.response.use(r => r, err => {
 
 // Auth
 export const authApi = {
-  login:  d => client.post('/auth/admin/login', d),
-  logout: () => client.post('/auth/logout'),
-  me:     () => client.get('/auth/me'),
+  login:         d  => client.post('/auth/admin/login', d),
+  logout:        () => client.post('/auth/logout'),
+  me:            () => client.get('/auth/me'),
+  myPermissions: () => client.get('/auth/my-permissions'),
 }
 
 // Dashboard
@@ -146,5 +147,7 @@ export const chatApi = {
   close:       id      => client.post(`/admin/chat/room/${id}/close`),
 }
 
-// Notifications
+// Notifications & RBAC
 export { notificationApi } from './notification'
+export { roleApi, adminStaffApi } from './role'
+export { permissionApi } from './permission'
