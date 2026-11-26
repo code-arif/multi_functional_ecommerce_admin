@@ -46,8 +46,11 @@ export { categoryApi } from './category'
 // Brands
 export const brandApi = {
   list:    p  => client.get('/admin/brands', { params: p }),
+  show:    uuid => client.get(`/admin/brands/${uuid}`),
   store:   d  => client.post('/admin/brands/store', d, { headers: { 'Content-Type': 'multipart/form-data' } }),
   update:  (id,d) => client.post(`/admin/brands/${id}/update?_method=PUT`, d, { headers: { 'Content-Type': 'multipart/form-data' } }),
+  approve: uuid => client.post(`/admin/brands/${uuid}/approve`),
+  reject:  (uuid, d = {}) => client.post(`/admin/brands/${uuid}/reject`, d),
   destroy: id => client.delete(`/admin/brands/${id}/delete`),
 }
 

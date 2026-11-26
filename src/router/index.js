@@ -141,6 +141,11 @@ const routes = [
                 name: "brands",
                 component: () => import("@/pages/brands/BrandsPage.vue"),
             },
+            {
+                path: "brands/:uuid",
+                name: "brand-detail",
+                component: () => import("@/pages/brands/BrandDetailPage.vue"),
+            },
 
             // Vendors / Shops
             {

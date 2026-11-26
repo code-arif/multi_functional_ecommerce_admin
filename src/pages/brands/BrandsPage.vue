@@ -47,6 +47,21 @@
         </td>
         <td class="table-cell text-right">
           <div class="flex items-center justify-end gap-1 whitespace-nowrap">
+            <Tooltip v-if="item.status !== 'approved'" text="Approve Brand">
+              <button @click="confirmStatusAction(item, 'approve')" class="p-1.5 rounded-lg border border-gray-300 hover:border-emerald-400 text-emerald-600 hover:bg-emerald-50 transition-all">
+                <CheckCircleIcon class="w-4 h-4" />
+              </button>
+            </Tooltip>
+            <Tooltip v-if="item.status !== 'rejected'" text="Reject Brand">
+              <button @click="confirmStatusAction(item, 'reject')" class="p-1.5 rounded-lg border border-gray-300 hover:border-rose-400 text-rose-500 hover:bg-rose-50 transition-all">
+                <XCircleIcon class="w-4 h-4" />
+              </button>
+            </Tooltip>
+            <Tooltip text="View">
+              <router-link :to="`/brands/${item.uuid}`" class="p-1.5 rounded-lg border border-gray-300 hover:border-gray-400 text-gray-500 hover:text-gray-700 transition-all">
+                <EyeIcon class="w-4 h-4" />
+              </router-link>
+            </Tooltip>
             <Tooltip text="Edit">
               <button @click="openForm(item)" class="p-1.5 rounded-lg border border-gray-300 hover:border-blue-400 text-blue-500 hover:bg-blue-50 transition-all">
                 <PencilIcon class="w-4 h-4" />
@@ -62,71 +77,122 @@
       </template>
     </DataTable>
     <Teleport to="body">
-      <div v-if="showForm" class="fixed inset-0 z-50">
+      <div v-if="showForm" class="fixed inset-0 z-50 overflow-y-auto">
         <div class="fixed inset-0 bg-black/50 backdrop-blur-sm" @click="showForm = false" />
-        <div class="relative z-10 h-full overflow-y-auto flex items-center justify-center p-4">
-        <div class="relative bg-white rounded-2xl p-6 w-full max-w-lg animate-in"
-          style="box-shadow:0 20px 60px rgba(0,0,0,0.15)">
-          <h2 class="font-bold text-lg mb-5" style="color:var(--text-primary)">{{ editing ? 'Edit' : 'Add' }} Brand</h2>
-          <form @submit.prevent="save" class="space-y-4">
-            <div>
-              <label class="label">Brand Name *</label>
-              <input v-model="form.name" required class="input" />
-              <p v-if="errors.name" class="text-xs text-red-500 mt-1">{{ errors.name[0] }}</p>
-            </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label class="label">Website</label>
-                <input v-model="form.website" type="url" class="input" placeholder="https://" />
-                <p v-if="errors.website" class="text-xs text-red-500 mt-1">{{ errors.website[0] }}</p>
-              </div>
-              <div>
-                <label class="label">Approval Status</label>
-                <SelectBox v-model="form.status" :options="formStatusOptions" full-width />
-              </div>
-            </div>
-            <div>
-              <label class="label">Description</label>
-              <textarea v-model="form.description" rows="2" class="input" />
-            </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <ImagePicker v-model="logoFile" label="Logo" :preview-url="editing?.logo_url || ''" hint="PNG, JPG, WEBP - Max 2MB" />
-              <ImagePicker v-model="bannerFile" label="Banner" :preview-url="editing?.banner_url || ''" hint="PNG, JPG, WEBP - Max 2MB" />
-            </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label class="label">Meta Title</label>
-                <input v-model="form.meta_title" class="input" />
-              </div>
-              <div>
-                <label class="label">Sort Order</label>
-                <input v-model.number="form.sort_order" type="number" min="0" class="input" />
-              </div>
-            </div>
-            <div>
-              <label class="label">Meta Description</label>
-              <textarea v-model="form.meta_description" rows="2" class="input" />
-            </div>
-            <div class="flex items-center gap-6">
-              <ToggleSwitch v-model="form.is_active" label="Active" />
-              <ToggleSwitch v-model="form.is_featured" label="Featured" />
-            </div>
-            <div class="flex gap-3 pt-2">
-              <button type="submit" :disabled="saving" class="btn-primary flex-1 justify-center">{{
-                saving ? 'Saving...' : 'Save Brand'
-              }}
+        <div class="relative z-10 flex min-h-full items-center justify-center p-4 sm:p-6">
+          <div
+            class="bg-white rounded-2xl w-full max-w-2xl border border-gray-200 animate-in"
+            style="box-shadow:0 20px 60px rgba(0,0,0,0.15)"
+            @click.stop
+          >
+            <div class="flex items-center justify-between gap-4 px-6 py-4 border-b border-gray-100">
+              <h2 class="font-bold text-lg" style="color:var(--text-primary)">
+                {{ editing ? 'Edit' : 'Add' }} Brand
+              </h2>
+              <button
+                type="button"
+                @click="showForm = false"
+                class="p-1.5 rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 transition-colors"
+                aria-label="Close modal"
+              >
+                <XMarkIcon class="w-4 h-4" />
               </button>
+            </div>
 
-              <button type="button" @click="showForm = false"
-                class="px-5 py-2.5 rounded-xl border border-gray-300 text-gray-600 text-sm font-medium hover:bg-gray-50 transition-colors">
-                Cancel
-              </button>
-            </div>
-          </form>
+            <form @submit.prevent="save">
+              <div class="p-6 space-y-4">
+                <div v-if="formError" class="p-3 rounded-xl bg-red-50 border border-red-200 text-xs text-red-700 font-medium">
+                  {{ formError }}
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label class="label">Brand Name *</label>
+                    <input v-model="form.name" required class="input" placeholder="e.g. Apple" />
+                    <p v-if="errors.name" class="text-xs text-red-500 mt-1">{{ errors.name[0] }}</p>
+                  </div>
+                  <div>
+                    <label class="label">Website</label>
+                    <input v-model="form.website" type="url" class="input" placeholder="https://" />
+                    <p v-if="errors.website" class="text-xs text-red-500 mt-1">{{ errors.website[0] }}</p>
+                  </div>
+
+                  <div class="sm:col-span-2">
+                    <label class="label">Description</label>
+                    <textarea v-model="form.description" rows="2" class="input" placeholder="Brief brand description..." />
+                    <p v-if="errors.description" class="text-xs text-red-500 mt-1">{{ errors.description[0] }}</p>
+                  </div>
+
+                  <div>
+                    <ImagePicker v-model="logoFile" label="Logo" :preview-url="editing?.logo_url || ''" :max-size-m-b="2" />
+                    <p v-if="errors.logo" class="text-xs text-red-500 mt-1">{{ errors.logo[0] }}</p>
+                  </div>
+                  <div>
+                    <ImagePicker v-model="bannerFile" label="Banner" :preview-url="editing?.banner_url || ''" :max-size-m-b="2" />
+                    <p v-if="errors.banner" class="text-xs text-red-500 mt-1">{{ errors.banner[0] }}</p>
+                  </div>
+
+                  <div>
+                    <label class="label">Approval Status</label>
+                    <SelectBox v-model="form.status" :options="formStatusOptions" size="lg" full-width />
+                    <p v-if="errors.status" class="text-xs text-red-500 mt-1">{{ errors.status[0] }}</p>
+                  </div>
+                  <div>
+                    <label class="label">Sort Order</label>
+                    <input v-model.number="form.sort_order" type="number" min="0" class="input" />
+                    <p v-if="errors.sort_order" class="text-xs text-red-500 mt-1">{{ errors.sort_order[0] }}</p>
+                  </div>
+
+                  <div class="sm:col-span-2">
+                    <label class="label">Meta Title</label>
+                    <input v-model="form.meta_title" class="input" placeholder="Optional SEO title" />
+                    <p v-if="errors.meta_title" class="text-xs text-red-500 mt-1">{{ errors.meta_title[0] }}</p>
+                  </div>
+
+                  <div class="sm:col-span-2">
+                    <label class="label">Meta Description</label>
+                    <textarea v-model="form.meta_description" rows="2" class="input" placeholder="Optional SEO description..." />
+                    <p v-if="errors.meta_description" class="text-xs text-red-500 mt-1">{{ errors.meta_description[0] }}</p>
+                  </div>
+
+                  <div class="sm:col-span-2 flex items-center gap-6 pt-1">
+                    <div>
+                      <ToggleSwitch v-model="form.is_active" label="Active" />
+                      <p v-if="errors.is_active" class="text-xs text-red-500 mt-1">{{ errors.is_active[0] }}</p>
+                    </div>
+                    <div>
+                      <ToggleSwitch v-model="form.is_featured" label="Featured" />
+                      <p v-if="errors.is_featured" class="text-xs text-red-500 mt-1">{{ errors.is_featured[0] }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-100">
+                <button type="button" @click="showForm = false"
+                  class="px-5 py-2.5 rounded-xl border border-gray-300 text-gray-600 text-sm font-medium hover:bg-gray-50 transition-colors">
+                  Cancel
+                </button>
+                <button type="submit" :disabled="saving" class="btn-primary px-6 justify-center">
+                  {{ saving ? 'Saving...' : 'Save Brand' }}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
-      </div>
     </Teleport>
+    <ConfirmModal
+      :show="!!statusTarget"
+      :title="statusAction === 'approve' ? 'Approve Brand' : 'Reject Brand'"
+      :message="statusAction === 'approve'
+        ? `Approve '${statusTarget?.name}' and notify the vendor?`
+        : `Reject '${statusTarget?.name}' and notify the vendor?`"
+      :confirm-text="statusAction === 'approve' ? 'Approve' : 'Reject'"
+      :type="statusAction === 'approve' ? 'success' : 'danger'"
+      :loading="updatingStatus"
+      @confirm="doStatusAction"
+      @cancel="statusTarget = null"
+    />
     <ConfirmModal :show="!!deleteTarget" title="Delete Brand" :message="`Delete '${deleteTarget?.name}'?`"
       :loading="deleting" @confirm="doDelete" @cancel="deleteTarget = null" />
   </div>
@@ -142,14 +208,14 @@ import StatusBadge from '@ecom/ui/components/StatusBadge.vue'
 import ConfirmModal from '@ecom/ui/components/ConfirmModal.vue'
 import Tooltip from '@ecom/ui/components/Tooltip.vue'
 import { brandApi } from '@/api'
-import { PencilIcon, TrashIcon, BuildingStorefrontIcon } from '@heroicons/vue/24/outline'
+import { PencilIcon, TrashIcon, BuildingStorefrontIcon, XMarkIcon, EyeIcon, CheckCircleIcon, XCircleIcon } from '@heroicons/vue/24/outline'
 import { Factory } from 'lucide-vue-next'
 import ImagePicker from '@ecom/ui/components/ImagePicker.vue'
 import ToggleSwitch from '@ecom/ui/components/ToggleSwitch.vue'
 
 const toast = useToast()
 const brands = ref([]), pagination = ref(null), loading = ref(true), showForm = ref(false), saving = ref(false)
-const search = ref(''), statusFilter = ref(''), errors = ref({})
+const search = ref(''), statusFilter = ref(''), errors = ref({}), formError = ref('')
 
 const breadcrumbItems = computed(() => [
   { label: 'Brands', icon: BuildingStorefrontIcon }
@@ -169,6 +235,7 @@ const formStatusOptions = [
 ]
 
 const editing = ref(null), deleteTarget = ref(null), deleting = ref(false), logoFile = ref(null), bannerFile = ref(null)
+const statusTarget = ref(null), statusAction = ref('approve'), updatingStatus = ref(false)
 const form = reactive({
   name: '',
   website: '',
@@ -186,7 +253,7 @@ const columns = [
   { key: 'is_featured', label: 'Featured', class: 'w-24' },
   { key: 'status', label: 'Approval', class: 'w-24' },
   { key: 'is_active', label: 'Status', class: 'w-24' },
-  { key: 'actions', label: 'Action', class: 'w-24 text-right' },
+  { key: 'actions', label: 'Action', class: 'w-36 text-right' },
 ]
 
 async function load(page = 1) {
@@ -210,6 +277,7 @@ async function load(page = 1) {
 function openForm(item = null) {
   editing.value = item
   errors.value = {}
+  formError.value = ''
   if (item) {
     Object.assign(form, {
       name: item.name || '',
@@ -243,6 +311,7 @@ function openForm(item = null) {
 async function save() {
   saving.value = true
   errors.value = {}
+  formError.value = ''
   try {
     const fd = new FormData()
     Object.entries(form).forEach(([k, v]) => {
@@ -265,15 +334,41 @@ async function save() {
     showForm.value = false
     load()
   } catch (e) {
-    if (e.response?.status === 422) {
-      errors.value = e.response.data.errors || {}
-      const firstError = Object.values(errors.value)[0]?.[0]
-      toast.error(firstError || 'Validation failed.')
-    } else {
-      toast.error(e.response?.data?.message || 'Failed to save brand.')
+    const status = e.response?.status
+    errors.value = e.response?.data?.errors || {}
+    const firstError = Object.values(errors.value)[0]?.[0]
+    const message = firstError || e.response?.data?.message || 'Failed to save brand.'
+    if (!firstError) formError.value = message
+    if (status !== 403 && status !== 500) {
+      toast.error(message)
     }
   } finally {
     saving.value = false
+  }
+}
+
+function confirmStatusAction(item, action) {
+  statusTarget.value = item
+  statusAction.value = action
+}
+
+async function doStatusAction() {
+  if (!statusTarget.value) return
+  updatingStatus.value = true
+  try {
+    if (statusAction.value === 'approve') {
+      await brandApi.approve(statusTarget.value.uuid)
+      toast.success('Brand approved.')
+    } else {
+      await brandApi.reject(statusTarget.value.uuid)
+      toast.success('Brand rejected.')
+    }
+    statusTarget.value = null
+    load()
+  } catch (e) {
+    toast.error(e.response?.data?.message || `Failed to ${statusAction.value} brand.`)
+  } finally {
+    updatingStatus.value = false
   }
 }
 

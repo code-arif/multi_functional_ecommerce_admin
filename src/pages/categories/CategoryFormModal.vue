@@ -24,6 +24,9 @@
 
           <form @submit.prevent="save">
             <div class="p-6 space-y-4">
+              <div v-if="formError" class="p-3 rounded-xl bg-red-50 border border-red-200 text-xs text-red-700 font-medium">
+                {{ formError }}
+              </div>
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <!-- Name -->
                 <div>
@@ -56,6 +59,9 @@
                 <div>
                   <label class="label">Sort Order</label>
                   <input v-model.number="form.sort_order" type="number" min="0" class="input" />
+                  <p v-if="errors.sort_order" class="text-red-500 text-xs mt-1">
+                    {{ errors.sort_order[0] }}
+                  </p>
                 </div>
 
                 <!-- Description -->
@@ -170,6 +176,7 @@ const saving = ref(false)
 const imageFile = ref(null)
 const bannerFile = ref(null)
 const errors = ref({})
+const formError = ref('')
 
 const form = reactive({
   name: '',
@@ -205,6 +212,7 @@ const parentOptions = computed(() => [
 watch(() => props.show, (newVal) => {
   if (newVal) {
     errors.value = {}
+    formError.value = ''
     imageFile.value = null
     bannerFile.value = null
     if (props.category) {
@@ -244,6 +252,7 @@ watch(() => props.show, (newVal) => {
 async function save() {
   saving.value = true
   errors.value = {}
+  formError.value = ''
   try {
     const fd = new FormData()
 
@@ -269,9 +278,14 @@ async function save() {
     toast.success('Category saved.')
     emit('saved')
   } catch (e) {
+    const status = e.response?.status
     errors.value = e.response?.data?.errors || {}
     const firstError = Object.values(errors.value)[0]?.[0]
-    toast.error(firstError || e.response?.data?.message || 'Save failed.')
+    const message = firstError || e.response?.data?.message || 'Save failed.'
+    if (!firstError) formError.value = message
+    if (status !== 403 && status !== 500) {
+      toast.error(message)
+    }
   } finally {
     saving.value = false
   }
