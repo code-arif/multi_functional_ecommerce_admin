@@ -105,12 +105,18 @@ export const settingsApi = {
   upload: (k,f) => { const fd=new FormData(); fd.append('key',k); fd.append('file',f); return client.post('/admin/settings/upload', fd, { headers: { 'Content-Type': 'multipart/form-data' } }) },
 }
 
-// Users
-export const userApi = {
-  list:         p      => client.get('/admin/users', { params: p }),
-  show:         id     => client.get(`/admin/users/${id}`),
-  updateStatus: (id,s) => client.patch(`/admin/users/${id}/status`, { status: s }),
+// Customers / Users (Modules/Customer)
+export const customerApi = {
+  list:         p        => client.get('/admin/customers', { params: p }),
+  stats:        ()       => client.get('/admin/customers/stats'),
+  show:         id       => client.get(`/admin/customers/${id}`),
+  store:        d        => client.post('/admin/customers', d),
+  update:       (id, d)  => client.put(`/admin/customers/${id}`, d),
+  updateStatus: (id, s)  => client.patch(`/admin/customers/${id}/status`, { status: s }),
+  destroy:      id       => client.delete(`/admin/customers/${id}`),
 }
+
+export const userApi = customerApi
 
 // Reports
 export const reportApi = {

@@ -131,9 +131,6 @@
                                         {{ vendor.shop_name || vendor.name }}
                                     </h2>
                                     <StatusBadge :value="vendor.status" />
-                                    <span v-if="vendor.is_active" class="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Active Store
-                                    </span>
                                 </div>
                                 <div class="flex flex-wrap items-center gap-3 mt-1.5 text-xs" :style="{ color: 'var(--text-muted)' }">
                                     <span v-if="vendor.slug" class="font-mono text-gray-500 font-medium">@{{ vendor.slug }}</span>
