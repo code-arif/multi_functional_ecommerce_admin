@@ -203,9 +203,10 @@ const navGroups = [
     {
         name: 'Catalog', icon: ShoppingBagIcon,
         items: [
-            { name: 'Products', to: '/products', icon: ShoppingBagIcon },
+           
             { name: 'Categories', to: '/categories', icon: TagIcon },
             { name: 'Brands', to: '/brands', icon: StarIcon },
+            { name: 'Products', to: '/products', icon: ShoppingBagIcon },
             { name: 'Coupons', to: '/coupons', icon: TicketIcon },
             // { name: 'Affiliate', to: '/affiliate', icon: LinkIcon },
         ]
