@@ -38,7 +38,7 @@ const routes = [
                 component: () => import("@/pages/products/ProductFormPage.vue"),
             },
             {
-                path: "products/:id/edit",
+                path: "products/:uuid/edit",
                 name: "products-edit",
                 component: () => import("@/pages/products/ProductFormPage.vue"),
             },
@@ -48,7 +48,7 @@ const routes = [
                 component: () => import("@/pages/products/ProductImportPage.vue"),
             },
             {
-                path: '/products/:id',
+                path: '/products/:uuid',
                 name: 'product-detail',
                 component: () => import("@/pages/products/ProductDetail.vue"),
                 meta: { requiresAuth: true }

@@ -52,7 +52,7 @@
               <h3 class="font-bold text-sm" :style="{ color: 'var(--text-primary)' }"><ShoppingBagIcon class="w-4 h-4 inline mr-1.5" :style="{ color: 'var(--color-primary)' }" />Products ({{ shop.products?.length || 0 }})</h3>
             </div>
             <div v-if="shop.products?.length" class="divide-y" :style="{ borderColor: 'var(--border-light)' }">
-              <div v-for="p in shop.products.slice(0, 5)" :key="p.id" class="flex items-center gap-3 px-5 py-3 cursor-pointer" @click="$router.push(`/products/${p.id}`)">
+              <div v-for="p in shop.products.slice(0, 5)" :key="p.id" class="flex items-center gap-3 px-5 py-3 cursor-pointer" @click="$router.push(`/products/${p.uuid || p.id}`)">
                 <div class="w-12 h-12 rounded-lg overflow-hidden shrink-0 border" :style="{ borderColor: 'var(--border)' }">
                   <div class="w-full h-full flex items-center justify-center text-xs" :style="{ backgroundColor: 'var(--border-light)', color: 'var(--text-muted)' }">No img</div>
                 </div>

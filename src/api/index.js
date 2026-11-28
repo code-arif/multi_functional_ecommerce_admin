@@ -32,11 +32,12 @@ export const dashboardApi = { stats: () => client.get('/admin/dashboard') }
 // Products
 export const productApi = {
   list:        p => client.get('/admin/products', { params: p }),
-  show:        id => client.get(`/admin/products/${id}`),
+  show:        uuid => client.get(`/admin/products/${uuid}`),
   store:       d => client.post('/admin/products', d, { headers: { 'Content-Type': 'multipart/form-data' } }),
-  update:      (id,d) => client.post(`/admin/products/${id}?_method=PUT`, d, { headers: { 'Content-Type': 'multipart/form-data' } }),
-  destroy:     id => client.delete(`/admin/products/${id}`),
+  update:      (uuid,d) => client.post(`/admin/products/${uuid}?_method=PUT`, d, { headers: { 'Content-Type': 'multipart/form-data' } }),
+  destroy:     uuid => client.delete(`/admin/products/${uuid}`),
   uploadImage: f => client.post('/admin/products/upload-image', f, { headers: { 'Content-Type': 'multipart/form-data' } }),
+  uploadVideo: f => client.post('/admin/products/upload-video', f, { headers: { 'Content-Type': 'multipart/form-data' }, timeout: 120000 }),
   import: d => client.post('/admin/products/import', d),
 }
 

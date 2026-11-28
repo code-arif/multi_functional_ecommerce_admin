@@ -1,7 +1,7 @@
 <template>
   <div class="w-full">
     <BreadcrumbHeader :items="breadcrumbItems">
-      <router-link :to="`/products/${product?.id}/edit`" class="btn-primary text-sm" v-if="product">
+      <router-link :to="`/products/${product?.uuid}/edit`" class="btn-primary text-sm" v-if="product">
         Edit Product
       </router-link>
     </BreadcrumbHeader>
@@ -56,6 +56,45 @@
               </button>
             </div>
 
+          </div>
+        </div>
+
+        <!-- Product Videos -->
+        <div v-if="product.videos?.length" class="card p-5">
+          <h3 class="font-bold text-gray-900 mb-4">
+            Product Videos
+            <span class="text-xs font-normal text-gray-400 ml-1">({{ product.videos.length }})</span>
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div v-for="vid in product.videos" :key="vid.uuid || vid.id"
+              class="rounded-xl border border-gray-200 overflow-hidden bg-slate-950">
+              <div class="aspect-video w-full bg-black">
+                <iframe
+                  v-if="vid.embed_url"
+                  :src="vid.embed_url"
+                  class="w-full h-full"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowfullscreen
+                />
+                <video
+                  v-else
+                  controls
+                  preload="metadata"
+                  :poster="vid.poster_url || undefined"
+                  :src="vid.video_url"
+                  class="w-full h-full object-contain"
+                />
+              </div>
+              <div class="p-3 bg-white flex items-center justify-between gap-2">
+                <p class="text-xs font-semibold text-gray-800 truncate">
+                  {{ vid.title || vid.external_url || 'Product Video' }}
+                </p>
+                <div class="flex items-center gap-1.5 shrink-0">
+                  <span v-if="vid.is_primary" class="badge badge-green">Primary</span>
+                  <span class="badge badge-gray uppercase">{{ vid.processing_status }}</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -429,7 +468,7 @@
         <div class="card p-5">
           <h3 class="font-bold text-gray-900 mb-3">Actions</h3>
           <div class="space-y-2">
-            <router-link :to="`/products/${product.id}/edit`"
+            <router-link :to="`/products/${product.uuid}/edit`"
               class="flex items-center gap-2 w-full text-sm text-[#2E7D32] hover:bg-green-50 px-3 py-2 rounded-lg transition">
               <PencilSquareIcon class="w-4 h-4" />
               Edit Product
@@ -498,7 +537,7 @@ async function load() {
   loading.value = true
   error.value = null
   try {
-    const res = await productApi.show(route.params.id)
+    const res = await productApi.show(route.params.uuid)
     product.value = res.data.data
 
     // Set first image as active
@@ -521,7 +560,7 @@ function confirmDelete(item) {
 async function doDelete() {
   deleting.value = true
   try {
-    await productApi.destroy(deleteTarget.value.id)
+    await productApi.destroy(deleteTarget.value.uuid)
     toast.success('Product deleted.')
     router.push('/products')
   } catch {

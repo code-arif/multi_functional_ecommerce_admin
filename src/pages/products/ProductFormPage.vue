@@ -310,6 +310,68 @@
             </div>
           </div>
 
+          <!-- Product Videos -->
+          <div class="card p-5">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="font-bold text-gray-900">Product Videos</h3>
+              <span class="text-xs text-gray-400">{{ uploadedVideos.length }} video(s)</span>
+            </div>
+
+            <!-- Upload Video -->
+            <div
+              class="border-2 border-dashed border-gray-200 rounded-2xl p-4 text-center cursor-pointer hover:border-[#4CAF50] hover:bg-green-50 transition"
+              @click="$refs.videoInput.click()">
+              <Film class="w-7 h-7 text-gray-400 mx-auto mb-1.5" />
+              <p class="text-sm font-medium text-gray-600">Upload Product Video</p>
+              <p class="text-xs text-gray-400 mt-0.5">MP4, WebM, MOV (Max 100MB)</p>
+            </div>
+            <input ref="videoInput" type="file" accept="video/mp4,video/webm,video/quicktime" class="hidden" @change="onVideoUpload" />
+
+            <!-- External / YouTube / Vimeo URL -->
+            <div class="mt-4 space-y-2">
+              <label class="label text-xs">Or Add YouTube / Vimeo / Direct Video URL</label>
+              <input v-model="videoUrlTitle" class="input-sm w-full" placeholder="Video title (optional)" />
+              <div class="flex gap-2">
+                <input v-model="videoUrlInput" type="url" class="input-sm flex-1" placeholder="https://youtube.com/watch?v=..." />
+                <button type="button" @click="addExternalVideo" class="btn-secondary text-xs px-3 py-1.5">Add</button>
+              </div>
+            </div>
+
+            <!-- Video Items -->
+            <div v-if="uploadedVideos.length" class="space-y-3 mt-4">
+              <div v-for="(vid, vi) in uploadedVideos" :key="vi"
+                class="flex items-center justify-between gap-3 p-3 rounded-xl border border-gray-200 bg-gray-50/50">
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-center gap-1.5 flex-wrap">
+                    <span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-slate-200 text-slate-700">
+                      {{ vid.source_type || 'upload' }}
+                    </span>
+                    <span v-if="vid.is_primary"
+                      class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#2E7D32] text-white">
+                      Primary
+                    </span>
+                    <span v-if="vid.uploading" class="text-[11px] text-amber-600 font-medium">Uploading...</span>
+                  </div>
+                  <p class="text-xs font-medium text-gray-800 truncate mt-1">
+                    {{ vid.title || vid.external_url || vid.video_path }}
+                  </p>
+                </div>
+                <div class="flex items-center gap-1.5 shrink-0">
+                  <button type="button" @click="setPrimaryVideo(vi)"
+                    class="p-1.5 rounded-lg border border-gray-200 bg-white text-gray-600 hover:text-amber-500 transition"
+                    title="Set Primary Video">
+                    <Star class="w-3.5 h-3.5" />
+                  </button>
+                  <button type="button" @click="removeVideo(vi)"
+                    class="p-1.5 rounded-lg border border-gray-200 bg-white text-red-500 hover:bg-red-50 transition"
+                    title="Remove Video">
+                    <Trash2 class="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <!-- Category & Brand -->
           <div class="card p-5">
             <h3 class="font-bold text-gray-900 mb-4">Organization</h3>
@@ -370,13 +432,13 @@ import BreadcrumbHeader from '@ecom/ui/components/BreadcrumbHeader.vue'
 import SelectBox from '@ecom/ui/components/SelectBox.vue'
 import { productApi, categoryApi, brandApi } from '@/api'
 import { TrashIcon, PhotoIcon, CubeIcon } from '@heroicons/vue/24/outline'
-import { Star, Trash2, ImagePlus } from 'lucide-vue-next'
+import { Star, Trash2, ImagePlus, Film } from 'lucide-vue-next'
 import ToggleSwitch from '@ecom/ui/components/ToggleSwitch.vue'
 
 const route = useRoute()
 const router = useRouter()
 const toast = useToast()
-const isEdit = computed(() => !!route.params.id)
+const isEdit = computed(() => !!route.params.uuid)
 
 const saving = ref(false), errors = ref({})
 
@@ -417,6 +479,12 @@ const thumbInput = ref(null)
 const imageFiles = ref([])      // raw files
 const imagePreviews = ref([])   // preview URLs
 const uploadedImages = ref([])  // final data (path, is_primary, alt_text)
+
+// video uploading state
+const uploadedVideos = ref([])
+const videoUrlInput = ref('')
+const videoUrlTitle = ref('')
+const videoInput = ref(null)
 
 // Quill toolbar configuration
 const quillOptions = {
@@ -549,6 +617,23 @@ async function save() {
         }))
     ))
 
+    fd.append('videos', JSON.stringify(
+      uploadedVideos.value
+        .filter(v => v.video_path || v.external_url)
+        .map((v, index) => ({
+          id: v.id || null,
+          source_type: v.source_type || 'upload',
+          title: v.title || null,
+          video_path: v.video_path || null,
+          external_url: v.external_url || null,
+          poster_path: v.poster_path || null,
+          mime_type: v.mime_type || null,
+          file_size: v.file_size || null,
+          is_primary: !!v.is_primary,
+          sort_order: index,
+        }))
+    ))
+
     if (form.type === 'variable') {
       fd.append('attributes', JSON.stringify(form.attributes || []))
       fd.append('variants', JSON.stringify(form.variants || []))
@@ -556,7 +641,7 @@ async function save() {
 
     // ── API call ──────────────────────────────────
     if (isEdit.value) {
-      await productApi.update(route.params.id, fd)
+      await productApi.update(route.params.uuid, fd)
       toast.success('Product updated successfully.')
     } else {
       await productApi.store(fd)
@@ -651,6 +736,77 @@ function removeImage(index) {
   }
 }
 
+async function onVideoUpload(e) {
+  const file = e.target.files?.[0]
+  if (!file) return
+  e.target.value = ''
+
+  if (file.size > 100 * 1024 * 1024) {
+    toast.error(`${file.name} exceeds 100MB limit.`)
+    return
+  }
+
+  const idx = uploadedVideos.value.length
+  uploadedVideos.value.push({
+    source_type: 'upload',
+    title: file.name.replace(/\.[^/.]+$/, ''),
+    video_path: null,
+    is_primary: idx === 0 && !uploadedVideos.value.some(v => v.is_primary),
+    uploading: true,
+  })
+
+  try {
+    const fd = new FormData()
+    fd.append('video', file)
+    const res = await productApi.uploadVideo(fd)
+    const data = res.data.data
+    uploadedVideos.value[idx] = {
+      ...uploadedVideos.value[idx],
+      video_path: data.path,
+      mime_type: data.mime_type || file.type,
+      file_size: data.file_size || file.size,
+      uploading: false,
+    }
+    toast.success(`${file.name} uploaded.`)
+  } catch (err) {
+    uploadedVideos.value.splice(idx, 1)
+    toast.error(err.response?.data?.message || `Failed to upload ${file.name}.`)
+  }
+}
+
+function addExternalVideo() {
+  const url = videoUrlInput.value.trim()
+  if (!url) return
+
+  let sourceType = 'external'
+  if (/youtube\.com|youtu\.be/i.test(url)) sourceType = 'youtube'
+  else if (/vimeo\.com/i.test(url)) sourceType = 'vimeo'
+
+  uploadedVideos.value.push({
+    source_type: sourceType,
+    title: videoUrlTitle.value.trim() || url,
+    external_url: url,
+    is_primary: uploadedVideos.value.length === 0,
+    uploading: false,
+  })
+
+  videoUrlInput.value = ''
+  videoUrlTitle.value = ''
+}
+
+function setPrimaryVideo(index) {
+  uploadedVideos.value.forEach((v, i) => {
+    v.is_primary = i === index
+  })
+}
+
+function removeVideo(index) {
+  uploadedVideos.value.splice(index, 1)
+  if (!uploadedVideos.value.some(v => v.is_primary) && uploadedVideos.value.length) {
+    uploadedVideos.value[0].is_primary = true
+  }
+}
+
 onMounted(async () => {
   const [catRes, brandRes] = await Promise.allSettled([
     categoryApi.list(),
@@ -661,7 +817,7 @@ onMounted(async () => {
 
   if (isEdit.value) {
     try {
-      const res = await productApi.show(route.params.id)
+      const res = await productApi.show(route.params.uuid)
       const p = res.data.data
 
       Object.keys(form).forEach(k => {
@@ -685,6 +841,19 @@ onMounted(async () => {
         imagePreviews.value = p.images.map(img =>
           img.url || `/storage/${img.image_path}`
         )
+      }
+
+      if (p.videos?.length) {
+        uploadedVideos.value = p.videos.map(v => ({
+          id: v.id,
+          source_type: v.source_type,
+          title: v.title || '',
+          video_path: v.video_path || null,
+          external_url: v.external_url || null,
+          poster_path: v.poster_path || null,
+          is_primary: !!v.is_primary,
+          uploading: false,
+        }))
       }
 
     } catch (err) {

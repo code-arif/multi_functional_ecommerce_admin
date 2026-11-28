@@ -100,13 +100,13 @@
         <td class="table-cell text-right">
           <div class="flex items-center justify-end gap-1">
             <Tooltip text="View">
-              <router-link :to="`/products/${item.id}`"
+              <router-link :to="`/products/${item.uuid}`"
                 class="p-1.5 rounded-lg border border-gray-300 hover:border-gray-400 text-gray-500 hover:text-gray-700 transition-all">
                 <EyeIcon class="w-4 h-4" />
               </router-link>
             </Tooltip>
             <Tooltip text="Edit">
-              <router-link :to="`/products/${item.id}/edit`"
+              <router-link :to="`/products/${item.uuid}/edit`"
                 class="p-1.5 rounded-lg border border-gray-300 hover:border-blue-400 text-blue-500 hover:bg-blue-50 transition-all">
                 <PencilIcon class="w-4 h-4" />
               </router-link>
@@ -206,7 +206,7 @@ function confirmDelete(item) {
 async function doDelete() {
   deleting.value = true
   try {
-    await productApi.destroy(deleteTarget.value.id)
+    await productApi.destroy(deleteTarget.value.uuid)
     toast.success('Product deleted.')
     deleteTarget.value = null
     load()

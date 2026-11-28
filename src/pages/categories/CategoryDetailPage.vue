@@ -244,7 +244,7 @@
                       <StatusBadge :value="prod.status === 'active' ? 'active' : 'inactive'" />
                     </td>
                     <td class="py-3 px-2 text-right">
-                      <router-link :to="`/products/${prod.id}`" class="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600 hover:text-emerald-700 transition">
+                      <router-link :to="`/products/${prod.uuid}`" class="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600 hover:text-emerald-700 transition">
                         View
                       </router-link>
                     </td>

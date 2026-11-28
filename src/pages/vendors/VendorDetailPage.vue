@@ -525,7 +525,7 @@
                         <div v-if="vendor.products?.length" class="divide-y divide-gray-100">
                             <div v-for="p in vendor.products.slice(0, 5)" :key="p.id"
                                 class="flex items-center gap-3 px-5 py-3 hover:bg-gray-50/50 transition cursor-pointer"
-                                @click="$router.push(`/products/${p.id}`)">
+                                @click="$router.push(`/products/${p.uuid || p.id}`)">
                                 <div class="w-12 h-12 rounded-lg overflow-hidden shrink-0 border border-gray-200">
                                     <img v-if="p.thumbnail || p.image" :src="p.thumbnail || p.image" :alt="p.name"
                                         class="w-full h-full object-cover" />
