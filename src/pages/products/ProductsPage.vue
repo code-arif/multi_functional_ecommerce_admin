@@ -13,6 +13,13 @@
           size="md"
           @change="load(1)"
         />
+        <SelectBox
+          v-model="ownerFilter"
+          :options="ownerOptions"
+          placeholder="All Owners"
+          size="md"
+          @change="load(1)"
+        />
       </template>
       <template #actions>
         <button @click="exportProducts" class="px-3 py-2 rounded-lg border border-gray-300 text-gray-600 text-xs font-medium hover:bg-gray-50 transition-colors inline-flex items-center gap-1.5" title="Export CSV">
@@ -86,7 +93,14 @@
         </td>
 
         <td class="table-cell">
-          <StatusBadge :value="item.status" />
+          <SelectBox
+            :model-value="item.status"
+            :options="rowStatusOptions"
+            :disabled="updatingStatusUuid === item.uuid"
+            :loading="updatingStatusUuid === item.uuid"
+            size="sm"
+            @change="val => changeStatus(item, val)"
+          />
         </td>
 
         <td class="table-cell">
@@ -95,6 +109,21 @@
 
         <td class="table-cell">
           <StatusBadge :value="item.brand?.name" />
+        </td>
+
+        <td class="table-cell">
+          <span
+            v-if="item.owner_type === 'vendor'"
+            class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-50 text-indigo-700"
+          >
+            {{ item.vendor?.shop_name || 'Vendor' }}
+          </span>
+          <span
+            v-else
+            class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700"
+          >
+            Platform
+          </span>
         </td>
 
         <td class="table-cell text-right">
@@ -146,7 +175,8 @@ import { Package, Download } from 'lucide-vue-next'
 const toast = useToast()
 const { exportToCsv } = useCsvExport()
 const products = ref([]), pagination = ref(null), loading = ref(true)
-const search = ref(''), statusFilter = ref(''), deleteTarget = ref(null), deleting = ref(false)
+const search = ref(''), statusFilter = ref(''), ownerFilter = ref(''), deleteTarget = ref(null), deleting = ref(false)
+const updatingStatusUuid = ref(null)
 
 const breadcrumbItems = computed(() => [
   { label: 'Products', icon: CubeIcon }
@@ -154,11 +184,22 @@ const breadcrumbItems = computed(() => [
 
 
 
-const statusOptions = [
-  { value: '', label: 'All Status' },
+const rowStatusOptions = [
   { value: 'active', label: 'Active' },
   { value: 'inactive', label: 'Inactive' },
   { value: 'draft', label: 'Draft' },
+  { value: 'pending', label: 'Pending' },
+]
+
+const statusOptions = [
+  { value: '', label: 'All Status' },
+  ...rowStatusOptions,
+]
+
+const ownerOptions = [
+  { value: '', label: 'All Owners' },
+  { value: 'platform', label: 'Platform' },
+  { value: 'vendor', label: 'Vendor' },
 ]
 
 const columns = [
@@ -166,16 +207,23 @@ const columns = [
   { key: 'type', label: 'Type', class: 'w-24' },
   { key: 'price', label: 'Price', class: 'w-28' },
   { key: 'stock', label: 'Stock', class: 'w-20' },
-  { key: 'status', label: 'Status', class: 'w-24' },
+  { key: 'status', label: 'Status', class: 'w-32' },
   { key: 'category', label: 'Category', class: 'w-24' },
   { key: 'brand', label: 'Brand', class: 'w-24' },
+  { key: 'owner', label: 'Owner', class: 'w-32' },
   { key: 'actions', label: 'Action', class: 'w-28 text-right' },
 ]
 
 async function load(page = 1) {
   loading.value = true
   try {
-    const res = await productApi.list({ page, search: search.value, status: statusFilter.value, per_page: 20 })
+    const res = await productApi.list({
+      page,
+      search: search.value,
+      status: statusFilter.value,
+      owner_type: ownerFilter.value || undefined,
+      per_page: 20,
+    })
     products.value = res.data.data || []
     pagination.value = res.data.pagination || null
   } catch {
@@ -197,6 +245,22 @@ function exportProducts() {
     { key: 'brand', label: 'Brand', transform: (_, item) => item.brand?.name || '' },
   ]
   exportToCsv(products.value, cols, `products-export-${products.value.length}-items`)
+}
+
+async function changeStatus(item, newStatus) {
+  if (!newStatus || newStatus === item.status) return
+  const prevStatus = item.status
+  updatingStatusUuid.value = item.uuid
+  try {
+    const res = await productApi.updateStatus(item.uuid, { status: newStatus })
+    item.status = res.data?.data?.status || newStatus
+    toast.success(`Status changed to ${item.status}.`)
+  } catch (e) {
+    item.status = prevStatus
+    toast.error(e.response?.data?.message || 'Failed to update product status.')
+  } finally {
+    updatingStatusUuid.value = null
+  }
 }
 
 function confirmDelete(item) {

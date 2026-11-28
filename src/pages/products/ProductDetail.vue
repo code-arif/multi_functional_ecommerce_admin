@@ -431,6 +431,12 @@
                 <p class="text-gray-700 font-medium">{{ product.brand?.name || 'None' }}</p>
               </div>
             </div>
+            <div>
+              <p class="text-gray-400 text-xs mb-1">Owner</p>
+              <p class="text-gray-700 font-medium">
+                {{ product.owner_type === 'vendor' ? (product.vendor?.shop_name || 'Vendor') : 'Platform Catalog' }}
+              </p>
+            </div>
             <div v-if="product.weight">
               <p class="text-gray-400 text-xs mb-1">Weight</p>
               <p class="text-gray-700">{{ product.weight }} {{ product.weight_unit || 'kg' }}</p>
@@ -451,11 +457,23 @@
 
         <!-- Timestamps -->
         <div class="card p-5">
-          <h3 class="font-bold text-gray-900 mb-3">Timeline</h3>
+          <h3 class="font-bold text-gray-900 mb-3">Timeline & Audit</h3>
           <div class="space-y-2 text-sm">
             <div class="flex items-center justify-between">
               <span class="text-gray-400 text-xs">Created</span>
               <span class="text-gray-600 text-xs">{{ formatDate(product.created_at) }}</span>
+            </div>
+            <div v-if="product.creator" class="flex items-center justify-between">
+              <span class="text-gray-400 text-xs">Created By</span>
+              <span class="text-gray-600 text-xs font-medium">{{ product.creator.name }}</span>
+            </div>
+            <div v-if="product.updated_at" class="flex items-center justify-between">
+              <span class="text-gray-400 text-xs">Updated</span>
+              <span class="text-gray-600 text-xs">{{ formatDate(product.updated_at) }}</span>
+            </div>
+            <div v-if="product.updater" class="flex items-center justify-between">
+              <span class="text-gray-400 text-xs">Updated By</span>
+              <span class="text-gray-600 text-xs font-medium">{{ product.updater.name }}</span>
             </div>
             <div v-if="product.published_at" class="flex items-center justify-between">
               <span class="text-gray-400 text-xs">Published</span>

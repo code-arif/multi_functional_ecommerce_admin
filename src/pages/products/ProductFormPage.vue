@@ -372,10 +372,36 @@
             </div>
           </div>
 
-          <!-- Category & Brand -->
+          <!-- Category, Brand & Product Owner -->
           <div class="card p-5">
             <h3 class="font-bold text-gray-900 mb-4">Organization</h3>
             <div class="space-y-3">
+              <div>
+                <div class="flex items-center justify-between mb-1">
+                  <label class="label mb-0">Product Owner (Vendor)</label>
+                  <span
+                    class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium"
+                    :class="form.vendor_uuid ? 'bg-indigo-50 text-indigo-700' : 'bg-emerald-50 text-emerald-700'"
+                  >
+                    {{ form.vendor_uuid ? 'Vendor Exclusive' : 'Platform Catalog' }}
+                  </span>
+                </div>
+                <SelectBox
+                  v-model="form.vendor_uuid"
+                  :options="vendorOptions"
+                  placeholder="Platform Catalog (No Vendor)"
+                  searchable
+                  remote
+                  :loading="vendorLoading"
+                  full-width
+                  @search="onVendorSearch"
+                  @change="onVendorChange"
+                />
+                <p class="text-[11px] text-gray-400 mt-1">
+                  Select a vendor if creating on their behalf; otherwise leave as Platform Catalog.
+                </p>
+                <p v-if="errors.vendor_uuid" class="text-red-500 text-xs mt-1">{{ errors.vendor_uuid[0] }}</p>
+              </div>
               <div>
                 <label class="label">Category</label>
                 <SelectBox v-model="form.category_id" :options="categoryOptions" placeholder="No Category" full-width />
@@ -423,7 +449,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
 import { QuillEditor } from '@vueup/vue-quill'
@@ -431,6 +457,7 @@ import '@vueup/vue-quill/dist/vue-quill.snow.css'
 import BreadcrumbHeader from '@ecom/ui/components/BreadcrumbHeader.vue'
 import SelectBox from '@ecom/ui/components/SelectBox.vue'
 import { productApi, categoryApi, brandApi } from '@/api'
+import { vendorApi } from '@/api/vendor'
 import { TrashIcon, PhotoIcon, CubeIcon } from '@heroicons/vue/24/outline'
 import { Star, Trash2, ImagePlus, Film } from 'lucide-vue-next'
 import ToggleSwitch from '@ecom/ui/components/ToggleSwitch.vue'
@@ -469,9 +496,26 @@ const brandOptions = computed(() => [
   ...brands.value.map(b => ({ value: b.id, label: b.name }))
 ])
 
+const vendorOptions = computed(() => {
+  const list = [...vendors.value]
+  if (selectedVendor.value && !list.some(v => v.uuid === selectedVendor.value.uuid)) {
+    list.unshift(selectedVendor.value)
+  }
+  return [
+    { value: '', label: 'Platform Catalog (No Vendor)' },
+    ...list.map(v => {
+      const owner = v.owner_name ? ` — ${v.owner_name}` : ''
+      const statusSuffix = v.status && v.status !== 'active' ? ` (${v.status})` : ''
+      return { value: v.uuid, label: `${v.shop_name}${owner}${statusSuffix}` }
+    }),
+  ]
+})
+
 
 const thumbnailPreview = ref(null), thumbnailFile = ref(null)
 const categories = ref([]), brands = ref([])
+const vendors = ref([]), selectedVendor = ref(null), vendorLoading = ref(false)
+let vendorSearchTimer = null
 const newTag = ref(''), newAttrValues = ref([])
 const thumbInput = ref(null)
 
@@ -508,7 +552,7 @@ const form = reactive({
   price: null, sale_price: null, cost_price: null,
   stock_quantity: 0, low_stock_threshold: 5, manage_stock: true,
   short_description: '', description: '',
-  category_id: null, brand_id: null,
+  vendor_uuid: '', category_id: null, brand_id: null,
   is_featured: false, is_new: false, is_bestseller: false,
   meta_title: '', meta_description: '', meta_keywords: '',
   thumbnail_url: '', tags: [], attributes: [], variants: [],
@@ -570,6 +614,7 @@ async function save() {
     fd.append('sku', form.sku || '')
     fd.append('short_description', form.short_description || '')
     fd.append('description', form.description || '')
+    fd.append('vendor_uuid', form.vendor_uuid || '')
     fd.append('category_id', form.category_id || '')
     fd.append('brand_id', form.brand_id || '')
     fd.append('meta_title', form.meta_title || '')
@@ -807,10 +852,43 @@ function removeVideo(index) {
   }
 }
 
+async function fetchVendors(query = '') {
+  vendorLoading.value = true
+  try {
+    const res = await vendorApi.list({
+      search: query.trim() || undefined,
+      per_page: 25,
+    })
+    vendors.value = res.data.data || []
+  } catch {
+    vendors.value = []
+  } finally {
+    vendorLoading.value = false
+  }
+}
+
+function onVendorSearch(query) {
+  clearTimeout(vendorSearchTimer)
+  vendorLoading.value = true
+  vendorSearchTimer = setTimeout(() => {
+    fetchVendors(query)
+  }, 300)
+}
+
+function onVendorChange(uuid) {
+  if (!uuid) {
+    selectedVendor.value = null
+    return
+  }
+  const match = vendors.value.find(v => v.uuid === uuid)
+  if (match) selectedVendor.value = match
+}
+
 onMounted(async () => {
   const [catRes, brandRes] = await Promise.allSettled([
     categoryApi.list(),
-    brandApi.list()
+    brandApi.list(),
+    fetchVendors(),
   ])
   if (catRes.status === 'fulfilled') categories.value = catRes.value.data.data || []
   if (brandRes.status === 'fulfilled') brands.value = brandRes.value.data.data || []
@@ -823,6 +901,9 @@ onMounted(async () => {
       Object.keys(form).forEach(k => {
         if (p[k] !== undefined) form[k] = p[k]
       })
+
+      form.vendor_uuid = p.vendor?.uuid || ''
+      selectedVendor.value = p.vendor || null
 
       form.tags = p.tags || []
       form.attributes = p.attributes?.map(a => ({ name: a.name, values: a.values || [] })) || []
@@ -861,6 +942,10 @@ onMounted(async () => {
       console.error(err)
     }
   }
+})
+
+onUnmounted(() => {
+  clearTimeout(vendorSearchTimer)
 })
 </script>
 
